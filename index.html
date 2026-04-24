@@ -101,6 +101,45 @@
   .tl-title { font-size: 0.88rem; color: var(--text); }
   .tl-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
 
+  /* ШКАЛА ПУТИ */
+  .roadmap { position: relative; padding: 40px 0 20px; overflow-x: auto; }
+  .roadmap-track { position: relative; height: 6px; background: #2a2a2a; border-radius: 3px; margin: 0 30px; }
+  .roadmap-progress { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold), var(--gold2)); transition: width 1s ease; }
+  .roadmap-hero { position: absolute; top: -14px; transform: translateX(-50%); font-size: 1.4rem; filter: drop-shadow(0 0 6px var(--gold)); transition: left 1s ease; z-index: 3; }
+  .roadmap-bosses { position: relative; margin: 0 30px; }
+  .boss-point { position: absolute; top: -22px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: default; z-index: 2; }
+  .boss-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--gold); background: var(--bg); transition: all 0.3s; }
+  .boss-dot.reached { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+  .boss-dot.final { width: 22px; height: 22px; border-color: #ff6b6b; }
+  .boss-dot.final.reached { background: #ff6b6b; box-shadow: 0 0 12px #ff6b6b; }
+  .boss-label { font-size: 0.65rem; color: var(--muted); text-align: center; max-width: 70px; line-height: 1.2; white-space: nowrap; }
+  .boss-label.reached { color: var(--gold); }
+  .boss-date { font-size: 0.6rem; color: #555; }
+  .roadmap-dates { display: flex; justify-content: space-between; margin: 18px 30px 0; }
+  .roadmap-dates span { font-size: 0.65rem; color: #555; }
+
+  /* МИНИ-КВЕСТЫ */
+  .coins-display { display: flex; align-items: center; gap: 8px; font-size: 1.2rem; font-weight: bold; color: var(--gold); }
+  .mini-quest { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; }
+  .mini-quest:last-child { border-bottom: none; }
+  .mq-left { display: flex; align-items: center; gap: 10px; }
+  .mq-icon { font-size: 1.3rem; width: 36px; text-align: center; }
+  .mq-text { font-size: 0.85rem; }
+  .mq-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+  .mq-reward { display: flex; align-items: center; gap: 6px; }
+  .mq-coins { font-size: 0.8rem; color: var(--gold); font-weight: bold; }
+  .btn-quest { background: #1a1200; border: 1px solid var(--gold); color: var(--gold); padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+  .btn-quest:hover { background: var(--gold); color: #000; }
+  .btn-quest:disabled { opacity: 0.3; cursor: not-allowed; border-color: #444; color: #444; background: none; }
+  .shop-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; }
+  .shop-item:last-child { border-bottom: none; }
+  .shop-emoji { font-size: 1.2rem; margin-right: 8px; }
+  .shop-text { font-size: 0.82rem; flex: 1; }
+  .shop-cost { font-size: 0.8rem; color: var(--gold); font-weight: bold; margin-right: 8px; }
+  .btn-buy { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 4px 10px; border-radius: 5px; font-size: 0.72rem; cursor: pointer; }
+  .btn-buy:hover { background: var(--gold); color: #000; }
+  .btn-buy:disabled { opacity: 0.3; cursor: not-allowed; }
+
   /* ДОЛГИ */
   .debt-item { margin-bottom: 14px; }
   .debt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
@@ -150,7 +189,46 @@
     </div>
   </div>
 
-  <div class="grid2">
+  <!-- ШКАЛА ПУТИ -->
+  <div class="section-title" style="margin-top:0">🗺️ Путь к раю — 1.5 года</div>
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Старт → Финиш</div>
+        <div style="font-size:0.9rem;color:var(--text)">Апрель 2026 → Октябрь 2027</div>
+      </div>
+      <div id="roadmap-pct" style="font-size:1.4rem;font-weight:bold;color:var(--gold)">0%</div>
+    </div>
+    <div class="roadmap">
+      <div class="roadmap-bosses" id="roadmap-bosses" style="height:40px"></div>
+      <div class="roadmap-track">
+        <div class="roadmap-progress" id="roadmap-bar" style="width:0%"></div>
+        <div class="roadmap-hero" id="roadmap-hero" style="left:0%">⚔️</div>
+      </div>
+    </div>
+    <div class="roadmap-dates">
+      <span>Апр 2026</span><span>Авг 2026</span><span>Дек 2026</span><span>Май 2027</span><span>Окт 2027</span>
+    </div>
+    <div id="current-boss-info" style="margin-top:14px;padding:10px;background:#111;border-radius:8px;font-size:0.82rem;color:var(--muted)"></div>
+  </div>
+
+  <!-- МИНИ-КВЕСТЫ -->
+  <div class="section-title">⚡ Ежедневные квесты</div>
+  <div class="grid2" style="margin-bottom:0">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin-bottom:0">Задания дня</div>
+        <div class="coins-display">🪙 <span id="coins-count">0</span></div>
+      </div>
+      <div id="daily-quests"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Магазин наград</div>
+      <div id="shop-items"></div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:16px">
 
     <!-- ХАРАКТЕРИСТИКИ -->
     <div class="card">
@@ -458,6 +536,170 @@
     document.getElementById('reward-popup').classList.remove('show');
   }
 
+  // ===== ШКАЛА ПУТИ =====
+  const BOSSES = [
+    { pct: 8,   date: 'Май 2026',  label: 'Уровень 1',  emoji: '💰', desc: 'Закрыть 130k долга · 8 клиентов масс-лукинга' },
+    { pct: 28,  date: 'Авг 2026',  label: 'Уровень 2',  emoji: '🚀', desc: '250k/мес доход · Первая поездка' },
+    { pct: 50,  date: 'Дек 2026',  label: 'Уровень 3',  emoji: '💳', desc: '350k/мес · Закрыты все мелкие кредитки' },
+    { pct: 75,  date: 'Май 2027',  label: 'Уровень 4',  emoji: '💪', desc: '450k/мес · Видимый рельеф тела' },
+    { pct: 100, date: 'Окт 2027',  label: 'РАЙ 🏆',     emoji: '🌴', desc: '500k+/мес · Нет долгов · Тело мечты · Свобода' },
+  ];
+
+  function initRoadmap() {
+    const start = new Date('2026-04-20');
+    const end   = new Date('2027-10-17');
+    const now   = new Date();
+    const total = end - start;
+    const elapsed = Math.min(Math.max(now - start, 0), total);
+    const pct = Math.round((elapsed / total) * 100);
+
+    document.getElementById('roadmap-pct').innerText = pct + '%';
+    document.getElementById('roadmap-bar').style.width = pct + '%';
+    document.getElementById('roadmap-hero').style.left = pct + '%';
+
+    const container = document.getElementById('roadmap-bosses');
+    container.innerHTML = '';
+    BOSSES.forEach(b => {
+      const el = document.createElement('div');
+      el.className = 'boss-point';
+      el.style.left = b.pct + '%';
+      const reached = pct >= b.pct;
+      el.innerHTML = `
+        <div style="font-size:1.1rem">${b.emoji}</div>
+        <div class="boss-dot ${reached ? 'reached' : ''} ${b.pct === 100 ? 'final' : ''}"></div>
+        <div class="boss-label ${reached ? 'reached' : ''}">${b.label}</div>
+        <div class="boss-date">${b.date}</div>
+      `;
+      el.onclick = () => {
+        document.getElementById('current-boss-info').innerHTML =
+          `<span style="color:var(--gold)">${b.emoji} ${b.label} · ${b.date}</span><br>${b.desc}`;
+      };
+      container.appendChild(el);
+    });
+
+    // Показать ближайшего босса
+    const next = BOSSES.find(b => b.pct > pct) || BOSSES[BOSSES.length - 1];
+    document.getElementById('current-boss-info').innerHTML =
+      `<span style="color:var(--gold)">Следующий рубеж: ${next.emoji} ${next.label} · ${next.date}</span><br>${next.desc}`;
+  }
+
+  // ===== МИНИ-КВЕСТЫ =====
+  const QUESTS = [
+    { id: 'steps',   icon: '🚶', text: '10 000 шагов', sub: 'Пройди сегодня', coins: 10 },
+    { id: 'workout', icon: '🏋️', text: 'Тренировка',   sub: 'Зал или дома', coins: 15 },
+    { id: 'protein', icon: '🥩', text: '160г белка',   sub: 'Правильное питание', coins: 10 },
+    { id: 'work30',  icon: '⚡', text: '30 мин работы', sub: 'Фокус без отвлечений', coins: 8 },
+    { id: 'work2h',  icon: '🔥', text: '2 часа работы', sub: 'Глубокий фокус', coins: 20 },
+    { id: 'sleep',   icon: '😴', text: 'Лечь до 23:00', sub: 'Качественный сон', coins: 8 },
+    { id: 'content', icon: '📝', text: 'Пост в канал',  sub: 'Любой из каналов', coins: 12 },
+    { id: 'skin',    icon: '🧴', text: 'Уход за лицом', sub: 'Утренний ритуал', coins: 5 },
+  ];
+
+  const SHOP = [
+    { id: 's1', emoji: '☕', text: 'Кофе в хорошей кофейне',     cost: 15 },
+    { id: 's2', emoji: '🥩', text: 'Стейк или бургер',            cost: 30 },
+    { id: 's3', emoji: '😴', text: 'Дневной сон 20 мин без вины', cost: 20 },
+    { id: 's4', emoji: '🎬', text: 'Сериал без лимита — вечер',   cost: 25 },
+    { id: 's5', emoji: '💆', text: 'Массаж 60 минут',             cost: 80 },
+    { id: 's6', emoji: '🏊', text: 'Баня / сауна',                cost: 60 },
+    { id: 's7', emoji: '🌊', text: 'Выходные в другом городе',    cost: 200 },
+  ];
+
+  function getTodayKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  }
+
+  function loadQuestState() {
+    const key = 'pq_' + getTodayKey();
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : {};
+  }
+
+  function saveQuestState(state) {
+    const key = 'pq_' + getTodayKey();
+    localStorage.setItem(key, JSON.stringify(state));
+  }
+
+  function loadCoins() {
+    return parseInt(localStorage.getItem('paradise_coins') || '0');
+  }
+
+  function saveCoins(n) {
+    localStorage.setItem('paradise_coins', n);
+    document.getElementById('coins-count').innerText = n;
+  }
+
+  function renderQuests() {
+    const state = loadQuestState();
+    const coins = loadCoins();
+    document.getElementById('coins-count').innerText = coins;
+
+    const list = document.getElementById('daily-quests');
+    list.innerHTML = '';
+    QUESTS.forEach(q => {
+      const done = !!state[q.id];
+      const div = document.createElement('div');
+      div.className = 'mini-quest';
+      div.innerHTML = `
+        <div class="mq-left">
+          <div class="mq-icon">${q.icon}</div>
+          <div>
+            <div class="mq-text" style="${done ? 'text-decoration:line-through;color:#555' : ''}">${q.text}</div>
+            <div class="mq-sub">${q.sub}</div>
+          </div>
+        </div>
+        <div class="mq-reward">
+          <div class="mq-coins">+${q.coins}🪙</div>
+          <button class="btn-quest" ${done ? 'disabled' : ''} onclick="completeQuest('${q.id}',${q.coins})">
+            ${done ? '✓' : 'Сделал'}
+          </button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function completeQuest(id, coins) {
+    const state = loadQuestState();
+    if (state[id]) return;
+    state[id] = true;
+    saveQuestState(state);
+    const cur = loadCoins();
+    saveCoins(cur + coins);
+    renderQuests();
+    renderShop();
+  }
+
+  function renderShop() {
+    const coins = loadCoins();
+    const list = document.getElementById('shop-items');
+    list.innerHTML = '';
+    SHOP.forEach(item => {
+      const canBuy = coins >= item.cost;
+      const div = document.createElement('div');
+      div.className = 'shop-item';
+      div.innerHTML = `
+        <span class="shop-emoji">${item.emoji}</span>
+        <span class="shop-text">${item.text}</span>
+        <span class="shop-cost">${item.cost}🪙</span>
+        <button class="btn-buy" ${!canBuy ? 'disabled' : ''} onclick="buyReward('${item.id}',${item.cost},'${item.emoji}','${item.text}')">Купить</button>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function buyReward(id, cost, emoji, text) {
+    const coins = loadCoins();
+    if (coins < cost) return;
+    saveCoins(coins - cost);
+    renderShop();
+    renderQuests();
+    document.getElementById('reward-emoji').innerText = emoji;
+    document.getElementById('reward-text').innerText = '🛍️ Куплено!\n\n' + text + '\n\nИди и наслаждайся — ты заработал это честно.';
+    document.getElementById('reward-popup').classList.add('show');
+  }
+
   // ===== ДОЛГИ =====
   const DEBT_REWARDS = [
     { emoji: '🥩', text: 'Стейк в хорошем ресторане — заслужил!' },
@@ -564,6 +806,9 @@
   // Инициализация
   countTasks();
   renderDebts();
+  initRoadmap();
+  renderQuests();
+  renderShop();
 </script>
 </body>
 </html>
