@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мой собственный рай — Анатолий</title>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --gold: #f5a623;
+    --gold2: #e8941a;
+    --green: #4caf50;
+    --red: #e53935;
+    --blue: #42a5f5;
+    --purple: #ab47bc;
+    --text: #e0e0e0;
+    --muted: #888;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, #1a1200, #0d0d0d); border-bottom: 1px solid var(--gold); padding: 20px; text-align: center; }
+  .header h1 { font-size: 1.4rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+  .header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+
+  /* LAYOUT */
+  .container { max-width: 900px; margin: 0 auto; padding: 20px 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* CARDS */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .card-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 14px; }
+
+  /* PROFILE */
+  .profile { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #f5a623, #e8941a); display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 3px solid var(--gold); flex-shrink: 0; }
+  .profile-info h2 { font-size: 1.3rem; color: var(--gold); }
+  .profile-info .level { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+  .xp-bar-wrap { margin-top: 8px; }
+  .xp-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .bar { height: 8px; background: #2a2a2a; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+  .bar-xp { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+
+  /* STATS */
+  .stat { margin-bottom: 14px; }
+  .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .stat-name { font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
+  .stat-val { font-size: 0.8rem; color: var(--gold); font-weight: bold; }
+  .bar-stat { background: linear-gradient(90deg, #f5a623, #ff6f00); }
+  .bar-body { background: linear-gradient(90deg, #4caf50, #1b5e20); }
+  .bar-youth { background: linear-gradient(90deg, #ab47bc, #6a1b9a); }
+  .bar-sleep { background: linear-gradient(90deg, #42a5f5, #0d47a1); }
+  .bar-freedom { background: linear-gradient(90deg, #26c6da, #006064); }
+  .bar-style { background: linear-gradient(90deg, #ec407a, #880e4f); }
+
+  /* MONSTER */
+  .monster-card { border-color: #3a1a1a; }
+  .monster-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .monster-name { font-size: 1rem; color: #ff6b6b; font-weight: bold; }
+  .monster-emoji { font-size: 2.5rem; text-align: center; margin: 10px 0; transition: transform 0.3s; }
+  .monster-emoji.hit { animation: shake 0.3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .monster-emoji.dead { animation: explode 0.6s forwards; }
+  @keyframes explode { 0%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.5} 100%{transform:scale(0);opacity:0} }
+  .hp-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .bar-hp { background: linear-gradient(90deg, #e53935, #b71c1c); }
+  .subtasks { margin-top: 14px; }
+  .subtask { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #222; cursor: pointer; transition: background 0.2s; border-radius: 6px; padding-left: 6px; }
+  .subtask:hover { background: #222; }
+  .subtask input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--green); cursor: pointer; flex-shrink: 0; }
+  .subtask label { font-size: 0.85rem; cursor: pointer; flex: 1; }
+  .subtask.done label { text-decoration: line-through; color: var(--muted); }
+  .reward-popup { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; }
+  .reward-popup.show { display: flex; }
+  .reward-box { background: linear-gradient(135deg, #1a1200, #2a2000); border: 2px solid var(--gold); border-radius: 16px; padding: 32px; text-align: center; max-width: 340px; animation: popIn 0.4s; }
+  @keyframes popIn { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+  .reward-box h2 { color: var(--gold); font-size: 1.5rem; margin-bottom: 8px; }
+  .reward-box .reward-emoji { font-size: 3rem; margin: 12px 0; }
+  .reward-box p { color: var(--text); font-size: 0.95rem; line-height: 1.5; }
+  .btn-close { margin-top: 20px; background: var(--gold); color: #000; border: none; padding: 10px 28px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; cursor: pointer; }
+
+  /* QUESTS */
+  .quest { padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .quest:last-child { border-bottom: none; }
+  .quest-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+  .quest-dot.done { background: var(--green); }
+  .quest-text { font-size: 0.85rem; flex: 1; }
+  .quest-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; background: #2a2a00; color: var(--gold); border: 1px solid var(--gold); white-space: nowrap; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-dot { position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--bg); }
+  .tl-year { font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 2px; }
+  .tl-title { font-size: 0.88rem; color: var(--text); }
+  .tl-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+  /* SECTION TITLE */
+  .section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+
+  /* POINTS */
+  .points-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .point-badge { background: #1a1200; border: 1px solid var(--gold); border-radius: 8px; padding: 4px 10px; font-size: 0.8rem; color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚔️ Мой собственный рай</h1>
+  <p>Путь к жизни мечты · Старт: апрель 2026</p>
+</div>
+
+<div class="container">
+
+  <!-- ПРОФИЛЬ -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="profile">
+      <div class="avatar">⚔️</div>
+      <div class="profile-info">
+        <h2>Анатолий</h2>
+        <div class="level">Уровень <span id="lvl">3</span> · Серийный запускатор</div>
+        <div class="xp-bar-wrap">
+          <div class="xp-label"><span>Опыт</span><span id="xp-text">220 / 500 XP</span></div>
+          <div class="bar"><div class="bar-fill bar-xp" id="xp-bar" style="width:44%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="points-bar">
+      <div class="point-badge">🏆 Очков сегодня: <span id="daily-pts">0</span></div>
+      <div class="point-badge">📅 Дней в игре: <span id="days">4</span></div>
+      <div class="point-badge">🔥 Серия: <span id="streak">3</span> дня</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <!-- ХАРАКТЕРИСТИКИ -->
+    <div class="card">
+      <div class="card-title">Характеристики персонажа</div>
+
+      <div class="stat">
+        <div class="stat-header">
+          <div class="stat-name">💰 Деньги</div>
+          <div class="stat-val">28/100</div>
+        </div>
+        <div class="bar"><div class="bar-fill bar-stat" style="width:28%"></div></div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-header">
+          <div class="stat-name">💪 Тело</div>
+          <div class="stat-val">35/100</div>
+        </div>
+        <div class="bar"><div class="bar-fill bar-body" style="width:35%"></div></div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-header">
+          <div class="stat-name">🧬 Молодость</div>
+          <div class="stat-val">42/100</div>
+        </div>
+        <div class="bar"><div class="bar-fill bar-youth" style="width:42%"></div></div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-header">
+          <div class="stat-name">😴 Восстановление</div>
+          <div class="stat-val">30/100</div>
+        </div>
+        <div class="bar"><div class="bar-fill bar-sleep" style="width:30%"></div></div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-header">
+          <div class="stat-name">✈️ Свобода</div>
+          <div class="stat-val">20/100</div>
+        </div>
+        <div class="bar"><div class="bar-fill bar-freedom" style="width:20%"></div></div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-header">
+          <div class="stat-name">👔 Образ</div>
+          <div class="stat-val">25/100</div>
+        </div>
+        <div class="bar"><div class="bar-fill bar-style" style="width:25%"></div></div>
+      </div>
+    </div>
+
+    <!-- АКТИВНЫЕ КВЕСТЫ -->
+    <div class="card">
+      <div class="card-title">Активные квесты</div>
+
+      <div class="quest">
+        <div class="quest-dot"></div>
+        <div class="quest-text">Закрыть 130k с кредитки</div>
+        <div class="quest-badge">🔥 Горит</div>
+      </div>
+      <div class="quest">
+        <div class="quest-dot"></div>
+        <div class="quest-text">8 клиентов масс-лукинга</div>
+        <div class="quest-badge">💰 Деньги</div>
+      </div>
+      <div class="quest">
+        <div class="quest-dot"></div>
+        <div class="quest-text">50 подписчиков ИИ-директор</div>
+        <div class="quest-badge">📣 Канал</div>
+      </div>
+      <div class="quest">
+        <div class="quest-dot"></div>
+        <div class="quest-text">Перенести 100 промптов в Telegraph</div>
+        <div class="quest-badge">📝 Контент</div>
+      </div>
+      <div class="quest">
+        <div class="quest-dot"></div>
+        <div class="quest-text">Настроить BotHelp-приветствие</div>
+        <div class="quest-badge">🤖 Бот</div>
+      </div>
+      <div class="quest">
+        <div class="quest-dot"></div>
+        <div class="quest-text">Сбросить 5 кг жира</div>
+        <div class="quest-badge">💪 Тело</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОНСТР -->
+  <div class="section-title">⚔️ Текущий бой</div>
+  <div class="card monster-card">
+    <div class="monster-header">
+      <div>
+        <div class="card-title" style="margin-bottom:4px">Босс-задача</div>
+        <div class="monster-name" id="monster-name">💀 Долг 130,000 ₽</div>
+      </div>
+      <div style="font-size:0.8rem;color:var(--muted)">Победи — получи приз</div>
+    </div>
+
+    <div class="monster-emoji" id="monster-emoji">👹</div>
+
+    <div class="hp-label">
+      <span>HP монстра</span>
+      <span id="hp-text">6 / 6</span>
+    </div>
+    <div class="bar" style="height:14px">
+      <div class="bar-fill bar-hp" id="hp-bar" style="width:100%"></div>
+    </div>
+
+    <div class="subtasks" id="subtasks">
+      <div class="subtask" onclick="toggleTask(this)">
+        <input type="checkbox" onclick="event.stopPropagation()">
+        <label>Найти 2 новых клиента масс-лукинг (30k)</label>
+      </div>
+      <div class="subtask" onclick="toggleTask(this)">
+        <input type="checkbox" onclick="event.stopPropagation()">
+        <label>Закрыть 3 текущих клиента (45k)</label>
+      </div>
+      <div class="subtask" onclick="toggleTask(this)">
+        <input type="checkbox" onclick="event.stopPropagation()">
+        <label>Провести 3 аутрич-рассылки владельцам каналов</label>
+      </div>
+      <div class="subtask" onclick="toggleTask(this)">
+        <input type="checkbox" onclick="event.stopPropagation()">
+        <label>Опубликовать 5 постов в канале маркетинга</label>
+      </div>
+      <div class="subtask" onclick="toggleTask(this)">
+        <input type="checkbox" onclick="event.stopPropagation()">
+        <label>Настроить автоматический масс-лукинг на себя</label>
+      </div>
+      <div class="subtask" onclick="toggleTask(this)">
+        <input type="checkbox" onclick="event.stopPropagation()">
+        <label>Перевести деньги на кредитку</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ХРОНОЛОГИЯ -->
+  <div class="section-title">📜 Хронология достижений</div>
+  <div class="card">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#ffd700"></div>
+        <div class="tl-year">Школа</div>
+        <div class="tl-title">🥈 Серебряная медаль</div>
+        <div class="tl-sub">Футбол, карате, теннис, плавание. Находил решения с минимальными усилиями.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">Институт</div>
+        <div class="tl-title">🥇 Красный диплом</div>
+        <div class="tl-sub">Работал на автомойке → купил теннисную ракетку сам. Открыл интернет-магазин линз с сёстрами.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">После института</div>
+        <div class="tl-title">🔧 Главный инженер</div>
+        <div class="tl-sub">Взяли сразу после вуза. Доверили руководство — справился.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">Сетевой бизнес</div>
+        <div class="tl-title">📈 Топ региона в Oriflame</div>
+        <div class="tl-sub">400+ страниц ВКонтакте, автоматизация, бесплатные поездки от компании. Научился трафику.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">Личное</div>
+        <div class="tl-title">🌴 Зимовка в Таиланде</div>
+        <div class="tl-sub">Дважды. Первый раз 1.5 месяца, второй — 4-5 месяцев.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">Лайк-центр</div>
+        <div class="tl-title">🚀 Менеджер → Руководитель офиса за 1.5 года</div>
+        <div class="tl-sub">Привлёк 530k инвестиций, отбил всё. Доход 150-200k/мес. Аудитория 200k+ человек.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">Пиковый доход</div>
+        <div class="tl-title">💰 600-700k ₽ в месяц</div>
+        <div class="tl-sub">Доказал себе — умею зарабатывать. Три раза падал в ноль — три раза поднимался.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2024-2025</div>
+        <div class="tl-title">🏋️ -13 кг за год</div>
+        <div class="tl-sub">Был почти 100 кг → сейчас 86. 1.5 года в тренажёрке без перерывов.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#f5a623"></div>
+        <div class="tl-year">2026</div>
+        <div class="tl-title">⚔️ Запуск OSBED + ИИ-директор</div>
+        <div class="tl-sub">90 оплат в клуб за неделю. 3000 подписчиков на канале дисциплины. Канал ИИ-директор запущен 20 апреля.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- НАГРАДА ПОПАП -->
+<div class="reward-popup" id="reward-popup">
+  <div class="reward-box">
+    <h2>🏆 ПОБЕДА!</h2>
+    <div class="reward-emoji" id="reward-emoji">🎉</div>
+    <p id="reward-text">Ты победил монстра!</p>
+    <button class="btn-close" onclick="closeReward()">Забрать награду</button>
+  </div>
+</div>
+
+<script>
+  const REWARDS = [
+    { emoji: '☕', text: 'Кофе в хорошей кофейне — не на бегу, а с удовольствием' },
+    { emoji: '🥩', text: 'Стейк или бургер из вкусного места — заслужил' },
+    { emoji: '🛀', text: 'Горячий душ +20 минут дольше обычного. Никуда не торопиться' },
+    { emoji: '🎬', text: 'Один сериал без чувства вины. Совсем без вины.' },
+    { emoji: '🚶', text: 'Прогулка 30 минут без телефона — просто идти и думать' },
+    { emoji: '😴', text: 'Лечь спать на час раньше без чувства вины' },
+    { emoji: '🍜', text: 'Заказать одно блюдо из ресторана домой — что давно хотел' },
+    { emoji: '🎵', text: 'Переслушать трек от которого мурашки — громко, в кайф' },
+    { emoji: '💆', text: 'Массаж 60 минут — ты это честно заработал' },
+    { emoji: '🏊', text: 'Баня или сауна — перезагрузка тела и головы' },
+  ];
+
+  let totalTasks = 0;
+  let doneTasks = 0;
+
+  function countTasks() {
+    const all = document.querySelectorAll('.subtask');
+    totalTasks = all.length;
+    doneTasks = document.querySelectorAll('.subtask.done').length;
+  }
+
+  function updateHP() {
+    countTasks();
+    const hp = totalTasks - doneTasks;
+    const pct = totalTasks > 0 ? (hp / totalTasks) * 100 : 0;
+    document.getElementById('hp-bar').style.width = pct + '%';
+    document.getElementById('hp-text').innerText = hp + ' / ' + totalTasks;
+
+    // цвет HP
+    const bar = document.getElementById('hp-bar');
+    if (pct > 60) bar.style.background = 'linear-gradient(90deg,#e53935,#b71c1c)';
+    else if (pct > 30) bar.style.background = 'linear-gradient(90deg,#ff9800,#e65100)';
+    else bar.style.background = 'linear-gradient(90deg,#4caf50,#1b5e20)';
+
+    if (hp === 0 && totalTasks > 0) {
+      setTimeout(killMonster, 400);
+    }
+  }
+
+  function toggleTask(el) {
+    const cb = el.querySelector('input');
+    cb.checked = !cb.checked;
+    el.classList.toggle('done', cb.checked);
+
+    // анимация удара
+    const emoji = document.getElementById('monster-emoji');
+    emoji.classList.remove('hit');
+    void emoji.offsetWidth;
+    emoji.classList.add('hit');
+    setTimeout(() => emoji.classList.remove('hit'), 300);
+
+    updateHP();
+  }
+
+  function killMonster() {
+    const emoji = document.getElementById('monster-emoji');
+    emoji.classList.add('dead');
+    setTimeout(() => {
+      showReward();
+    }, 700);
+  }
+
+  function showReward() {
+    const r = REWARDS[Math.floor(Math.random() * REWARDS.length)];
+    document.getElementById('reward-emoji').innerText = r.emoji;
+    document.getElementById('reward-text').innerText = r.text;
+    document.getElementById('reward-popup').classList.add('show');
+  }
+
+  function closeReward() {
+    document.getElementById('reward-popup').classList.remove('show');
+  }
+
+  // Ежедневные очки
+  let points = 0;
+  function addPoints(n) {
+    points += n;
+    document.getElementById('daily-pts').innerText = points;
+  }
+
+  // Инициализация
+  countTasks();
+</script>
+</body>
+</html>
