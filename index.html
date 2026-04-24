@@ -101,6 +101,18 @@
   .tl-title { font-size: 0.88rem; color: var(--text); }
   .tl-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
 
+  /* ДОЛГИ */
+  .debt-item { margin-bottom: 14px; }
+  .debt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .debt-name { font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+  .debt-name.paid { text-decoration: line-through; color: var(--muted); }
+  .debt-amount { font-size: 0.8rem; color: #ff6b6b; font-weight: bold; }
+  .debt-amount.paid { color: var(--green); }
+  .bar-debt { background: linear-gradient(90deg, #e53935, #c62828); }
+  .debt-edit { background: none; border: 1px solid #333; color: var(--muted); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; }
+  .debt-edit:hover { border-color: var(--gold); color: var(--gold); }
+  .debt-paid-badge { background: #1a3a1a; border: 1px solid var(--green); color: var(--green); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
+
   /* SECTION TITLE */
   .section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
 
@@ -279,6 +291,25 @@
     </div>
   </div>
 
+  <!-- ДОЛГИ -->
+  <div class="section-title">💳 Долги — уничтожаем одного за другим</div>
+  <div class="card" style="border-color:#3a1a2a">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Общий долг</div>
+        <div style="font-size:1.8rem;font-weight:bold;color:#ff6b6b" id="total-debt-display">790 262 ₽</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:0.75rem;color:var(--muted)">Цель</div>
+        <div style="font-size:1rem;color:var(--green)">0 ₽</div>
+      </div>
+    </div>
+    <div class="bar" style="height:10px;margin-bottom:20px">
+      <div class="bar-fill" id="debt-total-bar" style="width:100%;background:linear-gradient(90deg,#e53935,#b71c1c)"></div>
+    </div>
+    <div id="debts-list"></div>
+  </div>
+
   <!-- ХРОНОЛОГИЯ -->
   <div class="section-title">📜 Хронология достижений</div>
   <div class="card">
@@ -427,6 +458,102 @@
     document.getElementById('reward-popup').classList.remove('show');
   }
 
+  // ===== ДОЛГИ =====
+  const DEBT_REWARDS = [
+    { emoji: '🥩', text: 'Стейк в хорошем ресторане — заслужил!' },
+    { emoji: '💆', text: 'Массаж 60 минут — победа требует награды' },
+    { emoji: '🏊', text: 'Баня или сауна — смой этот долг с себя' },
+    { emoji: '🎬', text: 'Кино на большом экране + попкорн без лимита' },
+    { emoji: '👔', text: 'Купи одну классную вещь из одежды' },
+    { emoji: '🌊', text: 'Выходные в другом городе — ты это честно заработал' },
+    { emoji: '☕', text: 'Целое утро в кофейне с книгой — никуда не торопиться' },
+    { emoji: '🎮', text: 'Вечер только для себя — делай что хочешь без вины' },
+  ];
+
+  const DEFAULT_DEBTS = [
+    { id: 'sber',   name: 'СберБанк',    original: 160262, current: 160262 },
+    { id: 'tink1',  name: 'Тинькофф 1',  original: 150000, current: 150000 },
+    { id: 'tink2',  name: 'Тинькофф 2',  original: 136000, current: 136000 },
+    { id: 'alfa1',  name: 'Альфа 1',     original: 113000, current: 113000 },
+    { id: 'alfa2',  name: 'Альфа 2',     original: 96000,  current: 96000  },
+    { id: 'sn1',    name: 'Снежана 1',   original: 73000,  current: 73000  },
+    { id: 'sn2',    name: 'Снежана 2',   original: 30000,  current: 30000  },
+    { id: 'sn3',    name: 'Снежана 3',   original: 15000,  current: 15000  },
+    { id: 'wb',     name: 'ВБ',          original: 17000,  current: 17000  },
+  ];
+
+  function loadDebts() {
+    const saved = localStorage.getItem('paradise_debts');
+    return saved ? JSON.parse(saved) : DEFAULT_DEBTS;
+  }
+
+  function saveDebts(debts) {
+    localStorage.setItem('paradise_debts', JSON.stringify(debts));
+  }
+
+  function fmt(n) {
+    return n.toLocaleString('ru-RU') + ' ₽';
+  }
+
+  function renderDebts() {
+    const debts = loadDebts();
+    const totalOriginal = DEFAULT_DEBTS.reduce((s, d) => s + d.original, 0);
+    const totalCurrent = debts.reduce((s, d) => s + d.current, 0);
+    const pct = totalOriginal > 0 ? (totalCurrent / totalOriginal) * 100 : 0;
+
+    document.getElementById('total-debt-display').innerText = fmt(totalCurrent);
+    document.getElementById('debt-total-bar').style.width = pct + '%';
+
+    const list = document.getElementById('debts-list');
+    list.innerHTML = '';
+    debts.forEach(debt => {
+      const isPaid = debt.current <= 0;
+      const debtPct = debt.original > 0 ? Math.max(0, (debt.current / debt.original) * 100) : 0;
+      const div = document.createElement('div');
+      div.className = 'debt-item';
+      div.innerHTML = `
+        <div class="debt-header">
+          <div class="debt-name ${isPaid ? 'paid' : ''}">
+            ${isPaid ? '✅' : '💳'} ${debt.name}
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="debt-amount ${isPaid ? 'paid' : ''}">${isPaid ? 'ЗАКРЫТ' : fmt(debt.current)}</div>
+            ${isPaid
+              ? '<div class="debt-paid-badge">🏆 Победа!</div>'
+              : `<button class="debt-edit" onclick="editDebt('${debt.id}')">обновить</button>`
+            }
+          </div>
+        </div>
+        ${!isPaid ? `<div class="bar" style="height:6px"><div class="bar-fill bar-debt" style="width:${debtPct}%"></div></div>` : ''}
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function editDebt(id) {
+    const debts = loadDebts();
+    const debt = debts.find(d => d.id === id);
+    if (!debt) return;
+    const val = prompt(`${debt.name}\nТекущий остаток: ${fmt(debt.current)}\n\nВведи новую сумму (0 если закрыл):`, debt.current);
+    if (val === null) return;
+    const num = parseInt(val.replace(/\D/g, ''));
+    if (isNaN(num)) return;
+    const wasPaid = debt.current <= 0;
+    debt.current = Math.max(0, num);
+    saveDebts(debts);
+    renderDebts();
+    if (!wasPaid && debt.current <= 0) {
+      setTimeout(() => showDebtReward(debt.name), 300);
+    }
+  }
+
+  function showDebtReward(name) {
+    const r = DEBT_REWARDS[Math.floor(Math.random() * DEBT_REWARDS.length)];
+    document.getElementById('reward-emoji').innerText = r.emoji;
+    document.getElementById('reward-text').innerText = `🔥 ${name} — ЗАКРЫТ!\n\nТвоя награда:\n${r.text}`;
+    document.getElementById('reward-popup').classList.add('show');
+  }
+
   // Ежедневные очки
   let points = 0;
   function addPoints(n) {
@@ -436,6 +563,7 @@
 
   // Инициализация
   countTasks();
+  renderDebts();
 </script>
 </body>
 </html>
