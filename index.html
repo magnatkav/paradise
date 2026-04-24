@@ -252,29 +252,29 @@
     </div>
 
     <div class="subtasks" id="subtasks">
-      <div class="subtask" onclick="toggleTask(this)">
-        <input type="checkbox" onclick="event.stopPropagation()">
-        <label>Найти 2 новых клиента масс-лукинг (30k)</label>
+      <div class="subtask">
+        <input type="checkbox" id="t1" onchange="toggleTask(this)">
+        <label for="t1">Найти 2 новых клиента масс-лукинг (30k)</label>
       </div>
-      <div class="subtask" onclick="toggleTask(this)">
-        <input type="checkbox" onclick="event.stopPropagation()">
-        <label>Закрыть 3 текущих клиента (45k)</label>
+      <div class="subtask">
+        <input type="checkbox" id="t2" onchange="toggleTask(this)">
+        <label for="t2">Закрыть 3 текущих клиента (45k)</label>
       </div>
-      <div class="subtask" onclick="toggleTask(this)">
-        <input type="checkbox" onclick="event.stopPropagation()">
-        <label>Провести 3 аутрич-рассылки владельцам каналов</label>
+      <div class="subtask">
+        <input type="checkbox" id="t3" onchange="toggleTask(this)">
+        <label for="t3">Провести 3 аутрич-рассылки владельцам каналов</label>
       </div>
-      <div class="subtask" onclick="toggleTask(this)">
-        <input type="checkbox" onclick="event.stopPropagation()">
-        <label>Опубликовать 5 постов в канале маркетинга</label>
+      <div class="subtask">
+        <input type="checkbox" id="t4" onchange="toggleTask(this)">
+        <label for="t4">Опубликовать 5 постов в канале маркетинга</label>
       </div>
-      <div class="subtask" onclick="toggleTask(this)">
-        <input type="checkbox" onclick="event.stopPropagation()">
-        <label>Настроить автоматический масс-лукинг на себя</label>
+      <div class="subtask">
+        <input type="checkbox" id="t5" onchange="toggleTask(this)">
+        <label for="t5">Настроить автоматический масс-лукинг на себя</label>
       </div>
-      <div class="subtask" onclick="toggleTask(this)">
-        <input type="checkbox" onclick="event.stopPropagation()">
-        <label>Перевести деньги на кредитку</label>
+      <div class="subtask">
+        <input type="checkbox" id="t6" onchange="toggleTask(this)">
+        <label for="t6">Перевести деньги на кредитку</label>
       </div>
     </div>
   </div>
@@ -393,17 +393,17 @@
     }
   }
 
-  function toggleTask(el) {
-    const cb = el.querySelector('input');
-    cb.checked = !cb.checked;
-    el.classList.toggle('done', cb.checked);
+  function toggleTask(cb) {
+    const subtask = cb.closest('.subtask');
+    subtask.classList.toggle('done', cb.checked);
 
-    // анимация удара
-    const emoji = document.getElementById('monster-emoji');
-    emoji.classList.remove('hit');
-    void emoji.offsetWidth;
-    emoji.classList.add('hit');
-    setTimeout(() => emoji.classList.remove('hit'), 300);
+    if (cb.checked) {
+      const emoji = document.getElementById('monster-emoji');
+      emoji.classList.remove('hit');
+      void emoji.offsetWidth;
+      emoji.classList.add('hit');
+      setTimeout(() => emoji.classList.remove('hit'), 300);
+    }
 
     updateHP();
   }
