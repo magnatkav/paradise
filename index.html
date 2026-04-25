@@ -85,7 +85,7 @@
   }
 
   /* LAYOUT */
-  .container { max-width: 900px; margin: 0 auto; padding: 20px 16px; position: relative; z-index: 1; }
+  .container { max-width: 900px; margin: 0 auto; padding: 20px 16px; position: relative; z-index: 1; overflow: visible; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media(max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
 
@@ -106,25 +106,24 @@
   }
   .card-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 14px; }
 
-  /* ARC CONNECTORS */
+  /* ARC CONNECTORS — две дуги по бокам */
   .arc-connector {
     position: relative;
-    margin: 2px 0;
+    margin: 0;
     z-index: 1;
     overflow: visible;
+    height: 36px;
   }
-  .arc-svg { display: block; overflow: visible; }
-  .arc-path-l, .arc-path-r {
-    stroke-dasharray: 8 5;
-    animation: dashFlow 2s linear infinite;
+  .arc-svg { display: block; overflow: visible; position: absolute; left: 0; top: 0; }
+  .arc-side {
+    stroke-dasharray: 5 5;
+    animation: dashFlowSide 1.8s linear infinite;
   }
-  .arc-path-r { animation-delay: 1s; }
-  @keyframes dashFlow {
-    from { stroke-dashoffset: 52; }
-    to { stroke-dashoffset: 0; }
+  .arc-side.right { animation-delay: 0.9s; }
+  @keyframes dashFlowSide {
+    from { stroke-dashoffset: 40; }
+    to   { stroke-dashoffset: 0; }
   }
-  .arc-center-dot { animation: nodePulse 2.5s ease-in-out infinite; }
-  @keyframes nodePulse { 0%,100%{transform:scale(1);opacity:0.7} 50%{transform:scale(1.5);opacity:1} }
 
   /* PROFILE */
   .profile { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
@@ -242,8 +241,6 @@
   .boss-label { font-size: 0.65rem; color: var(--muted); text-align: center; max-width: 70px; line-height: 1.2; white-space: nowrap; }
   .boss-label.reached { color: var(--gold); }
   .boss-date { font-size: 0.6rem; color: #5a3812; }
-  .roadmap-dates { display: flex; justify-content: space-between; margin: 18px 30px 0; }
-  .roadmap-dates span { font-size: 0.65rem; color: #5a3812; }
 
   /* МИНИ-КВЕСТЫ */
   .coins-display { display: flex; align-items: center; gap: 8px; font-size: 1.2rem; font-weight: bold; color: var(--gold); }
@@ -285,12 +282,10 @@
   .chest:hover { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(245,166,35,0.9)); }
   .chest.locked { opacity: 0.2; cursor: default; }
   .chest.locked:hover { transform: none; filter: none; }
-  .chest-count { position: absolute; top: -4px; right: -6px; background: var(--red); color: #fff; font-size: 0.6rem; font-weight: bold; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; }
 
   /* СТРИК */
   .streak-fire { font-size: 1.6rem; animation: pulse 1.5s infinite; display: inline-block; }
   @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.18)} }
-  .streak-dead { font-size: 1.6rem; opacity: 0.2; display: inline-block; }
   .login-bonus { background: linear-gradient(135deg, #051a05, #021202); border: 1px solid rgba(76,175,80,0.35); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
   .login-bonus-text { font-size: 0.82rem; color: var(--green); }
 
@@ -308,6 +303,39 @@
   /* POINTS */
   .points-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
   .point-badge { background: rgba(245,166,35,0.07); border: 1px solid rgba(245,166,35,0.2); border-radius: 10px; padding: 4px 10px; font-size: 0.8rem; color: var(--gold); }
+
+  /* ЛЕСТНИЦА */
+  .staircase-wrap { display: flex; justify-content: center; padding: 8px 0 14px; }
+  .staircase-inner { display: flex; flex-direction: column; align-items: flex-start; }
+  .staircase-row { display: flex; gap: 4px; margin-bottom: 4px; }
+  .brick {
+    width: 40px; height: 24px; border-radius: 4px;
+    background: #1e1208;
+    border: 1px solid #2e1e08;
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .brick.filled {
+    background: linear-gradient(135deg, #7a3510, #c45818);
+    border-color: rgba(245,166,35,0.6);
+    box-shadow: 0 0 6px rgba(245,166,35,0.2), inset 0 1px 0 rgba(255,200,100,0.15);
+  }
+  .brick.pop {
+    animation: brickPop 0.45s cubic-bezier(0.175,0.885,0.32,1.275);
+  }
+  @keyframes brickPop {
+    0%   { transform: scale(0) rotate(-8deg); opacity: 0; }
+    60%  { transform: scale(1.25) rotate(2deg); }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+  .staircase-goal { font-size: 1.5rem; margin-bottom: 5px; line-height: 1; filter: drop-shadow(0 0 10px rgba(245,166,35,0.7)); }
+  .staircase-hero { font-size: 1.4rem; margin-top: 5px; margin-left: 0; filter: drop-shadow(0 0 6px rgba(245,166,35,0.4)); }
+  .staircase-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+  .staircase-progress-text { font-size: 0.75rem; color: var(--muted); }
+  .staircase-level-badge {
+    font-size: 0.72rem; color: var(--gold); font-weight: bold;
+    background: rgba(245,166,35,0.07); border: 1px solid rgba(245,166,35,0.2);
+    border-radius: 8px; padding: 2px 10px;
+  }
 
   /* VISION BOARD */
   .vision-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -371,14 +399,15 @@
     </div>
   </div>
 
+  <!-- ДУГИ МЕЖДУ БЛОКАМИ -->
   <div class="arc-connector">
-    <svg class="arc-svg" viewBox="0 0 800 50" preserveAspectRatio="none" width="100%" height="50">
-      <path d="M 400,4 L 160,4 Q 30,4 30,25 Q 30,46 160,46 L 400,46"
-            fill="none" stroke="rgba(245,166,35,0.55)" stroke-width="1.5" class="arc-path-l"/>
-      <path d="M 400,4 L 640,4 Q 770,4 770,25 Q 770,46 640,46 L 400,46"
-            fill="none" stroke="rgba(255,104,53,0.4)" stroke-width="1.5" class="arc-path-r"/>
-      <circle cx="400" cy="4" r="4" fill="#f5a623" class="arc-center-dot"/>
-      <circle cx="400" cy="46" r="3" fill="#f5a623" opacity="0.55"/>
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.7)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(245,166,35,0.55)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2"  r="3" fill="rgba(245,166,35,0.8)"/>
+      <circle cx="840" cy="2" r="3" fill="rgba(245,166,35,0.6)"/>
+      <circle cx="28" cy="34" r="3" fill="rgba(245,166,35,0.8)"/>
+      <circle cx="840" cy="34" r="3" fill="rgba(245,166,35,0.6)"/>
     </svg>
   </div>
 
@@ -403,13 +432,13 @@
   </div>
 
   <div class="arc-connector">
-    <svg class="arc-svg" viewBox="0 0 800 50" preserveAspectRatio="none" width="100%" height="50">
-      <path d="M 400,4 L 160,4 Q 30,4 30,25 Q 30,46 160,46 L 400,46"
-            fill="none" stroke="rgba(245,166,35,0.4)" stroke-width="1.5" class="arc-path-l"/>
-      <path d="M 400,4 L 640,4 Q 770,4 770,25 Q 770,46 640,46 L 400,46"
-            fill="none" stroke="rgba(192,96,224,0.35)" stroke-width="1.5" class="arc-path-r"/>
-      <circle cx="400" cy="4" r="4" fill="#f5a623" class="arc-center-dot"/>
-      <circle cx="400" cy="46" r="3" fill="#f5a623" opacity="0.5"/>
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.65)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(192,96,224,0.5)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2"  r="3" fill="rgba(245,166,35,0.75)"/>
+      <circle cx="840" cy="2" r="3" fill="rgba(192,96,224,0.65)"/>
+      <circle cx="28" cy="34" r="3" fill="rgba(245,166,35,0.75)"/>
+      <circle cx="840" cy="34" r="3" fill="rgba(192,96,224,0.65)"/>
     </svg>
   </div>
 
@@ -430,13 +459,38 @@
   </div>
 
   <div class="arc-connector">
-    <svg class="arc-svg" viewBox="0 0 800 50" preserveAspectRatio="none" width="100%" height="50">
-      <path d="M 400,4 L 160,4 Q 30,4 30,25 Q 30,46 160,46 L 400,46"
-            fill="none" stroke="rgba(245,166,35,0.38)" stroke-width="1.5" class="arc-path-l"/>
-      <path d="M 400,4 L 640,4 Q 770,4 770,25 Q 770,46 640,46 L 400,46"
-            fill="none" stroke="rgba(245,166,35,0.28)" stroke-width="1.5" class="arc-path-r"/>
-      <circle cx="400" cy="4" r="4" fill="#f5a623" class="arc-center-dot"/>
-      <circle cx="400" cy="46" r="3" fill="#f5a623" opacity="0.45"/>
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.6)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(245,166,35,0.45)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2"  r="3" fill="rgba(245,166,35,0.7)"/>
+      <circle cx="840" cy="2" r="3" fill="rgba(245,166,35,0.55)"/>
+      <circle cx="28" cy="34" r="3" fill="rgba(245,166,35,0.7)"/>
+      <circle cx="840" cy="34" r="3" fill="rgba(245,166,35,0.55)"/>
+    </svg>
+  </div>
+
+  <!-- ЛЕСТНИЦА К РАЮ -->
+  <div class="section-title">🏗️ Строю лестницу к раю</div>
+  <div class="card">
+    <div class="staircase-wrap">
+      <div class="staircase-inner" id="staircase-inner">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+    <div class="staircase-meta">
+      <div class="staircase-progress-text" id="staircase-text">0 / 25 ступеней</div>
+      <div class="staircase-level-badge" id="staircase-level-badge">Уровень 1</div>
+    </div>
+  </div>
+
+  <div class="arc-connector">
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.6)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(245,166,35,0.45)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2"  r="3" fill="rgba(245,166,35,0.7)"/>
+      <circle cx="840" cy="2" r="3" fill="rgba(245,166,35,0.55)"/>
+      <circle cx="28" cy="34" r="3" fill="rgba(245,166,35,0.7)"/>
+      <circle cx="840" cy="34" r="3" fill="rgba(245,166,35,0.55)"/>
     </svg>
   </div>
 
@@ -484,13 +538,13 @@
   </div>
 
   <div class="arc-connector">
-    <svg class="arc-svg" viewBox="0 0 800 50" preserveAspectRatio="none" width="100%" height="50">
-      <path d="M 400,4 L 160,4 Q 30,4 30,25 Q 30,46 160,46 L 400,46"
-            fill="none" stroke="rgba(229,57,53,0.35)" stroke-width="1.5" class="arc-path-l"/>
-      <path d="M 400,4 L 640,4 Q 770,4 770,25 Q 770,46 640,46 L 400,46"
-            fill="none" stroke="rgba(245,166,35,0.3)" stroke-width="1.5" class="arc-path-r"/>
-      <circle cx="400" cy="4" r="4" fill="#f5a623" class="arc-center-dot"/>
-      <circle cx="400" cy="46" r="3" fill="#f5a623" opacity="0.45"/>
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(229,57,53,0.45)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(245,166,35,0.4)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2"  r="3" fill="rgba(229,57,53,0.5)"/>
+      <circle cx="840" cy="2" r="3" fill="rgba(245,166,35,0.5)"/>
+      <circle cx="28" cy="34" r="3" fill="rgba(229,57,53,0.5)"/>
+      <circle cx="840" cy="34" r="3" fill="rgba(245,166,35,0.5)"/>
     </svg>
   </div>
 
@@ -518,13 +572,13 @@
   </div>
 
   <div class="arc-connector">
-    <svg class="arc-svg" viewBox="0 0 800 50" preserveAspectRatio="none" width="100%" height="50">
-      <path d="M 400,4 L 160,4 Q 30,4 30,25 Q 30,46 160,46 L 400,46"
-            fill="none" stroke="rgba(245,166,35,0.4)" stroke-width="1.5" class="arc-path-l"/>
-      <path d="M 400,4 L 640,4 Q 770,4 770,25 Q 770,46 640,46 L 400,46"
-            fill="none" stroke="rgba(245,166,35,0.3)" stroke-width="1.5" class="arc-path-r"/>
-      <circle cx="400" cy="4" r="4" fill="#f5a623" class="arc-center-dot"/>
-      <circle cx="400" cy="46" r="3" fill="#f5a623" opacity="0.5"/>
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.65)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(245,166,35,0.5)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2"  r="3" fill="rgba(245,166,35,0.75)"/>
+      <circle cx="840" cy="2" r="3" fill="rgba(245,166,35,0.6)"/>
+      <circle cx="28" cy="34" r="3" fill="rgba(245,166,35,0.75)"/>
+      <circle cx="840" cy="34" r="3" fill="rgba(245,166,35,0.6)"/>
     </svg>
   </div>
 
@@ -548,13 +602,13 @@
   </div>
 
   <div class="arc-connector">
-    <svg class="arc-svg" viewBox="0 0 800 50" preserveAspectRatio="none" width="100%" height="50">
-      <path d="M 400,4 L 160,4 Q 30,4 30,25 Q 30,46 160,46 L 400,46"
-            fill="none" stroke="rgba(245,166,35,0.45)" stroke-width="1.5" class="arc-path-l"/>
-      <path d="M 400,4 L 640,4 Q 770,4 770,25 Q 770,46 640,46 L 400,46"
-            fill="none" stroke="rgba(245,166,35,0.35)" stroke-width="1.5" class="arc-path-r"/>
-      <circle cx="400" cy="4" r="4" fill="#f5a623" class="arc-center-dot"/>
-      <circle cx="400" cy="46" r="3" fill="#f5a623" opacity="0.5"/>
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.65)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(245,166,35,0.5)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2"  r="3" fill="rgba(245,166,35,0.75)"/>
+      <circle cx="840" cy="2" r="3" fill="rgba(245,166,35,0.6)"/>
+      <circle cx="28" cy="34" r="3" fill="rgba(245,166,35,0.75)"/>
+      <circle cx="840" cy="34" r="3" fill="rgba(245,166,35,0.6)"/>
     </svg>
   </div>
 
@@ -620,13 +674,13 @@
   </div>
 
   <div class="arc-connector">
-    <svg class="arc-svg" viewBox="0 0 800 50" preserveAspectRatio="none" width="100%" height="50">
-      <path d="M 400,4 L 160,4 Q 30,4 30,25 Q 30,46 160,46 L 400,46"
-            fill="none" stroke="rgba(245,166,35,0.55)" stroke-width="1.5" class="arc-path-l"/>
-      <path d="M 400,4 L 640,4 Q 770,4 770,25 Q 770,46 640,46 L 400,46"
-            fill="none" stroke="rgba(255,104,53,0.45)" stroke-width="1.5" class="arc-path-r"/>
-      <circle cx="400" cy="4" r="5" fill="#f5a623" class="arc-center-dot"/>
-      <circle cx="400" cy="46" r="4" fill="#f5a623" opacity="0.6"/>
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.7)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(255,104,53,0.55)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2"  r="3.5" fill="rgba(245,166,35,0.85)"/>
+      <circle cx="840" cy="2" r="3.5" fill="rgba(255,104,53,0.7)"/>
+      <circle cx="28" cy="34" r="3.5" fill="rgba(245,166,35,0.85)"/>
+      <circle cx="840" cy="34" r="3.5" fill="rgba(255,104,53,0.7)"/>
     </svg>
   </div>
 
@@ -653,16 +707,15 @@
   // ===== ЧАСТИЦЫ =====
   function initParticles() {
     const canvas = document.createElement('canvas');
-    canvas.id = 'bg-canvas';
-    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.45;';
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.4;';
     document.body.insertBefore(canvas, document.body.firstChild);
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    const particles = Array.from({length: 45}, () => ({
+    const particles = Array.from({length: 40}, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      size: Math.random() * 2 + 0.5,
+      size: Math.random() * 1.8 + 0.4,
       speedX: (Math.random() - 0.5) * 0.3,
       speedY: -Math.random() * 0.35 - 0.1,
       opacity: Math.random() * 0.5 + 0.2,
@@ -671,13 +724,9 @@
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.opacity;
-        ctx.fill();
-        p.x += p.speedX;
-        p.y += p.speedY;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color; ctx.globalAlpha = p.opacity; ctx.fill();
+        p.x += p.speedX; p.y += p.speedY;
         if (p.y < -5) { p.y = canvas.height + 5; p.x = Math.random() * canvas.width; }
         if (p.x < -5) p.x = canvas.width + 5;
         if (p.x > canvas.width + 5) p.x = -5;
@@ -712,6 +761,51 @@
       `<span style="color:${theme.accent};font-weight:bold">${theme.name}</span> · <span style="color:var(--muted)">${theme.label}</span>`;
   }
 
+  // ===== ЛЕСТНИЦА =====
+  const STAIR_ROWS = 5, STAIR_COLS = 5, STAIR_TOTAL = 25;
+  const STAIR_STEP = 44; // px per staircase offset
+
+  function getStaircaseData() {
+    const total = parseInt(localStorage.getItem('paradise_quests_total') || '0');
+    const level = Math.floor(total / STAIR_TOTAL);
+    const filled = total % STAIR_TOTAL;
+    return { level, filled, total };
+  }
+
+  function renderStaircase(newBrick) {
+    const inner = document.getElementById('staircase-inner');
+    if (!inner) return;
+    const { level, filled } = getStaircaseData();
+
+    let html = '';
+    // Goal at top, aligned with top row's left edge
+    const topMargin = (STAIR_ROWS - 1) * STAIR_STEP;
+    html += `<div class="staircase-goal" style="margin-left:${topMargin + 4}px">🌴</div>`;
+
+    // Rows: top row first (rendered high on page, rightmost), bottom row last (leftmost)
+    for (let r = STAIR_ROWS - 1; r >= 0; r--) {
+      const brickStart = r * STAIR_COLS;
+      const filledInRow = Math.max(0, Math.min(STAIR_COLS, filled - brickStart));
+      const margin = r * STAIR_STEP;
+      html += `<div class="staircase-row" style="margin-left:${margin}px">`;
+      for (let c = 0; c < STAIR_COLS; c++) {
+        const isFilled = c < filledInRow;
+        const isNew = newBrick !== undefined && (brickStart + c) === (filled - 1) && isFilled;
+        html += `<div class="brick${isFilled ? ' filled' : ''}${isNew ? ' pop' : ''}"></div>`;
+      }
+      html += '</div>';
+    }
+
+    html += `<div class="staircase-hero">⚔️</div>`;
+    inner.innerHTML = html;
+
+    // Meta
+    const txt = document.getElementById('staircase-text');
+    if (txt) txt.innerText = `${filled} / ${STAIR_TOTAL} ступеней на этом уровне`;
+    const lvlBadge = document.getElementById('staircase-level-badge');
+    if (lvlBadge) lvlBadge.innerText = `Уровень ${level + 1}`;
+  }
+
   const REWARDS = [
     { emoji: '☕', text: 'Кофе в хорошей кофейне — не на бегу, а с удовольствием' },
     { emoji: '🥩', text: 'Стейк или бургер из вкусного места — заслужил' },
@@ -726,12 +820,10 @@
   ];
 
   let totalTasks = 0, doneTasks = 0;
-
   function countTasks() {
     totalTasks = document.querySelectorAll('.subtask').length;
     doneTasks = document.querySelectorAll('.subtask.done').length;
   }
-
   function updateHP() {
     countTasks();
     const hp = totalTasks - doneTasks;
@@ -744,34 +836,26 @@
     else bar.style.background = 'linear-gradient(90deg,#4caf50,#1b5e20)';
     if (hp === 0 && totalTasks > 0) setTimeout(killMonster, 400);
   }
-
   function toggleTask(cb) {
     cb.closest('.subtask').classList.toggle('done', cb.checked);
     if (cb.checked) {
       const emoji = document.getElementById('monster-emoji');
-      emoji.classList.remove('hit');
-      void emoji.offsetWidth;
-      emoji.classList.add('hit');
+      emoji.classList.remove('hit'); void emoji.offsetWidth; emoji.classList.add('hit');
       setTimeout(() => emoji.classList.remove('hit'), 300);
     }
     updateHP();
   }
-
   function killMonster() {
     document.getElementById('monster-emoji').classList.add('dead');
     setTimeout(showReward, 700);
   }
-
   function showReward() {
     const r = REWARDS[Math.floor(Math.random() * REWARDS.length)];
     document.getElementById('reward-emoji').innerText = r.emoji;
     document.getElementById('reward-text').innerText = r.text;
     document.getElementById('reward-popup').classList.add('show');
   }
-
-  function closeReward() {
-    document.getElementById('reward-popup').classList.remove('show');
-  }
+  function closeReward() { document.getElementById('reward-popup').classList.remove('show'); }
 
   // ===== ШКАЛА ПУТИ =====
   const BOSSES = [
@@ -781,59 +865,49 @@
     { pct: 75,  date: 'Май 2027',  label: 'Уровень 4', emoji: '💪', desc: '450k/мес · Видимый рельеф тела' },
     { pct: 100, date: 'Окт 2027',  label: 'РАЙ 🏆',    emoji: '🌴', desc: '500k+/мес · Нет долгов · Тело мечты · Свобода' },
   ];
-
   function initRoadmap() {
-    const start = new Date('2026-04-20');
-    const end   = new Date('2027-10-17');
-    const now   = new Date();
-    const pct   = Math.round((Math.min(Math.max(now - start, 0), end - start) / (end - start)) * 100);
-
+    const start = new Date('2026-04-20'), end = new Date('2027-10-17'), now = new Date();
+    const pct = Math.round((Math.min(Math.max(now-start,0),end-start)/(end-start))*100);
     document.getElementById('roadmap-pct').innerText = pct + '%';
     document.getElementById('roadmap-bar').style.width = pct + '%';
     document.getElementById('roadmap-hero').style.left = pct + '%';
-
     const container = document.getElementById('roadmap-bosses');
     container.innerHTML = '';
     BOSSES.forEach(b => {
       const el = document.createElement('div');
-      el.className = 'boss-point';
-      el.style.left = b.pct + '%';
+      el.className = 'boss-point'; el.style.left = b.pct + '%';
       const reached = pct >= b.pct;
-      el.innerHTML = `
-        <div style="font-size:1.1rem">${b.emoji}</div>
-        <div class="boss-dot ${reached ? 'reached' : ''} ${b.pct === 100 ? 'final' : ''}"></div>
-        <div class="boss-label ${reached ? 'reached' : ''}">${b.label}</div>
-        <div class="boss-date">${b.date}</div>
-      `;
+      el.innerHTML = `<div style="font-size:1.1rem">${b.emoji}</div>
+        <div class="boss-dot ${reached?'reached':''} ${b.pct===100?'final':''}"></div>
+        <div class="boss-label ${reached?'reached':''}">${b.label}</div>
+        <div class="boss-date">${b.date}</div>`;
       el.onclick = () => {
         document.getElementById('current-boss-info').innerHTML =
           `<span style="color:var(--gold)">${b.emoji} ${b.label} · ${b.date}</span><br>${b.desc}`;
       };
       container.appendChild(el);
     });
-
-    const next = BOSSES.find(b => b.pct > pct) || BOSSES[BOSSES.length - 1];
+    const next = BOSSES.find(b => b.pct > pct) || BOSSES[BOSSES.length-1];
     document.getElementById('current-boss-info').innerHTML =
       `<span style="color:var(--gold)">Следующий рубеж: ${next.emoji} ${next.label} · ${next.date}</span><br>${next.desc}`;
   }
 
   // ===== МИНИ-КВЕСТЫ =====
   const QUESTS = [
-    { id: 'water',    icon: '💧', text: 'Выпить стакан воды',      sub: '⚡ 2 мин · прямо сейчас',    coins: 2,  micro: true },
-    { id: 'squat',    icon: '🦵', text: '20 приседаний',            sub: '⚡ 2 мин · встань и сделай',  coins: 5,  micro: true },
-    { id: 'skin',     icon: '🧴', text: 'Уход за лицом',            sub: '⚡ 3 мин · утренний ритуал',  coins: 4,  micro: true },
-    { id: 'gratitude',icon: '🙏', text: 'Написать 1 вещь за которую благодарен', sub: '⚡ 2 мин · в заметки', coins: 3, micro: true },
-    { id: 'stretch',  icon: '🤸', text: 'Растяжка 5 минут',         sub: '⚡ 5 мин · шея и плечи',     coins: 5,  micro: true },
-    { id: 'steps',    icon: '🚶', text: '10 000 шагов',             sub: 'Пройди сегодня',             coins: 10 },
-    { id: 'workout',  icon: '🏋️', text: 'Тренировка в зале',        sub: 'Зал или дома',               coins: 15 },
-    { id: 'protein',  icon: '🥩', text: '160г белка за день',       sub: 'Правильное питание',         coins: 10 },
-    { id: 'work30',   icon: '⚡', text: '30 мин глубокой работы',   sub: 'Телефон в сторону',          coins: 8  },
-    { id: 'work2h',   icon: '🔥', text: '2 часа работы',            sub: 'Глубокий фокус',             coins: 20 },
-    { id: 'sleep',    icon: '😴', text: 'Лечь до 23:00',            sub: 'Качественный сон',           coins: 8  },
-    { id: 'content',  icon: '📝', text: 'Пост в канал',             sub: 'Любой из каналов',           coins: 12 },
-    { id: 'client',   icon: '💰', text: 'Написать 5 аутрич-сообщений', sub: 'Владельцам каналов',     coins: 15 },
+    { id: 'water',     icon: '💧', text: 'Выпить стакан воды',       sub: '⚡ 2 мин · прямо сейчас',   coins: 2,  micro: true },
+    { id: 'squat',     icon: '🦵', text: '20 приседаний',             sub: '⚡ 2 мин · встань и сделай', coins: 5,  micro: true },
+    { id: 'skin',      icon: '🧴', text: 'Уход за лицом',             sub: '⚡ 3 мин · утренний ритуал', coins: 4,  micro: true },
+    { id: 'gratitude', icon: '🙏', text: 'Написать 1 вещь за которую благодарен', sub: '⚡ 2 мин',  coins: 3,  micro: true },
+    { id: 'stretch',   icon: '🤸', text: 'Растяжка 5 минут',          sub: '⚡ 5 мин · шея и плечи',    coins: 5,  micro: true },
+    { id: 'steps',     icon: '🚶', text: '10 000 шагов',              sub: 'Пройди сегодня',            coins: 10 },
+    { id: 'workout',   icon: '🏋️', text: 'Тренировка в зале',         sub: 'Зал или дома',              coins: 15 },
+    { id: 'protein',   icon: '🥩', text: '160г белка за день',        sub: 'Правильное питание',        coins: 10 },
+    { id: 'work30',    icon: '⚡', text: '30 мин глубокой работы',    sub: 'Телефон в сторону',         coins: 8  },
+    { id: 'work2h',    icon: '🔥', text: '2 часа работы',             sub: 'Глубокий фокус',            coins: 20 },
+    { id: 'sleep',     icon: '😴', text: 'Лечь до 23:00',             sub: 'Качественный сон',          coins: 8  },
+    { id: 'content',   icon: '📝', text: 'Пост в канал',              sub: 'Любой из каналов',          coins: 12 },
+    { id: 'client',    icon: '💰', text: 'Написать 5 аутрич-сообщений', sub: 'Владельцам каналов',    coins: 15 },
   ];
-
   const SHOP = [
     { id: 's1', emoji: '☕', text: 'Кофе в хорошей кофейне',     cost: 15 },
     { id: 's2', emoji: '🥩', text: 'Стейк или бургер',            cost: 30 },
@@ -844,118 +918,93 @@
     { id: 's7', emoji: '🌊', text: 'Выходные в другом городе',    cost: 200 },
   ];
 
-  function getTodayKey() {
-    const d = new Date();
-    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-  }
-
-  function loadQuestState() {
-    const saved = localStorage.getItem('pq_' + getTodayKey());
-    return saved ? JSON.parse(saved) : {};
-  }
-
-  function saveQuestState(state) {
-    localStorage.setItem('pq_' + getTodayKey(), JSON.stringify(state));
-  }
-
-  function loadCoins() { return parseInt(localStorage.getItem('paradise_coins') || '0'); }
-
+  function getTodayKey() { const d=new Date(); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
+  function loadQuestState() { const s=localStorage.getItem('pq_'+getTodayKey()); return s?JSON.parse(s):{}; }
+  function saveQuestState(s) { localStorage.setItem('pq_'+getTodayKey(), JSON.stringify(s)); }
+  function loadCoins() { return parseInt(localStorage.getItem('paradise_coins')||'0'); }
   function saveCoins(n) {
     localStorage.setItem('paradise_coins', n);
     document.getElementById('coins-count').innerText = n;
-    const h = document.getElementById('coins-header');
-    if (h) h.innerText = n;
+    const h = document.getElementById('coins-header'); if(h) h.innerText = n;
   }
 
   function renderQuestItem(q, state, list) {
     const done = !!state[q.id];
-    const div = document.createElement('div');
-    div.className = 'mini-quest';
+    const div = document.createElement('div'); div.className = 'mini-quest';
     div.innerHTML = `
       <div class="mq-left">
         <div class="mq-icon">${q.icon}</div>
         <div>
-          <div class="mq-text" style="${done ? 'text-decoration:line-through;color:#5a3812' : ''}">${q.text}</div>
+          <div class="mq-text" style="${done?'text-decoration:line-through;color:#5a3812':''}">${q.text}</div>
           <div class="mq-sub">${q.sub}</div>
         </div>
       </div>
       <div class="mq-reward">
         <div class="mq-coins">+${q.coins}🪙</div>
-        <button class="btn-quest" ${done ? 'disabled' : ''} onclick="completeQuest('${q.id}',${q.coins})">
-          ${done ? '✓' : 'Сделал'}
+        <button class="btn-quest" ${done?'disabled':''} onclick="completeQuest('${q.id}',${q.coins})">
+          ${done?'✓':'Сделал'}
         </button>
-      </div>
-    `;
+      </div>`;
     list.appendChild(div);
   }
 
   function renderQuests() {
     const state = loadQuestState();
     document.getElementById('coins-count').innerText = loadCoins();
-    const list = document.getElementById('daily-quests');
-    list.innerHTML = '';
-
-    const hdr = (text) => {
-      const d = document.createElement('div');
-      d.style.cssText = 'font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;color:#5a3812;margin:6px 0 4px;';
-      d.innerText = text;
-      list.appendChild(d);
-    };
-
+    const list = document.getElementById('daily-quests'); list.innerHTML = '';
+    const hdr = (t) => { const d=document.createElement('div'); d.style.cssText='font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;color:#5a3812;margin:6px 0 4px;'; d.innerText=t; list.appendChild(d); };
     hdr('⚡ Быстрые (2–5 мин)');
-    QUESTS.filter(q => q.micro).forEach(q => renderQuestItem(q, state, list));
-    const sep = document.createElement('div');
-    sep.style.cssText = 'border-top:1px solid #1e1208;margin:8px 0 4px;';
-    list.appendChild(sep);
+    QUESTS.filter(q=>q.micro).forEach(q=>renderQuestItem(q,state,list));
+    const sep=document.createElement('div'); sep.style.cssText='border-top:1px solid #1e1208;margin:8px 0 4px;'; list.appendChild(sep);
     hdr('📋 Задания дня');
-    QUESTS.filter(q => !q.micro).forEach(q => renderQuestItem(q, state, list));
+    QUESTS.filter(q=>!q.micro).forEach(q=>renderQuestItem(q,state,list));
   }
 
   function completeQuest(id, coins) {
-    const state = loadQuestState();
-    if (state[id]) return;
-    state[id] = true;
-    saveQuestState(state);
+    const state = loadQuestState(); if(state[id]) return;
+    state[id] = true; saveQuestState(state);
     saveCoins(loadCoins() + coins);
-    const total = parseInt(localStorage.getItem('paradise_quests_total') || '0') + 1;
-    localStorage.setItem('paradise_quests_total', total);
-    renderQuests();
-    renderShop();
-    renderChests();
-    if (total % 5 === 0) {
+    const prevTotal = parseInt(localStorage.getItem('paradise_quests_total')||'0');
+    const newTotal = prevTotal + 1;
+    localStorage.setItem('paradise_quests_total', newTotal);
+
+    // Staircase: check level-up
+    const prevLevel = Math.floor(prevTotal / STAIR_TOTAL);
+    const newLevel = Math.floor(newTotal / STAIR_TOTAL);
+
+    renderQuests(); renderShop(); renderChests();
+    renderStaircase(true);
+
+    if (newLevel > prevLevel) {
+      setTimeout(() => {
+        document.getElementById('reward-emoji').innerText = '🏆';
+        document.getElementById('reward-text').innerText =
+          `🌟 Уровень ${newLevel + 1} разблокирован!\n\nЛестница к раю построена!\nТы выполнил 25 заданий.\nНовая лестница — новый уровень!`;
+        document.getElementById('reward-popup').classList.add('show');
+      }, 400);
+    } else if (newTotal % 5 === 0) {
       setTimeout(() => {
         document.querySelectorAll('#chests-row .chest:not(.locked)').forEach(c => {
-          c.style.transform = 'scale(1.4)';
-          setTimeout(() => c.style.transform = '', 500);
+          c.style.transform='scale(1.4)'; setTimeout(()=>c.style.transform='',500);
         });
       }, 150);
     }
   }
 
   function renderShop() {
-    const coins = loadCoins();
-    const list = document.getElementById('shop-items');
-    list.innerHTML = '';
+    const coins = loadCoins(), list = document.getElementById('shop-items'); list.innerHTML = '';
     SHOP.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'shop-item';
-      div.innerHTML = `
-        <span class="shop-emoji">${item.emoji}</span>
-        <span class="shop-text">${item.text}</span>
-        <span class="shop-cost">${item.cost}🪙</span>
-        <button class="btn-buy" ${coins < item.cost ? 'disabled' : ''} onclick="buyReward('${item.id}',${item.cost},'${item.emoji}','${item.text}')">Купить</button>
-      `;
+      const div=document.createElement('div'); div.className='shop-item';
+      div.innerHTML=`<span class="shop-emoji">${item.emoji}</span><span class="shop-text">${item.text}</span><span class="shop-cost">${item.cost}🪙</span><button class="btn-buy" ${coins<item.cost?'disabled':''} onclick="buyReward('${item.id}',${item.cost},'${item.emoji}','${item.text}')">Купить</button>`;
       list.appendChild(div);
     });
   }
 
   function buyReward(id, cost, emoji, text) {
-    const coins = loadCoins();
-    if (coins < cost) return;
-    saveCoins(coins - cost);
-    renderShop(); renderQuests();
-    document.getElementById('reward-emoji').innerText = emoji;
-    document.getElementById('reward-text').innerText = '🛍️ Куплено!\n\n' + text + '\n\nИди и наслаждайся — ты заработал это честно.';
+    const coins=loadCoins(); if(coins<cost) return;
+    saveCoins(coins-cost); renderShop(); renderQuests();
+    document.getElementById('reward-emoji').innerText=emoji;
+    document.getElementById('reward-text').innerText='🛍️ Куплено!\n\n'+text+'\n\nИди и наслаждайся — ты заработал это честно.';
     document.getElementById('reward-popup').classList.add('show');
   }
 
@@ -970,248 +1019,173 @@
     { emoji: '☕', text: 'Целое утро в кофейне с книгой — никуда не торопиться' },
     { emoji: '🎮', text: 'Вечер только для себя — делай что хочешь без вины' },
   ];
-
   const DEFAULT_DEBTS = [
-    { id: 'sber',  name: 'СберБанк',   original: 160262, current: 160262 },
-    { id: 'tink1', name: 'Тинькофф 1', original: 150000, current: 150000 },
-    { id: 'tink2', name: 'Тинькофф 2', original: 136000, current: 136000 },
-    { id: 'alfa1', name: 'Альфа 1',    original: 113000, current: 113000 },
-    { id: 'alfa2', name: 'Альфа 2',    original: 96000,  current: 96000  },
-    { id: 'sn1',   name: 'Снежана 1',  original: 73000,  current: 73000  },
-    { id: 'sn2',   name: 'Снежана 2',  original: 30000,  current: 30000  },
-    { id: 'sn3',   name: 'Снежана 3',  original: 15000,  current: 15000  },
-    { id: 'wb',    name: 'ВБ',         original: 17000,  current: 17000  },
+    { id:'sber',  name:'СберБанк',   original:160262, current:160262 },
+    { id:'tink1', name:'Тинькофф 1', original:150000, current:150000 },
+    { id:'tink2', name:'Тинькофф 2', original:136000, current:136000 },
+    { id:'alfa1', name:'Альфа 1',    original:113000, current:113000 },
+    { id:'alfa2', name:'Альфа 2',    original:96000,  current:96000  },
+    { id:'sn1',   name:'Снежана 1',  original:73000,  current:73000  },
+    { id:'sn2',   name:'Снежана 2',  original:30000,  current:30000  },
+    { id:'sn3',   name:'Снежана 3',  original:15000,  current:15000  },
+    { id:'wb',    name:'ВБ',         original:17000,  current:17000  },
   ];
-
-  function loadDebts() {
-    const saved = localStorage.getItem('paradise_debts');
-    return saved ? JSON.parse(saved) : DEFAULT_DEBTS;
-  }
-
-  function saveDebts(debts) { localStorage.setItem('paradise_debts', JSON.stringify(debts)); }
-  function fmt(n) { return n.toLocaleString('ru-RU') + ' ₽'; }
+  function loadDebts() { const s=localStorage.getItem('paradise_debts'); return s?JSON.parse(s):DEFAULT_DEBTS; }
+  function saveDebts(d) { localStorage.setItem('paradise_debts',JSON.stringify(d)); }
+  function fmt(n) { return n.toLocaleString('ru-RU')+' ₽'; }
 
   function renderDebts() {
-    const debts = loadDebts();
-    const totalOriginal = DEFAULT_DEBTS.reduce((s, d) => s + d.original, 0);
-    const totalCurrent = debts.reduce((s, d) => s + d.current, 0);
-    const pct = (totalCurrent / totalOriginal) * 100;
-
-    document.getElementById('total-debt-display').innerText = fmt(totalCurrent);
-    document.getElementById('debt-total-bar').style.width = pct + '%';
-
-    const list = document.getElementById('debts-list');
-    list.innerHTML = '';
+    const debts=loadDebts();
+    const totalOriginal=DEFAULT_DEBTS.reduce((s,d)=>s+d.original,0);
+    const totalCurrent=debts.reduce((s,d)=>s+d.current,0);
+    document.getElementById('total-debt-display').innerText=fmt(totalCurrent);
+    document.getElementById('debt-total-bar').style.width=(totalCurrent/totalOriginal*100)+'%';
+    const list=document.getElementById('debts-list'); list.innerHTML='';
     debts.forEach(debt => {
-      const isPaid = debt.current <= 0;
-      const debtPct = Math.max(0, (debt.current / debt.original) * 100);
-      const div = document.createElement('div');
-      div.className = 'debt-item';
-      div.innerHTML = `
-        <div class="debt-header">
-          <div class="debt-name ${isPaid ? 'paid' : ''}">${isPaid ? '✅' : '💳'} ${debt.name}</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div class="debt-amount ${isPaid ? 'paid' : ''}">${isPaid ? 'ЗАКРЫТ' : fmt(debt.current)}</div>
-            ${isPaid ? '<div class="debt-paid-badge">🏆 Победа!</div>'
-                     : `<button class="debt-edit" onclick="editDebt('${debt.id}')">обновить</button>`}
-          </div>
-        </div>
-        ${!isPaid ? `<div class="bar" style="height:6px"><div class="bar-fill bar-debt" style="width:${debtPct}%"></div></div>` : ''}
-      `;
+      const isPaid=debt.current<=0, debtPct=Math.max(0,debt.current/debt.original*100);
+      const div=document.createElement('div'); div.className='debt-item';
+      div.innerHTML=`<div class="debt-header">
+        <div class="debt-name ${isPaid?'paid':''}">${isPaid?'✅':'💳'} ${debt.name}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="debt-amount ${isPaid?'paid':''}">${isPaid?'ЗАКРЫТ':fmt(debt.current)}</div>
+          ${isPaid?'<div class="debt-paid-badge">🏆 Победа!</div>':`<button class="debt-edit" onclick="editDebt('${debt.id}')">обновить</button>`}
+        </div></div>
+        ${!isPaid?`<div class="bar" style="height:6px"><div class="bar-fill bar-debt" style="width:${debtPct}%"></div></div>`:''}`;
       list.appendChild(div);
     });
   }
 
   function editDebt(id) {
-    const debts = loadDebts();
-    const debt = debts.find(d => d.id === id);
-    if (!debt) return;
-    const val = prompt(`${debt.name}\nТекущий остаток: ${fmt(debt.current)}\n\nВведи новую сумму (0 если закрыл):`, debt.current);
-    if (val === null) return;
-    const num = parseInt(val.replace(/\D/g, ''));
-    if (isNaN(num)) return;
-    const wasPaid = debt.current <= 0;
-    debt.current = Math.max(0, num);
-    saveDebts(debts);
-    renderDebts();
-    if (!wasPaid && debt.current <= 0) setTimeout(() => showDebtReward(debt.name), 300);
+    const debts=loadDebts(), debt=debts.find(d=>d.id===id); if(!debt) return;
+    const val=prompt(`${debt.name}\nТекущий: ${fmt(debt.current)}\n\nВведи новую сумму (0 если закрыл):`,debt.current);
+    if(val===null) return;
+    const num=parseInt(val.replace(/\D/g,''));
+    if(isNaN(num)) return;
+    const wasPaid=debt.current<=0; debt.current=Math.max(0,num);
+    saveDebts(debts); renderDebts();
+    if(!wasPaid&&debt.current<=0) setTimeout(()=>showDebtReward(debt.name),300);
   }
 
   function showDebtReward(name) {
-    const r = DEBT_REWARDS[Math.floor(Math.random() * DEBT_REWARDS.length)];
-    document.getElementById('reward-emoji').innerText = r.emoji;
-    document.getElementById('reward-text').innerText = `🔥 ${name} — ЗАКРЫТ!\n\nТвоя награда:\n${r.text}`;
+    const r=DEBT_REWARDS[Math.floor(Math.random()*DEBT_REWARDS.length)];
+    document.getElementById('reward-emoji').innerText=r.emoji;
+    document.getElementById('reward-text').innerText=`🔥 ${name} — ЗАКРЫТ!\n\nТвоя награда:\n${r.text}`;
     document.getElementById('reward-popup').classList.add('show');
   }
 
   // ===== СТРИК И СУНДУКИ =====
   const CHEST_REWARDS = [
-    { emoji: '☕', text: 'Кофе в хорошей кофейне — заслужил!' },
-    { emoji: '🥩', text: 'Стейк или бургер — победа!' },
-    { emoji: '🛀', text: 'Горячий душ +20 минут — никуда не торопиться' },
-    { emoji: '🎬', text: 'Один сериал без чувства вины' },
-    { emoji: '🚶', text: 'Прогулка 30 мин без телефона' },
-    { emoji: '😴', text: 'Лечь спать на час раньше — законный отдых' },
-    { emoji: '🍜', text: 'Заказать блюдо из ресторана домой' },
-    { emoji: '🎵', text: 'Переслушать трек от которого мурашки — громко' },
-    { emoji: '💆', text: 'Массаж 60 минут — ты честно заработал' },
-    { emoji: '🏊', text: 'Баня или сауна — перезагрузка' },
-    { emoji: '🎁', text: '+10 монет — бонус из сундука!', coins: 10 },
-    { emoji: '⚡', text: '+15 монет — двойная удача!', coins: 15 },
-    { emoji: '🌟', text: '+5 монет и вечер только для себя', coins: 5 },
+    { emoji:'☕', text:'Кофе в хорошей кофейне — заслужил!' },
+    { emoji:'🥩', text:'Стейк или бургер — победа!' },
+    { emoji:'🛀', text:'Горячий душ +20 минут — никуда не торопиться' },
+    { emoji:'🎬', text:'Один сериал без чувства вины' },
+    { emoji:'🚶', text:'Прогулка 30 мин без телефона' },
+    { emoji:'😴', text:'Лечь спать на час раньше — законный отдых' },
+    { emoji:'🍜', text:'Заказать блюдо из ресторана домой' },
+    { emoji:'🎵', text:'Переслушать трек от которого мурашки — громко' },
+    { emoji:'💆', text:'Массаж 60 минут — ты честно заработал' },
+    { emoji:'🏊', text:'Баня или сауна — перезагрузка' },
+    { emoji:'🎁', text:'+10 монет — бонус из сундука!', coins:10 },
+    { emoji:'⚡', text:'+15 монет — двойная удача!', coins:15 },
+    { emoji:'🌟', text:'+5 монет и вечер только для себя', coins:5 },
   ];
 
-  function getTodayStr() {
-    const d = new Date();
-    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-  }
+  function getTodayStr() { const d=new Date(); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
 
   function initStreak() {
-    const today = getTodayStr();
-    const lastLogin = localStorage.getItem('paradise_last_login') || '';
-    let streak = parseInt(localStorage.getItem('paradise_streak') || '0');
-
-    if (lastLogin !== today) {
-      if (lastLogin) {
-        const lp = lastLogin.split('-').map(Number);
-        const tp = today.split('-').map(Number);
-        const diff = Math.round((new Date(tp[0],tp[1],tp[2]) - new Date(lp[0],lp[1],lp[2])) / 86400000);
-        streak = diff === 1 ? streak + 1 : 1;
-      } else {
-        streak = 1;
-      }
-      localStorage.setItem('paradise_streak', streak);
-      localStorage.setItem('paradise_last_login', today);
-
-      const bonusCoins = streak >= 14 ? 12 : streak >= 7 ? 8 : 5;
-      saveCoins(loadCoins() + bonusCoins);
-
-      const bar = document.getElementById('login-bonus-bar');
-      bar.innerHTML = `
-        <div class="login-bonus">
-          <div class="login-bonus-text">🎁 Бонус за вход · Стрик ${streak} дн. · +${bonusCoins} монет</div>
-          <div style="font-size:0.82rem;color:var(--gold);font-weight:bold">+${bonusCoins} 🪙</div>
-        </div>
-      `;
-      setTimeout(() => {
-        bar.style.transition = 'opacity 1s';
-        bar.style.opacity = '0';
-        setTimeout(() => { bar.innerHTML = ''; bar.style.opacity = '1'; }, 1000);
-      }, 6000);
+    const today=getTodayStr(), lastLogin=localStorage.getItem('paradise_last_login')||'';
+    let streak=parseInt(localStorage.getItem('paradise_streak')||'0');
+    if(lastLogin!==today) {
+      if(lastLogin) {
+        const lp=lastLogin.split('-').map(Number), tp=today.split('-').map(Number);
+        const diff=Math.round((new Date(tp[0],tp[1],tp[2])-new Date(lp[0],lp[1],lp[2]))/86400000);
+        streak=diff===1?streak+1:1;
+      } else { streak=1; }
+      localStorage.setItem('paradise_streak',streak); localStorage.setItem('paradise_last_login',today);
+      const bonusCoins=streak>=14?12:streak>=7?8:5;
+      saveCoins(loadCoins()+bonusCoins);
+      const bar=document.getElementById('login-bonus-bar');
+      bar.innerHTML=`<div class="login-bonus"><div class="login-bonus-text">🎁 Бонус за вход · Стрик ${streak} дн. · +${bonusCoins} монет</div><div style="font-size:0.82rem;color:var(--gold);font-weight:bold">+${bonusCoins} 🪙</div></div>`;
+      setTimeout(()=>{ bar.style.transition='opacity 1s'; bar.style.opacity='0'; setTimeout(()=>{bar.innerHTML='';bar.style.opacity='1';},1000); },6000);
     }
-
-    const fire = streak >= 3 ? `<span class="streak-fire">🔥</span>` : `🔥`;
-    document.getElementById('streak-badge').innerHTML = `${fire} Стрик: <span id="streak">${streak}</span> дн.`;
+    const fire=streak>=3?`<span class="streak-fire">🔥</span>`:'🔥';
+    document.getElementById('streak-badge').innerHTML=`${fire} Стрик: <span id="streak">${streak}</span> дн.`;
   }
 
   function loadChestData() {
-    const total = parseInt(localStorage.getItem('paradise_quests_total') || '0');
-    const opened = parseInt(localStorage.getItem('paradise_chests_opened') || '0');
-    const earned = Math.floor(total / 5);
-    return { total, earned, opened, available: Math.max(0, earned - opened) };
+    const total=parseInt(localStorage.getItem('paradise_quests_total')||'0');
+    const opened=parseInt(localStorage.getItem('paradise_chests_opened')||'0');
+    const earned=Math.floor(total/5);
+    return { total, earned, opened, available:Math.max(0,earned-opened) };
   }
 
   function renderChests() {
-    const { available, total } = loadChestData();
-    const row = document.getElementById('chests-row');
-    row.innerHTML = '';
-    for (let i = 0; i < 5; i++) {
-      const div = document.createElement('div');
-      const canOpen = i < available;
-      div.className = 'chest' + (canOpen ? '' : ' locked');
-      div.innerHTML = canOpen ? '📦' : '🔒';
-      if (canOpen) { div.onclick = openChest; div.title = 'Нажми — открой сундук!'; }
+    const {available,total}=loadChestData(), row=document.getElementById('chests-row');
+    row.innerHTML='';
+    for(let i=0;i<5;i++){
+      const div=document.createElement('div'), canOpen=i<available;
+      div.className='chest'+(canOpen?'':' locked');
+      div.innerHTML=canOpen?'📦':'🔒';
+      if(canOpen){div.onclick=openChest;div.title='Нажми — открой сундук!';}
       row.appendChild(div);
     }
-    const label = document.createElement('div');
-    label.style.cssText = 'font-size:0.7rem;color:var(--muted);align-self:center;margin-left:6px';
-    label.innerText = available > 0 ? `🎁 ${available} готов!` : `${total % 5}/5 до сундука`;
+    const label=document.createElement('div');
+    label.style.cssText='font-size:0.7rem;color:var(--muted);align-self:center;margin-left:6px';
+    label.innerText=available>0?`🎁 ${available} готов!`:`${total%5}/5 до сундука`;
     row.appendChild(label);
   }
 
   function openChest() {
-    const data = loadChestData();
-    if (data.available <= 0) return;
-    localStorage.setItem('paradise_chests_opened', data.opened + 1);
-    const r = CHEST_REWARDS[Math.floor(Math.random() * CHEST_REWARDS.length)];
-    if (r.coins) saveCoins(loadCoins() + r.coins);
+    const data=loadChestData(); if(data.available<=0) return;
+    localStorage.setItem('paradise_chests_opened',data.opened+1);
+    const r=CHEST_REWARDS[Math.floor(Math.random()*CHEST_REWARDS.length)];
+    if(r.coins) saveCoins(loadCoins()+r.coins);
     renderChests();
-    document.getElementById('reward-emoji').innerText = '📦 → ' + r.emoji;
-    document.getElementById('reward-text').innerText = '🎁 Сундук открыт!\n\n' + r.text + (r.coins ? ' (добавлено на счёт)' : '');
+    document.getElementById('reward-emoji').innerText='📦 → '+r.emoji;
+    document.getElementById('reward-text').innerText='🎁 Сундук открыт!\n\n'+r.text+(r.coins?' (добавлено на счёт)':'');
     document.getElementById('reward-popup').classList.add('show');
   }
 
   // ===== ДОСКА ВИЗУАЛИЗАЦИИ =====
   const VISION_SLOTS = [
-    { id: 'v1', icon: '💰', label: 'Финансы' },
-    { id: 'v2', icon: '💪', label: 'Тело' },
-    { id: 'v3', icon: '✈️', label: 'Путешествия' },
-    { id: 'v4', icon: '🏠', label: 'Жильё / место' },
-    { id: 'v5', icon: '🌟', label: 'Образ жизни' },
-    { id: 'v6', icon: '🎯', label: 'Цель 2027' },
+    {id:'v1',icon:'💰',label:'Финансы'},{id:'v2',icon:'💪',label:'Тело'},
+    {id:'v3',icon:'✈️',label:'Путешествия'},{id:'v4',icon:'🏠',label:'Жильё / место'},
+    {id:'v5',icon:'🌟',label:'Образ жизни'},{id:'v6',icon:'🎯',label:'Цель 2027'},
   ];
-
-  function loadVision() {
-    const saved = localStorage.getItem('paradise_vision');
-    return saved ? JSON.parse(saved) : {};
-  }
-
-  function saveVision(v) { localStorage.setItem('paradise_vision', JSON.stringify(v)); }
+  function loadVision() { const s=localStorage.getItem('paradise_vision'); return s?JSON.parse(s):{}; }
+  function saveVision(v) { localStorage.setItem('paradise_vision',JSON.stringify(v)); }
 
   function renderVisionBoard() {
-    const photos = loadVision();
-    const grid = document.getElementById('vision-grid');
-    grid.innerHTML = '';
-    VISION_SLOTS.forEach(slot => {
-      const div = document.createElement('div');
-      div.className = 'vision-slot';
-      const photo = photos[slot.id];
-      if (photo) {
-        div.innerHTML = `
-          <img src="${photo}" alt="${slot.label}">
-          <div class="vision-caption">${slot.icon} ${slot.label}</div>
-          <button class="vision-remove" onclick="removeVisionSlot(event,'${slot.id}')">✕</button>
-        `;
+    const photos=loadVision(), grid=document.getElementById('vision-grid'); grid.innerHTML='';
+    VISION_SLOTS.forEach(slot=>{
+      const div=document.createElement('div'); div.className='vision-slot';
+      const photo=photos[slot.id];
+      if(photo) {
+        div.innerHTML=`<img src="${photo}" alt="${slot.label}"><div class="vision-caption">${slot.icon} ${slot.label}</div><button class="vision-remove" onclick="removeVisionSlot(event,'${slot.id}')">✕</button>`;
       } else {
-        div.innerHTML = `
-          <div class="vision-empty">
-            <div class="vision-empty-icon">${slot.icon}</div>
-            <div class="vision-empty-label">${slot.label}</div>
-            <div class="vision-empty-hint">+ добавить фото</div>
-          </div>
-        `;
+        div.innerHTML=`<div class="vision-empty"><div class="vision-empty-icon">${slot.icon}</div><div class="vision-empty-label">${slot.label}</div><div class="vision-empty-hint">+ добавить фото</div></div>`;
       }
-      div.onclick = (e) => {
-        if (e.target.closest('.vision-remove')) return;
-        uploadVisionPhoto(slot.id);
-      };
+      div.onclick=(e)=>{ if(e.target.closest('.vision-remove')) return; uploadVisionPhoto(slot.id); };
       grid.appendChild(div);
     });
   }
 
   function uploadVisionPhoto(id) {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const img = new Image();
-        img.onload = () => {
-          const ratio = Math.min(600 / img.width, 450 / img.height, 1);
-          const w = Math.round(img.width * ratio);
-          const h = Math.round(img.height * ratio);
-          const canvas = document.createElement('canvas');
-          canvas.width = w; canvas.height = h;
-          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          const v = loadVision();
-          v[id] = canvas.toDataURL('image/jpeg', 0.75);
-          saveVision(v);
-          renderVisionBoard();
+    const input=document.createElement('input'); input.type='file'; input.accept='image/*';
+    input.onchange=(e)=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=(ev)=>{
+        const img=new Image();
+        img.onload=()=>{
+          const ratio=Math.min(600/img.width,450/img.height,1);
+          const w=Math.round(img.width*ratio),h=Math.round(img.height*ratio);
+          const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+          canvas.getContext('2d').drawImage(img,0,0,w,h);
+          const v=loadVision(); v[id]=canvas.toDataURL('image/jpeg',0.75);
+          saveVision(v); renderVisionBoard();
         };
-        img.src = ev.target.result;
+        img.src=ev.target.result;
       };
       reader.readAsDataURL(file);
     };
@@ -1220,10 +1194,7 @@
 
   function removeVisionSlot(event, id) {
     event.stopPropagation();
-    const v = loadVision();
-    delete v[id];
-    saveVision(v);
-    renderVisionBoard();
+    const v=loadVision(); delete v[id]; saveVision(v); renderVisionBoard();
   }
 
   // Инициализация
@@ -1236,6 +1207,7 @@
   renderShop();
   initStreak();
   renderChests();
+  renderStaircase();
   renderVisionBoard();
   document.getElementById('coins-header').innerText = loadCoins();
 </script>
