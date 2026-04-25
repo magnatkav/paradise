@@ -152,6 +152,21 @@
   .debt-edit:hover { border-color: var(--gold); color: var(--gold); }
   .debt-paid-badge { background: #1a3a1a; border: 1px solid var(--green); color: var(--green); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
 
+  /* СУНДУКИ */
+  .chests-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .chest { position: relative; font-size: 2rem; cursor: pointer; transition: transform 0.2s; user-select: none; }
+  .chest:hover { transform: scale(1.15); }
+  .chest.locked { opacity: 0.3; cursor: default; }
+  .chest.locked:hover { transform: none; }
+  .chest-count { position: absolute; top: -4px; right: -6px; background: var(--red); color: #fff; font-size: 0.6rem; font-weight: bold; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; }
+
+  /* СТРИК */
+  .streak-fire { font-size: 1.6rem; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+  .streak-dead { font-size: 1.6rem; opacity: 0.3; }
+  .login-bonus { background: linear-gradient(135deg, #1a2a00, #0d1a00); border: 1px solid var(--green); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+  .login-bonus-text { font-size: 0.82rem; color: var(--green); }
+
   /* SECTION TITLE */
   .section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
 
@@ -182,10 +197,15 @@
         </div>
       </div>
     </div>
+    <div id="login-bonus-bar"></div>
     <div class="points-bar">
-      <div class="point-badge">🏆 Очков сегодня: <span id="daily-pts">0</span></div>
-      <div class="point-badge">📅 Дней в игре: <span id="days">4</span></div>
-      <div class="point-badge">🔥 Серия: <span id="streak">3</span> дня</div>
+      <div class="point-badge">🪙 Монеток: <span id="coins-header">0</span></div>
+      <div class="point-badge">📅 Дней в игре: <span id="days">1</span></div>
+      <div class="point-badge" id="streak-badge">🔥 Стрик: <span id="streak">0</span> дн.</div>
+    </div>
+    <div style="margin-top:10px">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Сундуки (каждые 5 квестов)</div>
+      <div class="chests-row" id="chests-row"></div>
     </div>
   </div>
 
@@ -582,14 +602,21 @@
 
   // ===== МИНИ-КВЕСТЫ =====
   const QUESTS = [
-    { id: 'steps',   icon: '🚶', text: '10 000 шагов', sub: 'Пройди сегодня', coins: 10 },
-    { id: 'workout', icon: '🏋️', text: 'Тренировка',   sub: 'Зал или дома', coins: 15 },
-    { id: 'protein', icon: '🥩', text: '160г белка',   sub: 'Правильное питание', coins: 10 },
-    { id: 'work30',  icon: '⚡', text: '30 мин работы', sub: 'Фокус без отвлечений', coins: 8 },
-    { id: 'work2h',  icon: '🔥', text: '2 часа работы', sub: 'Глубокий фокус', coins: 20 },
-    { id: 'sleep',   icon: '😴', text: 'Лечь до 23:00', sub: 'Качественный сон', coins: 8 },
-    { id: 'content', icon: '📝', text: 'Пост в канал',  sub: 'Любой из каналов', coins: 12 },
-    { id: 'skin',    icon: '🧴', text: 'Уход за лицом', sub: 'Утренний ритуал', coins: 5 },
+    // Микро (2 мин)
+    { id: 'water',   icon: '💧', text: 'Выпить стакан воды', sub: '⚡ 2 мин · прямо сейчас', coins: 2,  micro: true },
+    { id: 'squat',   icon: '🦵', text: '20 приседаний',      sub: '⚡ 2 мин · встань и сделай', coins: 5,  micro: true },
+    { id: 'skin',    icon: '🧴', text: 'Уход за лицом',      sub: '⚡ 3 мин · утренний ритуал', coins: 4,  micro: true },
+    { id: 'gratitude',icon:'🙏', text: 'Написать 1 вещь за которую благодарен', sub: '⚡ 2 мин · в заметки', coins: 3, micro: true },
+    { id: 'stretch', icon: '🤸', text: 'Растяжка 5 минут',   sub: '⚡ 5 мин · шея и плечи', coins: 5,  micro: true },
+    // Средние
+    { id: 'steps',   icon: '🚶', text: '10 000 шагов',       sub: 'Пройди сегодня', coins: 10 },
+    { id: 'workout', icon: '🏋️', text: 'Тренировка в зале',  sub: 'Зал или дома', coins: 15 },
+    { id: 'protein', icon: '🥩', text: '160г белка за день', sub: 'Правильное питание', coins: 10 },
+    { id: 'work30',  icon: '⚡', text: '30 мин глубокой работы', sub: 'Телефон в сторону', coins: 8 },
+    { id: 'work2h',  icon: '🔥', text: '2 часа работы',      sub: 'Глубокий фокус', coins: 20 },
+    { id: 'sleep',   icon: '😴', text: 'Лечь до 23:00',      sub: 'Качественный сон', coins: 8 },
+    { id: 'content', icon: '📝', text: 'Пост в канал',       sub: 'Любой из каналов', coins: 12 },
+    { id: 'client',  icon: '💰', text: 'Написать 5 аутрич-сообщений', sub: 'Владельцам каналов', coins: 15 },
   ];
 
   const SHOP = [
@@ -625,36 +652,55 @@
   function saveCoins(n) {
     localStorage.setItem('paradise_coins', n);
     document.getElementById('coins-count').innerText = n;
+    const h = document.getElementById('coins-header');
+    if (h) h.innerText = n;
+  }
+
+  function renderQuestItem(q, state, list) {
+    const done = !!state[q.id];
+    const div = document.createElement('div');
+    div.className = 'mini-quest';
+    div.innerHTML = `
+      <div class="mq-left">
+        <div class="mq-icon">${q.icon}</div>
+        <div>
+          <div class="mq-text" style="${done ? 'text-decoration:line-through;color:#555' : ''}">${q.text}</div>
+          <div class="mq-sub">${q.sub}</div>
+        </div>
+      </div>
+      <div class="mq-reward">
+        <div class="mq-coins">+${q.coins}🪙</div>
+        <button class="btn-quest" ${done ? 'disabled' : ''} onclick="completeQuest('${q.id}',${q.coins})">
+          ${done ? '✓' : 'Сделал'}
+        </button>
+      </div>
+    `;
+    list.appendChild(div);
   }
 
   function renderQuests() {
     const state = loadQuestState();
-    const coins = loadCoins();
-    document.getElementById('coins-count').innerText = coins;
+    document.getElementById('coins-count').innerText = loadCoins();
 
     const list = document.getElementById('daily-quests');
     list.innerHTML = '';
-    QUESTS.forEach(q => {
-      const done = !!state[q.id];
-      const div = document.createElement('div');
-      div.className = 'mini-quest';
-      div.innerHTML = `
-        <div class="mq-left">
-          <div class="mq-icon">${q.icon}</div>
-          <div>
-            <div class="mq-text" style="${done ? 'text-decoration:line-through;color:#555' : ''}">${q.text}</div>
-            <div class="mq-sub">${q.sub}</div>
-          </div>
-        </div>
-        <div class="mq-reward">
-          <div class="mq-coins">+${q.coins}🪙</div>
-          <button class="btn-quest" ${done ? 'disabled' : ''} onclick="completeQuest('${q.id}',${q.coins})">
-            ${done ? '✓' : 'Сделал'}
-          </button>
-        </div>
-      `;
-      list.appendChild(div);
-    });
+
+    const hdr = (text) => {
+      const d = document.createElement('div');
+      d.style.cssText = 'font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;color:#555;margin:6px 0 4px;';
+      d.innerText = text;
+      list.appendChild(d);
+    };
+
+    hdr('⚡ Быстрые (2–5 мин)');
+    QUESTS.filter(q => q.micro).forEach(q => renderQuestItem(q, state, list));
+
+    const sep = document.createElement('div');
+    sep.style.cssText = 'border-top:1px solid #222;margin:8px 0 4px;';
+    list.appendChild(sep);
+
+    hdr('📋 Задания дня');
+    QUESTS.filter(q => !q.micro).forEach(q => renderQuestItem(q, state, list));
   }
 
   function completeQuest(id, coins) {
@@ -662,10 +708,20 @@
     if (state[id]) return;
     state[id] = true;
     saveQuestState(state);
-    const cur = loadCoins();
-    saveCoins(cur + coins);
+    saveCoins(loadCoins() + coins);
+    const total = parseInt(localStorage.getItem('paradise_quests_total') || '0') + 1;
+    localStorage.setItem('paradise_quests_total', total);
     renderQuests();
     renderShop();
+    renderChests();
+    if (total % 5 === 0) {
+      setTimeout(() => {
+        document.querySelectorAll('#chests-row .chest:not(.locked)').forEach(c => {
+          c.style.transform = 'scale(1.4)';
+          setTimeout(() => c.style.transform = '', 500);
+        });
+      }, 150);
+    }
   }
 
   function renderShop() {
@@ -793,11 +849,123 @@
     document.getElementById('reward-popup').classList.add('show');
   }
 
-  // Ежедневные очки
-  let points = 0;
-  function addPoints(n) {
-    points += n;
-    document.getElementById('daily-pts').innerText = points;
+  // ===== СТРИК И СУНДУКИ =====
+  const CHEST_REWARDS = [
+    { emoji: '☕', text: 'Кофе в хорошей кофейне — не на бегу, а с удовольствием' },
+    { emoji: '🥩', text: 'Стейк или бургер из вкусного места — заслужил' },
+    { emoji: '🛀', text: 'Горячий душ +20 минут дольше обычного. Никуда не торопиться' },
+    { emoji: '🎬', text: 'Один сериал без чувства вины. Совсем без вины.' },
+    { emoji: '🚶', text: 'Прогулка 30 минут без телефона — просто идти и думать' },
+    { emoji: '😴', text: 'Лечь спать на час раньше без чувства вины' },
+    { emoji: '🍜', text: 'Заказать одно блюдо из ресторана домой — что давно хотел' },
+    { emoji: '🎵', text: 'Переслушать трек от которого мурашки — громко, в кайф' },
+    { emoji: '💆', text: 'Массаж 60 минут — ты это честно заработал' },
+    { emoji: '🏊', text: 'Баня или сауна — перезагрузка тела и головы' },
+    { emoji: '🎁', text: '+10 монет — бонус из сундука!', coins: 10 },
+    { emoji: '⚡', text: '+15 монет — двойная удача!', coins: 15 },
+    { emoji: '🌟', text: '+5 монет и вечер только для себя', coins: 5 },
+  ];
+
+  function getTodayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  }
+
+  function initStreak() {
+    const today = getTodayStr();
+    const lastLogin = localStorage.getItem('paradise_last_login') || '';
+    let streak = parseInt(localStorage.getItem('paradise_streak') || '0');
+
+    if (lastLogin !== today) {
+      if (lastLogin) {
+        const lp = lastLogin.split('-').map(Number);
+        const tp = today.split('-').map(Number);
+        const lastDt = new Date(lp[0], lp[1], lp[2]);
+        const todayDt = new Date(tp[0], tp[1], tp[2]);
+        const diff = Math.round((todayDt - lastDt) / 86400000);
+        if (diff === 1) {
+          streak += 1;
+        } else {
+          streak = 1;
+        }
+      } else {
+        streak = 1;
+      }
+
+      localStorage.setItem('paradise_streak', streak);
+      localStorage.setItem('paradise_last_login', today);
+
+      const bonusCoins = streak >= 14 ? 12 : streak >= 7 ? 8 : 5;
+      saveCoins(loadCoins() + bonusCoins);
+
+      const bar = document.getElementById('login-bonus-bar');
+      bar.innerHTML = `
+        <div class="login-bonus">
+          <div class="login-bonus-text">🎁 Бонус за вход · Стрик ${streak} дн. · +${bonusCoins} монет</div>
+          <div style="font-size:0.82rem;color:var(--gold);font-weight:bold">+${bonusCoins} 🪙</div>
+        </div>
+      `;
+      setTimeout(() => {
+        bar.style.transition = 'opacity 1s';
+        bar.style.opacity = '0';
+        setTimeout(() => { bar.innerHTML = ''; bar.style.opacity = '1'; }, 1000);
+      }, 6000);
+    }
+
+    // Update streak badge
+    const fire = streak >= 3 ? `<span class="streak-fire">🔥</span>` : streak === 0 ? `<span class="streak-dead">🔥</span>` : `🔥`;
+    const badge = document.getElementById('streak-badge');
+    badge.innerHTML = `${fire} Стрик: <span id="streak">${streak}</span> дн.`;
+  }
+
+  function loadChestData() {
+    const total = parseInt(localStorage.getItem('paradise_quests_total') || '0');
+    const opened = parseInt(localStorage.getItem('paradise_chests_opened') || '0');
+    const earned = Math.floor(total / 5);
+    const available = Math.max(0, earned - opened);
+    return { total, earned, opened, available };
+  }
+
+  function renderChests() {
+    const { available, total } = loadChestData();
+    const row = document.getElementById('chests-row');
+    row.innerHTML = '';
+
+    for (let i = 0; i < 5; i++) {
+      const div = document.createElement('div');
+      const canOpen = i < available;
+      div.className = 'chest' + (canOpen ? '' : ' locked');
+      div.innerHTML = canOpen ? '📦' : '🔒';
+      if (canOpen) {
+        div.onclick = openChest;
+        div.title = 'Нажми — открой сундук!';
+      }
+      row.appendChild(div);
+    }
+
+    const progress = total % 5;
+    const label = document.createElement('div');
+    label.style.cssText = 'font-size:0.7rem;color:var(--muted);align-self:center;margin-left:6px';
+    label.innerText = available > 0 ? `🎁 ${available} готов к открытию!` : `${progress}/5 до сундука`;
+    row.appendChild(label);
+  }
+
+  function openChest() {
+    const data = loadChestData();
+    if (data.available <= 0) return;
+    localStorage.setItem('paradise_chests_opened', data.opened + 1);
+
+    const r = CHEST_REWARDS[Math.floor(Math.random() * CHEST_REWARDS.length)];
+    let bonusText = r.text;
+    if (r.coins) {
+      saveCoins(loadCoins() + r.coins);
+      bonusText = r.text + ' (добавлено на счёт)';
+    }
+
+    renderChests();
+    document.getElementById('reward-emoji').innerText = '📦 → ' + r.emoji;
+    document.getElementById('reward-text').innerText = '🎁 Сундук открыт!\n\n' + bonusText;
+    document.getElementById('reward-popup').classList.add('show');
   }
 
   // Инициализация
@@ -806,6 +974,9 @@
   initRoadmap();
   renderQuests();
   renderShop();
+  initStreak();
+  renderChests();
+  document.getElementById('coins-header').innerText = loadCoins();
 </script>
 </body>
 </html>
