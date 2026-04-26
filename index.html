@@ -6,11 +6,11 @@
 <title>Мой собственный рай — Анатолий</title>
 <style>
   :root {
-    --bg: #1a1208;
-    --card: #241a0c;
-    --card2: #1e1508;
-    --border: #3d2810;
-    --border-hi: #6a4420;
+    --bg: #4a2c10;
+    --card: #5e3818;
+    --card2: #573212;
+    --border: #7a4a20;
+    --border-hi: #a06030;
     --gold: #f5a623;
     --gold2: #e8941a;
     --orange: #ff6835;
@@ -25,10 +25,10 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background:
-      radial-gradient(ellipse at 30% 0%, rgba(255,104,53,0.14) 0%, transparent 45%),
-      radial-gradient(ellipse at 70% 40%, rgba(150,50,220,0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 20% 80%, rgba(245,166,35,0.08) 0%, transparent 50%),
-      #1a1208;
+      radial-gradient(ellipse at 30% 0%, rgba(255,140,60,0.20) 0%, transparent 45%),
+      radial-gradient(ellipse at 70% 40%, rgba(180,80,20,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 20% 80%, rgba(245,166,35,0.12) 0%, transparent 50%),
+      #4a2c10;
     background-attachment: fixed;
     color: var(--text);
     font-family: 'Segoe UI', sans-serif;
@@ -46,7 +46,7 @@
 
   /* HEADER */
   .header {
-    background: linear-gradient(135deg, #0d0800 0%, #080400 50%, #100900 100%);
+    background: linear-gradient(135deg, #3a2008 0%, #2e1804 50%, #422408 100%);
     border-bottom: 2px solid rgba(245,166,35,0.22);
     padding: 28px 20px 22px;
     text-align: center;
@@ -144,7 +144,7 @@
   .profile-info .level { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
   .xp-bar-wrap { margin-top: 8px; }
   .xp-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
-  .bar { height: 8px; background: #100a02; border-radius: 4px; overflow: hidden; }
+  .bar { height: 8px; background: #3a2008; border-radius: 4px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
   .bar-xp { background: linear-gradient(90deg, var(--gold), var(--orange)); }
 
@@ -188,8 +188,8 @@
   .hp-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
   .bar-hp { background: linear-gradient(90deg, #e53935, #b71c1c); }
   .subtasks { margin-top: 14px; }
-  .subtask { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #1e1208; cursor: pointer; transition: background 0.2s; border-radius: 6px; padding-left: 6px; }
-  .subtask:hover { background: #170f04; }
+  .subtask { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #5a3010; cursor: pointer; transition: background 0.2s; border-radius: 6px; padding-left: 6px; }
+  .subtask:hover { background: #3a2008; }
   .subtask input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--green); cursor: pointer; flex-shrink: 0; }
   .subtask label { font-size: 0.85rem; cursor: pointer; flex: 1; }
   .subtask.done label { text-decoration: line-through; color: var(--muted); }
@@ -198,7 +198,7 @@
   .reward-popup { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100; align-items: center; justify-content: center; }
   .reward-popup.show { display: flex; }
   .reward-box {
-    background: linear-gradient(135deg, #130d00, #1e1200);
+    background: linear-gradient(135deg, #3a2008, #4a2c10);
     border: 2px solid var(--gold); border-radius: 20px;
     padding: 36px; text-align: center; max-width: 340px;
     animation: popIn 0.4s; box-shadow: 0 0 50px rgba(245,166,35,0.3);
@@ -229,7 +229,7 @@
 
   /* ШКАЛА ПУТИ */
   .roadmap { position: relative; padding: 40px 0 20px; overflow: visible; }
-  .roadmap-track { position: relative; height: 8px; background: #100a02; border-radius: 4px; margin: 0 30px; border: 1px solid var(--border); }
+  .roadmap-track { position: relative; height: 8px; background: #3a2008; border-radius: 4px; margin: 0 30px; border: 1px solid var(--border); }
   .roadmap-progress { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--gold), var(--orange)); box-shadow: 0 0 12px rgba(245,166,35,0.4); transition: width 1s ease; }
   .roadmap-hero { position: absolute; top: -14px; transform: translateX(-50%); font-size: 1.4rem; filter: drop-shadow(0 0 10px var(--gold)); transition: left 1s ease; z-index: 3; }
   .roadmap-bosses { position: relative; margin: 0 30px; }
@@ -244,7 +244,7 @@
 
   /* МИНИ-КВЕСТЫ */
   .coins-display { display: flex; align-items: center; gap: 8px; font-size: 1.2rem; font-weight: bold; color: var(--gold); }
-  .mini-quest { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e1208; }
+  .mini-quest { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #5a3010; }
   .mini-quest:last-child { border-bottom: none; }
   .mq-left { display: flex; align-items: center; gap: 10px; }
   .mq-icon { font-size: 1.3rem; width: 36px; text-align: center; }
@@ -255,7 +255,7 @@
   .btn-quest { background: rgba(245,166,35,0.08); border: 1.5px solid rgba(245,166,35,0.4); color: var(--gold); padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
   .btn-quest:hover { background: var(--gold); color: #000; box-shadow: 0 0 12px rgba(245,166,35,0.4); }
   .btn-quest:disabled { opacity: 0.25; cursor: not-allowed; border-color: #2e1e08; color: #5a3812; background: none; }
-  .shop-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1e1208; }
+  .shop-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #5a3010; }
   .shop-item:last-child { border-bottom: none; }
   .shop-emoji { font-size: 1.2rem; margin-right: 8px; }
   .shop-text { font-size: 0.82rem; flex: 1; }
@@ -310,8 +310,8 @@
   .staircase-row { display: flex; gap: 4px; margin-bottom: 4px; }
   .brick {
     width: 40px; height: 24px; border-radius: 4px;
-    background: #1e1208;
-    border: 1px solid #2e1e08;
+    background: #3a2008;
+    border: 1px solid #5a3010;
     transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
   }
   .brick.filled {
@@ -343,7 +343,7 @@
   .vision-slot {
     aspect-ratio: 4/3; border-radius: 12px; overflow: hidden;
     position: relative; cursor: pointer; border: 1.5px solid var(--border);
-    background: linear-gradient(135deg, #0f0a03, #1a1206);
+    background: linear-gradient(135deg, #3a2008, #4a2c10);
     transition: border-color 0.3s, transform 0.2s, box-shadow 0.3s;
   }
   .vision-slot:hover { border-color: rgba(245,166,35,0.5); transform: scale(1.02); box-shadow: 0 0 24px rgba(245,166,35,0.14); }
@@ -381,7 +381,7 @@
   .guild-in-progress-title { font-size:0.65rem; text-transform:uppercase; letter-spacing:2px; color:var(--blue); margin-bottom:6px; }
   .guild-active-card { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:rgba(66,165,245,0.05); margin-bottom:6px; font-size:0.82rem; flex-wrap:wrap; }
   .guild-bulletin-title { font-size:0.65rem; text-transform:uppercase; letter-spacing:2px; color:var(--gold); margin:10px 0 6px; }
-  .guild-bulletin { background:linear-gradient(145deg,#201208,#180e04); border:1.5px solid var(--border-hi); border-radius:10px; padding:12px; max-height:380px; overflow-y:auto; }
+  .guild-bulletin { background:linear-gradient(145deg,#3a2008,#321804); border:1.5px solid var(--border-hi); border-radius:10px; padding:12px; max-height:380px; overflow-y:auto; }
   .guild-rank-section { margin-bottom:10px; }
   .guild-rank-label { font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:5px; padding-left:4px; }
   .guild-quest-card { background:rgba(245,166,35,0.03); border-radius:8px; padding:9px 11px; margin-bottom:6px; border:1px solid var(--border); border-left:3px solid; transition:background 0.2s; }
@@ -490,7 +490,7 @@
         <div class="roadmap-hero" id="roadmap-hero" style="left:0%">⚔️</div>
       </div>
     </div>
-    <div id="current-boss-info" style="margin-top:14px;padding:10px;background:#0a0702;border-radius:10px;font-size:0.82rem;color:var(--muted)"></div>
+    <div id="current-boss-info" style="margin-top:14px;padding:10px;background:#3a2008;border-radius:10px;font-size:0.82rem;color:var(--muted)"></div>
   </div>
 
   <div class="arc-connector">
