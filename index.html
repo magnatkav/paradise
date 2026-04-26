@@ -372,28 +372,141 @@
   .section-title.collapsible:hover { color:var(--text); }
   .collapse-arrow { font-size:0.65rem; transition:transform 0.2s; display:inline-block; }
 
-  /* ГИЛЬДИЯ */
-  .guild-wrap { display:flex; gap:16px; }
-  @media(max-width:680px) { .guild-wrap { flex-direction:column; align-items:center; } }
-  .guild-receptionist { flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:6px; }
-  .guild-speech { font-size:0.7rem; color:var(--muted); text-align:center; max-width:120px; line-height:1.4; background:rgba(245,166,35,0.05); border:1px solid var(--border); border-radius:8px; padding:6px 8px; }
-  .guild-board-panel { flex:1; min-width:0; }
-  .guild-in-progress-title { font-size:0.65rem; text-transform:uppercase; letter-spacing:2px; color:var(--blue); margin-bottom:6px; }
-  .guild-active-card { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:rgba(66,165,245,0.05); margin-bottom:6px; font-size:0.82rem; flex-wrap:wrap; }
-  .guild-bulletin-title { font-size:0.65rem; text-transform:uppercase; letter-spacing:2px; color:var(--gold); margin:10px 0 6px; }
-  .guild-bulletin { background:linear-gradient(145deg,#3a2008,#321804); border:1.5px solid var(--border-hi); border-radius:10px; padding:12px; max-height:380px; overflow-y:auto; }
-  .guild-rank-section { margin-bottom:10px; }
-  .guild-rank-label { font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:5px; padding-left:4px; }
-  .guild-quest-card { background:rgba(245,166,35,0.03); border-radius:8px; padding:9px 11px; margin-bottom:6px; border:1px solid var(--border); border-left:3px solid; transition:background 0.2s; }
-  .guild-quest-card:hover { background:rgba(245,166,35,0.06); }
-  .guild-rank-badge { font-size:0.62rem; font-weight:bold; padding:1px 6px; border-radius:4px; letter-spacing:1px; }
-  .btn-accept { background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.4); color:var(--gold); padding:3px 10px; border-radius:6px; font-size:0.7rem; cursor:pointer; transition:all 0.2s; }
-  .btn-accept:hover { background:var(--gold); color:#000; }
-  .btn-gcomp { background:rgba(76,175,80,0.1); border:1px solid rgba(76,175,80,0.4); color:var(--green); padding:3px 10px; border-radius:6px; font-size:0.7rem; cursor:pointer; transition:all 0.2s; }
+  /* ДОСКА ГИЛЬДИИ — ДЕРЕВЯННАЯ */
+  .guild-board-frame {
+    background:linear-gradient(145deg,#5a2e08,#3a1e04);
+    border:6px solid #7a4010;
+    border-radius:14px;
+    padding:5px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.6),inset 0 0 24px rgba(0,0,0,0.4);
+    position:relative;
+  }
+  .guild-board-frame::before { content:'✦'; position:absolute; top:2px; left:8px; color:#c57a20; font-size:1.3rem; }
+  .guild-board-frame::after  { content:'✦'; position:absolute; top:2px; right:8px; color:#c57a20; font-size:1.3rem; }
+  .guild-board-inner {
+    background:
+      repeating-linear-gradient(0deg,transparent,transparent 58px,rgba(0,0,0,0.07) 58px,rgba(0,0,0,0.07) 59px),
+      repeating-linear-gradient(90deg,transparent,transparent 90px,rgba(255,200,100,0.03) 90px,rgba(255,200,100,0.03) 91px),
+      linear-gradient(160deg,#8b5a2b 0%,#6b4018 30%,#7a4c22 60%,#5a3010 100%);
+    border-radius:8px;
+    padding:14px 14px 10px;
+    min-height:200px;
+  }
+  .guild-board-title {
+    text-align:center; font-size:0.82rem; font-weight:bold; color:#c57a20;
+    letter-spacing:3px; text-transform:uppercase; text-shadow:0 1px 3px rgba(0,0,0,0.7);
+    margin-bottom:14px; padding-bottom:10px;
+    border-bottom:2px solid rgba(197,122,32,0.4);
+  }
+  .guild-board-title::before, .guild-board-title::after { content:'⚔️'; margin:0 8px; }
+
+  /* СЕТКА КАРТОЧЕК */
+  .guild-cards-grid { display:flex; flex-wrap:wrap; gap:10px; padding:4px 2px; }
+
+  /* БАЗОВАЯ КАРТОЧКА */
+  .guild-card {
+    position:relative; cursor:pointer;
+    transition:transform 0.18s, box-shadow 0.18s, z-index 0s;
+    flex-shrink:0;
+  }
+  .guild-card:hover {
+    transform:translateY(-6px) scale(1.06) rotate(0deg) !important;
+    box-shadow:0 14px 28px rgba(0,0,0,0.65),0 0 0 2px rgba(245,166,35,0.4) !important;
+    z-index:20;
+  }
+  /* Кнопка-булавка сверху */
+  .guild-card::before {
+    content:''; position:absolute; top:-7px; left:50%; transform:translateX(-50%);
+    width:13px; height:13px; border-radius:50%; z-index:4;
+    box-shadow:0 2px 5px rgba(0,0,0,0.55);
+  }
+  /* Стиль: листок (F/E) */
+  .gc-note {
+    background:linear-gradient(160deg,#f7eecc,#ecdba8);
+    border-radius:3px; padding:10px 11px; width:115px;
+    box-shadow:3px 5px 12px rgba(0,0,0,0.5);
+    color:#2a1500; border:1px solid rgba(180,140,60,0.3);
+    font-family:'Segoe UI',sans-serif;
+  }
+  .gc-note::before { background:#cc2200; }
+  /* Стиль: пергамент (D/C) */
+  .gc-parchment {
+    background:linear-gradient(160deg,#eddea4,#d8c47e,#e5d590);
+    border-radius:4px; padding:11px 13px; width:138px;
+    box-shadow:3px 5px 14px rgba(0,0,0,0.55);
+    color:#1a0e00; border:1px solid rgba(160,120,40,0.4);
+  }
+  .gc-parchment::before { background:#c5922a; }
+  /* Стиль: постер (B/A) */
+  .gc-poster {
+    background:linear-gradient(160deg,#f2e4b4,#e2d090,#ead898);
+    border-radius:3px; padding:13px; width:148px;
+    box-shadow:4px 6px 18px rgba(0,0,0,0.6);
+    color:#180800; border:3px solid rgba(140,100,30,0.55);
+  }
+  .gc-poster::before { background:#1a0a00; }
+  /* Стиль: эпический свиток (S) */
+  .gc-epic {
+    background:linear-gradient(160deg,#1e1004,#0e0802);
+    border-radius:5px; padding:13px; width:154px;
+    box-shadow:4px 6px 20px rgba(0,0,0,0.75),0 0 18px rgba(245,166,35,0.25);
+    color:#f5e0a0; border:2px solid rgba(245,166,35,0.55);
+  }
+  .gc-epic::before { background:#f5a623; }
+
+  .gc-rank  { font-size:0.58rem; font-weight:bold; letter-spacing:2px; text-transform:uppercase; opacity:0.7; margin-bottom:3px; }
+  .gc-icon  { font-size:1.5rem; display:block; margin-bottom:3px; }
+  .gc-title { font-size:0.78rem; font-weight:bold; margin-bottom:5px; line-height:1.3; }
+  .gc-coins { font-size:0.7rem; font-weight:bold; }
+  .gc-type  { font-size:0.58rem; opacity:0.6; margin-top:2px; }
+  .gc-status-badge { position:absolute; top:5px; right:5px; font-size:0.58rem; font-weight:bold; padding:2px 5px; border-radius:3px; line-height:1.2; }
+  /* Штамп «выполнено» */
+  .gc-done-stamp::after {
+    content:'✓'; position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%) rotate(-22deg);
+    font-size:3.2rem; font-weight:900; color:rgba(76,175,80,0.38); pointer-events:none; z-index:3;
+  }
+
+  /* ПОЛОСА «В РАБОТЕ» */
+  .guild-active-strip { margin-top:12px; padding:9px 12px; background:rgba(0,0,0,0.22); border-radius:8px; border:1px solid rgba(245,166,35,0.18); }
+  .guild-active-strip-title { font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; color:#c5922a; margin-bottom:7px; }
+  .guild-active-card { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:7px; border:1px solid var(--border); background:rgba(66,165,245,0.06); margin-bottom:5px; font-size:0.8rem; flex-wrap:wrap; }
+  .guild-rank-badge { font-size:0.6rem; font-weight:bold; padding:1px 6px; border-radius:4px; letter-spacing:1px; }
+  .btn-gcomp { background:rgba(76,175,80,0.12); border:1px solid rgba(76,175,80,0.45); color:var(--green); padding:3px 10px; border-radius:6px; font-size:0.7rem; cursor:pointer; transition:all 0.2s; }
   .btn-gcomp:hover { background:var(--green); color:#000; }
+
+  /* ФОРМА ДОБАВЛЕНИЯ */
   .guild-add-form { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; border-top:1px solid var(--border); padding-top:10px; }
   .guild-add-input { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:5px 10px; border-radius:6px; font-size:0.78rem; flex:1; min-width:120px; }
   .guild-add-input:focus { outline:none; border-color:var(--gold); }
+  .btn-accept { background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.4); color:var(--gold); padding:3px 10px; border-radius:6px; font-size:0.7rem; cursor:pointer; transition:all 0.2s; }
+  .btn-accept:hover { background:var(--gold); color:#000; }
+
+  /* МОДАЛЬНОЕ ОКНО ЗАДАНИЯ */
+  .guild-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:200; align-items:center; justify-content:center; }
+  .guild-modal.show { display:flex; }
+  .guild-modal-box {
+    background:linear-gradient(160deg,#f0e4b0,#e0d080);
+    border-radius:12px; max-width:360px; width:90%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.8),0 0 0 4px rgba(160,120,40,0.45);
+    animation:popIn 0.28s; overflow:hidden; color:#1a0e00;
+  }
+  .gm-header { background:linear-gradient(135deg,#3a1e04,#5a2e08); padding:16px 20px; display:flex; align-items:center; gap:12px; }
+  .gm-rank-big { font-size:1.15rem; font-weight:900; letter-spacing:2px; padding:4px 10px; border-radius:6px; border:2px solid; }
+  .gm-icon-big { font-size:2.2rem; }
+  .gm-title { font-size:1rem; font-weight:bold; color:#f0d890; line-height:1.3; }
+  .gm-type  { font-size:0.68rem; color:#a08040; margin-top:3px; }
+  .gm-body  { padding:18px 20px; }
+  .gm-desc  { font-size:0.88rem; line-height:1.55; margin-bottom:14px; font-style:italic; color:#2a1600; }
+  .gm-reward-row { background:rgba(0,0,0,0.1); border:1px solid rgba(160,120,40,0.35); border-radius:8px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .gm-reward-num { font-size:1.3rem; font-weight:bold; color:#7a4800; }
+  .gm-footer { padding:10px 20px 16px; display:flex; gap:8px; }
+  .btn-gm-close   { background:rgba(0,0,0,0.1); border:1px solid rgba(0,0,0,0.2); color:#4a3010; padding:8px 14px; border-radius:8px; font-size:0.82rem; cursor:pointer; transition:all 0.2s; }
+  .btn-gm-close:hover { background:rgba(0,0,0,0.2); }
+  .btn-gm-accept  { background:linear-gradient(135deg,#5a2e08,#7a4010); border:none; color:#f0d890; padding:8px 18px; border-radius:8px; font-size:0.82rem; font-weight:bold; cursor:pointer; transition:all 0.2s; flex:1; }
+  .btn-gm-accept:hover  { background:linear-gradient(135deg,#7a4010,#9a5818); box-shadow:0 4px 12px rgba(0,0,0,0.4); }
+  .btn-gm-complete { background:linear-gradient(135deg,#1b5e20,#2e7d32); border:none; color:#a0f0a0; padding:8px 18px; border-radius:8px; font-size:0.82rem; font-weight:bold; cursor:pointer; flex:1; transition:all 0.2s; }
+  .btn-gm-complete:hover { background:linear-gradient(135deg,#2e7d32,#388e3c); }
 
   /* ТРЕКЕР ТЕЛА */
   .body-tracker-grid { display:grid; grid-template-columns:1fr 130px; gap:16px; }
@@ -750,64 +863,22 @@
   </div>
 
   <!-- ГИЛЬДИЯ -->
-  <div class="section-title">⚔️ Доска заданий гильдии</div>
-  <div class="card">
-    <div class="guild-wrap">
-      <div class="guild-receptionist">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 200" width="110" height="200">
-          <rect x="0" y="150" width="110" height="50" rx="5" fill="#3d1e08"/>
-          <rect x="0" y="150" width="110" height="9" rx="4" fill="#5a2e10"/>
-          <line x1="20" y1="152" x2="20" y2="200" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-          <line x1="55" y1="152" x2="55" y2="200" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
-          <line x1="88" y1="152" x2="88" y2="200" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
-          <path d="M 22,115 Q 18,135 16,150 L 94,150 Q 92,135 88,115 Z" fill="#1a2848"/>
-          <path d="M 22,115 Q 30,126 55,124 Q 80,126 88,115" fill="none" stroke="#c5922a" stroke-width="1.5"/>
-          <line x1="55" y1="124" x2="55" y2="150" stroke="#c5922a" stroke-width="1"/>
-          <polygon points="55,116 47,127 55,125 63,127" fill="white" opacity="0.9"/>
-          <path d="M 49,128 L 55,135 L 61,128 M 55,135 L 55,141" fill="none" stroke="#e53935" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="52" cy="143" r="2" fill="#f5a623"/>
-          <circle cx="58" cy="143" r="2" fill="#f5a623"/>
-          <ellipse cx="28" cy="154" rx="12" ry="6" fill="#f5d5b0"/>
-          <ellipse cx="82" cy="154" rx="12" ry="6" fill="#f5d5b0"/>
-          <rect x="49" y="104" width="12" height="15" rx="3" fill="#f5d5b0"/>
-          <ellipse cx="55" cy="84" rx="24" ry="26" fill="#f5d5b0"/>
-          <path d="M 32,76 Q 32,55 55,53 Q 78,55 78,76" fill="#18082a"/>
-          <path d="M 33,78 Q 26,92 27,112 Q 31,118 35,112 Q 32,98 37,87 Z" fill="#18082a"/>
-          <path d="M 77,78 Q 84,92 83,112 Q 79,118 75,112 Q 78,98 73,87 Z" fill="#18082a"/>
-          <path d="M 44,58 Q 50,54 55,53 Q 60,56 56,60" fill="#28104a"/>
-          <path d="M 35,70 L 39,66 L 43,70 L 39,74 Z M 39,66 L 39,62" fill="#e53935" stroke="#c52020" stroke-width="0.5"/>
-          <path d="M 43,77 Q 48,74 52,76" fill="none" stroke="#18082a" stroke-width="2" stroke-linecap="round"/>
-          <path d="M 58,76 Q 62,74 67,77" fill="none" stroke="#18082a" stroke-width="2" stroke-linecap="round"/>
-          <ellipse cx="47" cy="86" rx="6" ry="7" fill="white"/>
-          <ellipse cx="63" cy="86" rx="6" ry="7" fill="white"/>
-          <ellipse cx="47" cy="87" rx="4.5" ry="5.5" fill="#5a1a9a"/>
-          <ellipse cx="63" cy="87" rx="4.5" ry="5.5" fill="#5a1a9a"/>
-          <circle cx="47" cy="89" r="2.5" fill="#18052e"/>
-          <circle cx="63" cy="89" r="2.5" fill="#18052e"/>
-          <circle cx="45" cy="85" r="1.5" fill="white"/>
-          <circle cx="61" cy="85" r="1.5" fill="white"/>
-          <path d="M 42,81 L 41,79 M 45,80 L 44,78 M 48,80 L 48,78" stroke="#18082a" stroke-width="0.8" stroke-linecap="round"/>
-          <path d="M 57,80 L 57,78 M 60,80 L 61,78 M 63,81 L 64,79" stroke="#18082a" stroke-width="0.8" stroke-linecap="round"/>
-          <ellipse cx="38" cy="93" rx="6" ry="2.5" fill="rgba(255,140,140,0.35)"/>
-          <ellipse cx="72" cy="93" rx="6" ry="2.5" fill="rgba(255,140,140,0.35)"/>
-          <path d="M 53,95 L 55,97 L 57,95" fill="none" stroke="rgba(180,100,80,0.4)" stroke-width="1"/>
-          <path d="M 49,100 Q 55,106 61,100" fill="none" stroke="#c07060" stroke-width="1.5" stroke-linecap="round"/>
-          <ellipse cx="31" cy="88" rx="4" ry="5" fill="#f5d5b0"/>
-          <ellipse cx="79" cy="88" rx="4" ry="5" fill="#f5d5b0"/>
-        </svg>
-        <div class="guild-speech">Добро пожаловать, авантюрист! Выбирай задание по силам 🗺️</div>
-      </div>
-      <div class="guild-board-panel">
-        <div class="guild-in-progress-title">⚡ В работе</div>
-        <div id="guild-in-progress"></div>
-        <div class="guild-bulletin-title">📋 Доска заданий</div>
-        <div class="guild-bulletin" id="guild-quest-cards"></div>
-        <div class="guild-add-form">
-          <input class="guild-add-input" id="custom-quest-title" placeholder="Своё задание..." maxlength="50">
-          <input class="guild-add-input" id="custom-quest-reward" placeholder="Монет" type="number" min="1" max="9999" style="width:80px;flex:none">
-          <button class="btn-accept" onclick="addCustomGuildQuest()">+ Добавить</button>
+  <div class="section-title">⚔️ Доска заданий гильдии авантюристов</div>
+  <div class="card" style="padding:14px">
+    <div class="guild-board-frame">
+      <div class="guild-board-inner">
+        <div class="guild-board-title">ДОСКА ЗАДАНИЙ · ГИЛЬДИЯ АВАНТЮРИСТОВ</div>
+        <div class="guild-cards-grid" id="guild-quest-cards"></div>
+        <div class="guild-active-strip" id="guild-in-progress-wrap" style="display:none">
+          <div class="guild-active-strip-title">⚡ Задания в работе — нажми «Выполнил» когда готово</div>
+          <div id="guild-in-progress"></div>
         </div>
       </div>
+    </div>
+    <div class="guild-add-form">
+      <input class="guild-add-input" id="custom-quest-title" placeholder="Добавить своё задание..." maxlength="50">
+      <input class="guild-add-input" id="custom-quest-reward" placeholder="Монет" type="number" min="1" max="9999" style="width:80px;flex:none">
+      <button class="btn-accept" onclick="addCustomGuildQuest()">+ Добавить</button>
     </div>
   </div>
 
@@ -895,6 +966,32 @@
   </div>
 
 </div><!-- /container -->
+
+<!-- GUILD QUEST MODAL -->
+<div class="guild-modal" id="guild-modal" onclick="if(event.target===this)closeGuildModal()">
+  <div class="guild-modal-box">
+    <div class="gm-header">
+      <div id="gm-rank" class="gm-rank-big">[F]</div>
+      <div class="gm-icon-big" id="gm-icon">⚔️</div>
+      <div>
+        <div class="gm-title" id="gm-title">Название задания</div>
+        <div class="gm-type"  id="gm-type">Тип</div>
+      </div>
+    </div>
+    <div class="gm-body">
+      <div class="gm-desc" id="gm-desc">Описание</div>
+      <div class="gm-reward-row">
+        <span style="font-size:0.78rem;color:#5a3010">Награда авантюриста</span>
+        <span class="gm-reward-num" id="gm-reward">+0 🪙</span>
+      </div>
+    </div>
+    <div class="gm-footer" id="gm-footer">
+      <button class="btn-gm-close" onclick="closeGuildModal()">Закрыть</button>
+      <button class="btn-gm-accept"   id="gm-btn-accept"   onclick="acceptFromModal()">⚔️ Принять задание</button>
+      <button class="btn-gm-complete" id="gm-btn-complete" onclick="completeFromModal()" style="display:none">✓ Выполнено!</button>
+    </div>
+  </div>
+</div>
 
 <!-- НАГРАДА ПОПАП -->
 <div class="reward-popup" id="reward-popup">
@@ -1503,6 +1600,42 @@
   function getAccepted() { return JSON.parse(localStorage.getItem('paradise_guild_accepted')||'[]'); }
   function setAccepted(a) { localStorage.setItem('paradise_guild_accepted',JSON.stringify(a)); }
 
+  // Стили карточек по рангу
+  const GC_STYLE = { F:'gc-note', E:'gc-note', D:'gc-parchment', C:'gc-parchment', B:'gc-poster', A:'gc-poster', S:'gc-epic', '?':'gc-note' };
+  const GC_ROTS  = [-3,-1.5,2,3,-2,1,-1,2.5,-2.5,1.5,0.5,-0.5,3,-3,1,-1,2,-2];
+  let guildModalId = null;
+
+  function openGuildQuest(id) {
+    const allQ=[...GUILD_QUESTS,...JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]')];
+    const q=allQ.find(q=>q.id===id); if(!q) return;
+    const accepted=getAccepted(), done=isGuildDone(q), inAcc=accepted.includes(id);
+    const rc=RANK_COLORS[q.rank]||'#888';
+    guildModalId=id;
+    const rmEl=document.getElementById('gm-rank');
+    rmEl.textContent=`[${q.rank}]`; rmEl.style.color=rc; rmEl.style.borderColor=rc;
+    document.getElementById('gm-icon').textContent=q.icon;
+    document.getElementById('gm-title').textContent=q.title;
+    document.getElementById('gm-type').textContent=(TYPE_LBL[q.type]||q.type);
+    document.getElementById('gm-desc').textContent=q.desc;
+    document.getElementById('gm-reward').textContent='+'+q.reward+' 🪙';
+    const ba=document.getElementById('gm-btn-accept'), bc=document.getElementById('gm-btn-complete');
+    document.getElementById('gm-footer').querySelectorAll('.gm-done-msg').forEach(e=>e.remove());
+    if(done){
+      ba.style.display='none'; bc.style.display='none';
+      const msg=document.createElement('div'); msg.className='gm-done-msg';
+      msg.style.cssText='color:#2e7d32;font-size:0.82rem;padding:4px 0;text-align:center;flex:1';
+      msg.textContent='✓ Выполнено в этом периоде'; document.getElementById('gm-footer').appendChild(msg);
+    } else if(inAcc){
+      ba.style.display='none'; bc.style.display='';
+    } else {
+      ba.style.display=''; bc.style.display='none';
+    }
+    document.getElementById('guild-modal').classList.add('show');
+  }
+  function closeGuildModal(){ document.getElementById('guild-modal').classList.remove('show'); guildModalId=null; }
+  function acceptFromModal(){ if(guildModalId){ acceptGuildQuest(guildModalId); closeGuildModal(); } }
+  function completeFromModal(){ if(guildModalId){ completeGuildQuest(guildModalId); closeGuildModal(); } }
+
   function acceptGuildQuest(id) {
     const a=getAccepted(); if(!a.includes(id)){a.push(id);setAccepted(a);} renderGuildBoard();
   }
@@ -1516,7 +1649,7 @@
     localStorage.setItem('paradise_quests_total',tot);
     renderGuildBoard(); renderQuests(); renderShop(); updatePlayerRank(); renderStaircase(true);
     document.getElementById('reward-emoji').innerText=q.icon;
-    document.getElementById('reward-text').innerText=`🏆 Задание гильдии выполнено!\n\n[${q.rank}] ${q.title}\n\n+${q.reward} монет за отвагу!`;
+    document.getElementById('reward-text').innerText='🏆 Задание гильдии выполнено!\n\n['+q.rank+'] '+q.title+'\n\n+'+q.reward+' монет за отвагу!';
     document.getElementById('reward-popup').classList.add('show');
   }
   function addCustomGuildQuest() {
@@ -1524,53 +1657,52 @@
     const reward=parseInt(document.getElementById('custom-quest-reward').value)||10;
     if(!title) return;
     const custom=JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]');
-    custom.push({id:'cq_'+Date.now(),rank:'?',title,desc:'Своё задание',reward,icon:'⭐',type:'instant'});
+    custom.push({id:'cq_'+Date.now(),rank:'?',title,desc:'Пользовательское задание',reward,icon:'⭐',type:'instant'});
     localStorage.setItem('paradise_guild_custom',JSON.stringify(custom));
     document.getElementById('custom-quest-title').value='';
     document.getElementById('custom-quest-reward').value='';
     renderGuildBoard();
   }
+
   function renderGuildBoard() {
     const accepted=getAccepted();
     const custom=JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]');
     const allQ=[...GUILD_QUESTS,...custom];
-    // In progress
-    const ipEl=document.getElementById('guild-in-progress');
+    // Полоса «в работе»
     const ip=accepted.map(id=>allQ.find(q=>q.id===id)).filter(Boolean);
-    if(ipEl){
-      if(!ip.length){ ipEl.innerHTML='<div style="font-size:0.78rem;color:var(--muted);padding:6px 0">Нет активных заданий — прими что-нибудь</div>'; }
-      else { ipEl.innerHTML=ip.map(q=>`<div class="guild-active-card" style="border-color:${RANK_COLORS[q.rank]}40">
-        <span class="guild-rank-badge" style="color:${RANK_COLORS[q.rank]};background:${RANK_BG[q.rank]}">[${q.rank}]</span>
-        <span>${q.icon} ${q.title}</span><span style="flex:1"></span>
-        <span style="color:var(--gold);font-size:0.78rem;margin-right:8px">+${q.reward}🪙</span>
-        <button class="btn-gcomp" onclick="completeGuildQuest('${q.id}')">✓ Выполнил</button>
-      </div>`).join(''); }
-    }
-    // Board
+    const ipWrap=document.getElementById('guild-in-progress-wrap');
+    const ipEl=document.getElementById('guild-in-progress');
+    if(ipWrap) ipWrap.style.display=ip.length?'':'none';
+    if(ipEl) ipEl.innerHTML=ip.map(q=>
+      '<div class="guild-active-card" style="border-color:'+RANK_COLORS[q.rank]+'40">'+
+      '<span class="guild-rank-badge" style="color:'+RANK_COLORS[q.rank]+';background:'+RANK_BG[q.rank]+'">['+q.rank+']</span>'+
+      '<span>'+q.icon+' '+q.title+'</span><span style="flex:1"></span>'+
+      '<span style="color:var(--gold);font-size:0.78rem;margin-right:8px">+'+q.reward+'🪙</span>'+
+      '<button class="btn-gcomp" onclick="completeGuildQuest(\''+q.id+'\')">✓ Выполнил</button></div>'
+    ).join('');
+    // Карточки
     const bEl=document.getElementById('guild-quest-cards'); if(!bEl) return;
     bEl.innerHTML='';
-    ['F','E','D','C','B','A','S','?'].forEach(rank=>{
-      const rq=allQ.filter(q=>q.rank===rank); if(!rq.length) return;
-      const sec=document.createElement('div'); sec.className='guild-rank-section';
-      sec.innerHTML=`<div class="guild-rank-label" style="color:${RANK_COLORS[rank]}">Ранг [${rank}]</div>`;
-      rq.forEach(q=>{
-        const done=isGuildDone(q), inAcc=accepted.includes(q.id);
-        const card=document.createElement('div'); card.className='guild-quest-card';
-        card.style.borderLeftColor=RANK_COLORS[q.rank]; if(done) card.style.opacity='0.42';
-        card.innerHTML=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
-          <span class="guild-rank-badge" style="color:${RANK_COLORS[q.rank]};background:${RANK_BG[q.rank]}">[${q.rank}]</span>
-          <span style="font-size:0.85rem;font-weight:bold;color:var(--text)">${q.icon} ${q.title}</span>
-        </div>
-        <div style="font-size:0.7rem;color:var(--muted);margin-bottom:5px">${q.desc} · ${TYPE_LBL[q.type]||q.type}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <span style="color:var(--gold);font-size:0.78rem;font-weight:bold">+${q.reward} 🪙</span>
-          ${done?'<span style="font-size:0.7rem;color:var(--green)">✓ Выполнено</span>':
-            inAcc?'<span style="font-size:0.7rem;color:var(--blue)">⚡ В работе</span>':
-            `<button class="btn-accept" onclick="acceptGuildQuest('${q.id}')">Принять</button>`}
-        </div>`;
-        sec.appendChild(card);
-      });
-      bEl.appendChild(sec);
+    allQ.forEach((q,idx)=>{
+      const done=isGuildDone(q), inAcc=accepted.includes(q.id);
+      const rc=RANK_COLORS[q.rank]||'#888';
+      const cls=GC_STYLE[q.rank]||'gc-note';
+      const rot=GC_ROTS[(idx*3+(q.rank.charCodeAt(0)||63))%GC_ROTS.length];
+      const card=document.createElement('div');
+      card.className='guild-card '+cls+(done?' gc-done-stamp':'');
+      card.style.transform='rotate('+rot+'deg)';
+      card.onclick=()=>openGuildQuest(q.id);
+      let badge='';
+      if(inAcc&&!done) badge='<div class="gc-status-badge" style="background:rgba(66,165,245,0.92);color:#fff">В РАБОТЕ</div>';
+      else if(done)     badge='<div class="gc-status-badge" style="background:rgba(76,175,80,0.85);color:#fff">✓ СДАНО</div>';
+      const coinCol=(cls==='gc-epic')?'#f5c850':'#6a3a00';
+      card.innerHTML=badge+
+        '<div class="gc-rank" style="color:'+rc+'">['+q.rank+']</div>'+
+        '<span class="gc-icon">'+q.icon+'</span>'+
+        '<div class="gc-title">'+q.title+'</div>'+
+        '<div class="gc-coins" style="color:'+coinCol+'">+'+q.reward+' 🪙</div>'+
+        '<div class="gc-type">'+(TYPE_LBL[q.type]||q.type)+'</div>';
+      bEl.appendChild(card);
     });
   }
 
