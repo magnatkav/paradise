@@ -617,20 +617,10 @@
     </svg>
   </div>
 
-  <!-- МИНИ-КВЕСТЫ -->
-  <div class="section-title">⚡ Ежедневные квесты</div>
-  <div class="grid2">
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <div class="card-title" style="margin-bottom:0">Задания дня</div>
-        <div class="coins-display">🪙 <span id="coins-count">0</span></div>
-      </div>
-      <div id="daily-quests"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Магазин наград</div>
-      <div id="shop-items"></div>
-    </div>
+  <!-- МАГАЗИН НАГРАД -->
+  <div class="section-title">🛍️ Магазин наград — трать монеты</div>
+  <div class="card">
+    <div id="shop-items"></div>
   </div>
 
   <div class="arc-connector">
@@ -876,8 +866,24 @@
       </div>
     </div>
     <div class="guild-add-form">
-      <input class="guild-add-input" id="custom-quest-title" placeholder="Добавить своё задание..." maxlength="50">
-      <input class="guild-add-input" id="custom-quest-reward" placeholder="Монет" type="number" min="1" max="9999" style="width:80px;flex:none">
+      <input class="guild-add-input" id="custom-quest-title" placeholder="Название задания..." maxlength="60" style="flex:2;min-width:160px">
+      <select class="guild-add-input" id="custom-quest-rank" style="flex:none;width:90px">
+        <option value="F">F — легко</option>
+        <option value="E">E — просто</option>
+        <option value="D" selected>D — норма</option>
+        <option value="C">C — сложно</option>
+        <option value="B">B — тяжело</option>
+        <option value="A">A — эпик</option>
+        <option value="S">S — легенда</option>
+      </select>
+      <select class="guild-add-input" id="custom-quest-type" style="flex:none;width:130px">
+        <option value="instant">⚡ Мгновенное</option>
+        <option value="daily" selected>🌅 Каждый день</option>
+        <option value="weekly">📅 Каждую неделю</option>
+        <option value="monthly">📅 Каждый месяц</option>
+        <option value="epic">🌟 Разово</option>
+      </select>
+      <input class="guild-add-input" id="custom-quest-reward" placeholder="Монет (авто)" type="number" min="1" max="9999" style="flex:none;width:100px">
       <button class="btn-accept" onclick="addCustomGuildQuest()">+ Добавить</button>
     </div>
   </div>
@@ -1228,7 +1234,6 @@
   function loadCoins() { return parseInt(localStorage.getItem('paradise_coins')||'0'); }
   function saveCoins(n) {
     localStorage.setItem('paradise_coins', n);
-    document.getElementById('coins-count').innerText = n;
     const h = document.getElementById('coins-header'); if(h) h.innerText = n;
   }
 
@@ -1560,8 +1565,11 @@
   const RANK_BG    = { F:'rgba(136,136,136,0.1)', E:'rgba(76,175,80,0.1)', D:'rgba(66,165,245,0.1)', C:'rgba(171,71,188,0.1)', B:'rgba(255,152,0,0.1)', A:'rgba(229,57,53,0.1)', S:'rgba(245,166,35,0.15)', SS:'rgba(255,215,0,0.2)', '?':'rgba(255,255,255,0.05)' };
   const TYPE_LBL   = { instant:'⚡ Мгновенное', daily:'🌅 Ежедневное', weekly:'📅 Еженедельное', monthly:'📅 Ежемесячное', epic:'🌟 Эпическое' };
   const GUILD_QUESTS = [
-    { id:'gf1', rank:'F', title:'Стакан воды',           desc:'Прямо сейчас',               reward:1,   icon:'💧', type:'instant' },
-    { id:'gf2', rank:'F', title:'20 приседаний',          desc:'Встань и сделай',             reward:2,   icon:'🦵', type:'instant' },
+    { id:'gf1', rank:'F', title:'Стакан воды',            desc:'Прямо сейчас',                reward:1,   icon:'💧', type:'instant' },
+    { id:'gf2', rank:'F', title:'20 приседаний',           desc:'Встань и сделай',             reward:2,   icon:'🦵', type:'instant' },
+    { id:'gf3', rank:'F', title:'Уход за лицом',           desc:'Утренний ритуал · 3 мин',    reward:3,   icon:'🧴', type:'instant' },
+    { id:'gf4', rank:'F', title:'Написать благодарность',  desc:'За что благодарен сегодня?', reward:2,   icon:'🙏', type:'instant' },
+    { id:'ge0', rank:'E', title:'Растяжка 5 минут',        desc:'Шея, плечи, спина',          reward:5,   icon:'🤸', type:'instant' },
     { id:'ge1', rank:'E', title:'Не кусать губу',         desc:'Весь день',                  reward:15,  icon:'👄', type:'daily'   },
     { id:'ge2', rank:'E', title:'Без сладкого',           desc:'Чистое питание',              reward:20,  icon:'🚫', type:'daily'   },
     { id:'ge3', rank:'E', title:'160г белка',             desc:'Ежедневная норма',            reward:15,  icon:'🥩', type:'daily'   },
@@ -1570,8 +1578,9 @@
     { id:'gd2', rank:'D', title:'15 мин анализа дня',     desc:'Что принесло доход?',         reward:15,  icon:'📊', type:'daily'   },
     { id:'gd3', rank:'D', title:'Хобби 30+ минут',        desc:'Удовольствие сегодня',        reward:30,  icon:'🎯', type:'daily'   },
     { id:'gd4', rank:'D', title:'Тренировка в зале',      desc:'60+ минут',                   reward:60,  icon:'🏋️', type:'daily'   },
-    { id:'gc1', rank:'C', title:'Пост в канал',           desc:'Любой канал',                 reward:30,  icon:'📝', type:'weekly'  },
-    { id:'gc2', rank:'C', title:'5 аутрич-сообщений',     desc:'Владельцам каналов',          reward:45,  icon:'📨', type:'weekly'  },
+    { id:'qc0', rank:'C', title:'30 мин глубокой работы',  desc:'Телефон в сторону',          reward:30,  icon:'⚡', type:'daily'   },
+    { id:'gc1', rank:'C', title:'Пост в канал',           desc:'Любой канал',                 reward:30,  icon:'📝', type:'daily'   },
+    { id:'gc2', rank:'C', title:'5 аутрич-сообщений',     desc:'Владельцам каналов',          reward:45,  icon:'📨', type:'daily'   },
     { id:'gc3', rank:'C', title:'2 часа глубокой работы', desc:'Без прерываний',              reward:120, icon:'🔥', type:'weekly'  },
     { id:'gb1', rank:'B', title:'Новый клиент',           desc:'Оплата получена',             reward:200, icon:'🤝', type:'monthly' },
     { id:'ga1', rank:'A', title:'50 подп. ИИ-директор',  desc:'Рост канала',                 reward:500, icon:'📣', type:'monthly' },
@@ -1647,20 +1656,24 @@
     saveCoins(loadCoins()+q.reward);
     const tot=parseInt(localStorage.getItem('paradise_quests_total')||'0')+1;
     localStorage.setItem('paradise_quests_total',tot);
-    renderGuildBoard(); renderQuests(); renderShop(); updatePlayerRank(); renderStaircase(true);
+    renderGuildBoard(); renderShop(); updatePlayerRank(); renderStaircase(true);
     document.getElementById('reward-emoji').innerText=q.icon;
     document.getElementById('reward-text').innerText='🏆 Задание гильдии выполнено!\n\n['+q.rank+'] '+q.title+'\n\n+'+q.reward+' монет за отвагу!';
     document.getElementById('reward-popup').classList.add('show');
   }
+  const RANK_DEFAULT_COINS = { F:2, E:10, D:25, C:60, B:150, A:350, S:1000 };
   function addCustomGuildQuest() {
-    const title=document.getElementById('custom-quest-title').value.trim();
-    const reward=parseInt(document.getElementById('custom-quest-reward').value)||10;
-    if(!title) return;
-    const custom=JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]');
-    custom.push({id:'cq_'+Date.now(),rank:'?',title,desc:'Пользовательское задание',reward,icon:'⭐',type:'instant'});
-    localStorage.setItem('paradise_guild_custom',JSON.stringify(custom));
-    document.getElementById('custom-quest-title').value='';
-    document.getElementById('custom-quest-reward').value='';
+    const title  = document.getElementById('custom-quest-title').value.trim();
+    const rank   = document.getElementById('custom-quest-rank').value;
+    const type   = document.getElementById('custom-quest-type').value;
+    const rewardEl = document.getElementById('custom-quest-reward');
+    const reward = parseInt(rewardEl.value) || RANK_DEFAULT_COINS[rank] || 10;
+    if (!title) return;
+    const custom = JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]');
+    custom.push({ id:'cq_'+Date.now(), rank, title, desc:'Пользовательское задание', reward, icon:'⭐', type });
+    localStorage.setItem('paradise_guild_custom', JSON.stringify(custom));
+    document.getElementById('custom-quest-title').value = '';
+    rewardEl.value = '';
     renderGuildBoard();
   }
 
@@ -1864,7 +1877,7 @@
   renderVitamins();
   initCollapsible('body-section');
   initCollapsible('vitamins-section');
-  document.getElementById('coins-header').innerText = loadCoins();
+  const _ch = document.getElementById('coins-header'); if(_ch) _ch.innerText = loadCoins();
 </script>
 </body>
 </html>
