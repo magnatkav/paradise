@@ -6,11 +6,11 @@
 <title>Мой собственный рай — Анатолий</title>
 <style>
   :root {
-    --bg: #080601;
-    --card: #130f06;
-    --card2: #0f0b04;
-    --border: #2e1e08;
-    --border-hi: #5a3812;
+    --bg: #1a1208;
+    --card: #241a0c;
+    --card2: #1e1508;
+    --border: #3d2810;
+    --border-hi: #6a4420;
     --gold: #f5a623;
     --gold2: #e8941a;
     --orange: #ff6835;
@@ -19,16 +19,16 @@
     --blue: #42a5f5;
     --purple: #c060e0;
     --cyan: #00e5ff;
-    --text: #eeddc8;
-    --muted: #907055;
+    --text: #f2e4c8;
+    --muted: #a08060;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background:
-      radial-gradient(ellipse at 30% 0%, rgba(255,104,53,0.18) 0%, transparent 45%),
-      radial-gradient(ellipse at 70% 40%, rgba(150,50,220,0.12) 0%, transparent 50%),
-      radial-gradient(ellipse at 20% 80%, rgba(245,166,35,0.1) 0%, transparent 50%),
-      #080601;
+      radial-gradient(ellipse at 30% 0%, rgba(255,104,53,0.14) 0%, transparent 45%),
+      radial-gradient(ellipse at 70% 40%, rgba(150,50,220,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 20% 80%, rgba(245,166,35,0.08) 0%, transparent 50%),
+      #1a1208;
     background-attachment: fixed;
     color: var(--text);
     font-family: 'Segoe UI', sans-serif;
@@ -358,6 +358,65 @@
   .vision-remove { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); border: 1px solid rgba(229,57,53,0.4); color: #ff6b6b; border-radius: 50%; width: 22px; height: 22px; font-size: 0.65rem; cursor: pointer; display: none; align-items: center; justify-content: center; }
   .vision-slot:hover .vision-remove { display: flex; }
   .vision-remove:hover { background: rgba(229,57,53,0.4); }
+
+  /* РАНГ ИГРОКА */
+  .player-rank-badge { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:8px; border:1px solid; font-size:0.75rem; margin-top:6px; }
+
+  /* ПРИВАТНЫЙ РЕЖИМ ДОЛГОВ */
+  .btn-private { background:none; border:1px solid var(--border); color:var(--muted); padding:4px 10px; border-radius:6px; font-size:0.78rem; cursor:pointer; transition:all 0.2s; }
+  .btn-private:hover { border-color:var(--gold); color:var(--gold); }
+  .debt-hidden { filter:blur(5px); user-select:none; pointer-events:none; }
+
+  /* КОЛЛАПС СЕКЦИЙ */
+  .section-title.collapsible { cursor:pointer; user-select:none; display:flex; justify-content:space-between; align-items:center; padding-right:14px; }
+  .section-title.collapsible:hover { color:var(--text); }
+  .collapse-arrow { font-size:0.65rem; transition:transform 0.2s; display:inline-block; }
+
+  /* ГИЛЬДИЯ */
+  .guild-wrap { display:flex; gap:16px; }
+  @media(max-width:680px) { .guild-wrap { flex-direction:column; align-items:center; } }
+  .guild-receptionist { flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .guild-speech { font-size:0.7rem; color:var(--muted); text-align:center; max-width:120px; line-height:1.4; background:rgba(245,166,35,0.05); border:1px solid var(--border); border-radius:8px; padding:6px 8px; }
+  .guild-board-panel { flex:1; min-width:0; }
+  .guild-in-progress-title { font-size:0.65rem; text-transform:uppercase; letter-spacing:2px; color:var(--blue); margin-bottom:6px; }
+  .guild-active-card { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:rgba(66,165,245,0.05); margin-bottom:6px; font-size:0.82rem; flex-wrap:wrap; }
+  .guild-bulletin-title { font-size:0.65rem; text-transform:uppercase; letter-spacing:2px; color:var(--gold); margin:10px 0 6px; }
+  .guild-bulletin { background:linear-gradient(145deg,#201208,#180e04); border:1.5px solid var(--border-hi); border-radius:10px; padding:12px; max-height:380px; overflow-y:auto; }
+  .guild-rank-section { margin-bottom:10px; }
+  .guild-rank-label { font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:5px; padding-left:4px; }
+  .guild-quest-card { background:rgba(245,166,35,0.03); border-radius:8px; padding:9px 11px; margin-bottom:6px; border:1px solid var(--border); border-left:3px solid; transition:background 0.2s; }
+  .guild-quest-card:hover { background:rgba(245,166,35,0.06); }
+  .guild-rank-badge { font-size:0.62rem; font-weight:bold; padding:1px 6px; border-radius:4px; letter-spacing:1px; }
+  .btn-accept { background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.4); color:var(--gold); padding:3px 10px; border-radius:6px; font-size:0.7rem; cursor:pointer; transition:all 0.2s; }
+  .btn-accept:hover { background:var(--gold); color:#000; }
+  .btn-gcomp { background:rgba(76,175,80,0.1); border:1px solid rgba(76,175,80,0.4); color:var(--green); padding:3px 10px; border-radius:6px; font-size:0.7rem; cursor:pointer; transition:all 0.2s; }
+  .btn-gcomp:hover { background:var(--green); color:#000; }
+  .guild-add-form { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; border-top:1px solid var(--border); padding-top:10px; }
+  .guild-add-input { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:5px 10px; border-radius:6px; font-size:0.78rem; flex:1; min-width:120px; }
+  .guild-add-input:focus { outline:none; border-color:var(--gold); }
+
+  /* ТРЕКЕР ТЕЛА */
+  .body-tracker-grid { display:grid; grid-template-columns:1fr 130px; gap:16px; }
+  @media(max-width:600px) { .body-tracker-grid { grid-template-columns:1fr; } }
+  .body-inputs { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:12px; }
+  @media(max-width:600px) { .body-inputs { grid-template-columns:repeat(3,1fr); } }
+  .body-input-wrap label { font-size:0.62rem; color:var(--muted); display:block; margin-bottom:3px; text-transform:uppercase; letter-spacing:1px; }
+  .body-input-wrap input { width:100%; background:var(--card2); border:1px solid var(--border); color:var(--text); padding:5px 7px; border-radius:6px; font-size:0.82rem; }
+  .body-input-wrap input:focus { outline:none; border-color:var(--gold); }
+  .body-photo-slot { border:1.5px dashed var(--border-hi); border-radius:8px; overflow:hidden; cursor:pointer; min-height:100px; display:flex; align-items:center; justify-content:center; transition:border-color 0.2s; }
+  .body-photo-slot:hover { border-color:var(--gold); }
+
+  /* ВИТАМИНЫ */
+  .vitamin-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; transition:background 0.2s; border:1px solid transparent; margin-bottom:2px; }
+  .vitamin-item:hover { background:rgba(245,166,35,0.05); }
+  .vitamin-item.taken { background:rgba(76,175,80,0.07); border-color:rgba(76,175,80,0.2); }
+  .vit-check { width:22px; height:22px; border-radius:50%; border:2px solid var(--border-hi); display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0; color:var(--muted); }
+  .vitamin-item.taken .vit-check { background:var(--green); border-color:var(--green); color:#fff; }
+  .vit-name { font-size:0.83rem; flex:1; }
+  .vit-freq { font-size:0.62rem; color:var(--muted); }
+  .vit-add-form { display:flex; gap:8px; margin-top:10px; border-top:1px solid var(--border); padding-top:10px; }
+  .vit-add-input { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:5px 10px; border-radius:6px; font-size:0.78rem; flex:1; }
+  .vit-add-input:focus { outline:none; border-color:var(--gold); }
 </style>
 </head>
 <body>
@@ -380,6 +439,9 @@
         <div class="xp-bar-wrap">
           <div class="xp-label"><span>Опыт</span><span id="xp-text">220 / 500 XP</span></div>
           <div class="bar"><div class="bar-fill bar-xp" id="xp-bar" style="width:44%"></div></div>
+        </div>
+        <div id="player-rank-badge" class="player-rank-badge" style="border-color:#88888860;background:#1a1a1a">
+          <span style="font-weight:bold;color:#888">[F]</span> Новобранец
         </div>
         <div class="osbed-badge">
           <span class="osbed-text">OSBED</span>
@@ -590,9 +652,12 @@
         <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Общий долг</div>
         <div style="font-size:1.8rem;font-weight:bold;color:#ff6b6b" id="total-debt-display">790 262 ₽</div>
       </div>
-      <div style="text-align:right">
-        <div style="font-size:0.75rem;color:var(--muted)">Цель</div>
-        <div style="font-size:1rem;color:var(--green)">0 ₽</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <button id="debt-private-btn" class="btn-private" onclick="toggleDebtPrivate()" title="Скрыть суммы">🔒 Скрыть</button>
+        <div style="text-align:right">
+          <div style="font-size:0.75rem;color:var(--muted)">Цель</div>
+          <div style="font-size:1rem;color:var(--green)">0 ₽</div>
+        </div>
       </div>
     </div>
     <div class="bar" style="height:10px;margin-bottom:20px">
@@ -678,6 +743,144 @@
       <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.7)" stroke-width="2" class="arc-side left"/>
       <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(255,104,53,0.55)" stroke-width="2" class="arc-side right"/>
       <circle cx="28" cy="2"  r="3.5" fill="rgba(245,166,35,0.85)"/>
+      <circle cx="840" cy="2" r="3.5" fill="rgba(255,104,53,0.7)"/>
+      <circle cx="28" cy="34" r="3.5" fill="rgba(245,166,35,0.85)"/>
+      <circle cx="840" cy="34" r="3.5" fill="rgba(255,104,53,0.7)"/>
+    </svg>
+  </div>
+
+  <!-- ГИЛЬДИЯ -->
+  <div class="section-title">⚔️ Доска заданий гильдии</div>
+  <div class="card">
+    <div class="guild-wrap">
+      <div class="guild-receptionist">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 200" width="110" height="200">
+          <rect x="0" y="150" width="110" height="50" rx="5" fill="#3d1e08"/>
+          <rect x="0" y="150" width="110" height="9" rx="4" fill="#5a2e10"/>
+          <line x1="20" y1="152" x2="20" y2="200" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
+          <line x1="55" y1="152" x2="55" y2="200" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+          <line x1="88" y1="152" x2="88" y2="200" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+          <path d="M 22,115 Q 18,135 16,150 L 94,150 Q 92,135 88,115 Z" fill="#1a2848"/>
+          <path d="M 22,115 Q 30,126 55,124 Q 80,126 88,115" fill="none" stroke="#c5922a" stroke-width="1.5"/>
+          <line x1="55" y1="124" x2="55" y2="150" stroke="#c5922a" stroke-width="1"/>
+          <polygon points="55,116 47,127 55,125 63,127" fill="white" opacity="0.9"/>
+          <path d="M 49,128 L 55,135 L 61,128 M 55,135 L 55,141" fill="none" stroke="#e53935" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="52" cy="143" r="2" fill="#f5a623"/>
+          <circle cx="58" cy="143" r="2" fill="#f5a623"/>
+          <ellipse cx="28" cy="154" rx="12" ry="6" fill="#f5d5b0"/>
+          <ellipse cx="82" cy="154" rx="12" ry="6" fill="#f5d5b0"/>
+          <rect x="49" y="104" width="12" height="15" rx="3" fill="#f5d5b0"/>
+          <ellipse cx="55" cy="84" rx="24" ry="26" fill="#f5d5b0"/>
+          <path d="M 32,76 Q 32,55 55,53 Q 78,55 78,76" fill="#18082a"/>
+          <path d="M 33,78 Q 26,92 27,112 Q 31,118 35,112 Q 32,98 37,87 Z" fill="#18082a"/>
+          <path d="M 77,78 Q 84,92 83,112 Q 79,118 75,112 Q 78,98 73,87 Z" fill="#18082a"/>
+          <path d="M 44,58 Q 50,54 55,53 Q 60,56 56,60" fill="#28104a"/>
+          <path d="M 35,70 L 39,66 L 43,70 L 39,74 Z M 39,66 L 39,62" fill="#e53935" stroke="#c52020" stroke-width="0.5"/>
+          <path d="M 43,77 Q 48,74 52,76" fill="none" stroke="#18082a" stroke-width="2" stroke-linecap="round"/>
+          <path d="M 58,76 Q 62,74 67,77" fill="none" stroke="#18082a" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="47" cy="86" rx="6" ry="7" fill="white"/>
+          <ellipse cx="63" cy="86" rx="6" ry="7" fill="white"/>
+          <ellipse cx="47" cy="87" rx="4.5" ry="5.5" fill="#5a1a9a"/>
+          <ellipse cx="63" cy="87" rx="4.5" ry="5.5" fill="#5a1a9a"/>
+          <circle cx="47" cy="89" r="2.5" fill="#18052e"/>
+          <circle cx="63" cy="89" r="2.5" fill="#18052e"/>
+          <circle cx="45" cy="85" r="1.5" fill="white"/>
+          <circle cx="61" cy="85" r="1.5" fill="white"/>
+          <path d="M 42,81 L 41,79 M 45,80 L 44,78 M 48,80 L 48,78" stroke="#18082a" stroke-width="0.8" stroke-linecap="round"/>
+          <path d="M 57,80 L 57,78 M 60,80 L 61,78 M 63,81 L 64,79" stroke="#18082a" stroke-width="0.8" stroke-linecap="round"/>
+          <ellipse cx="38" cy="93" rx="6" ry="2.5" fill="rgba(255,140,140,0.35)"/>
+          <ellipse cx="72" cy="93" rx="6" ry="2.5" fill="rgba(255,140,140,0.35)"/>
+          <path d="M 53,95 L 55,97 L 57,95" fill="none" stroke="rgba(180,100,80,0.4)" stroke-width="1"/>
+          <path d="M 49,100 Q 55,106 61,100" fill="none" stroke="#c07060" stroke-width="1.5" stroke-linecap="round"/>
+          <ellipse cx="31" cy="88" rx="4" ry="5" fill="#f5d5b0"/>
+          <ellipse cx="79" cy="88" rx="4" ry="5" fill="#f5d5b0"/>
+        </svg>
+        <div class="guild-speech">Добро пожаловать, авантюрист! Выбирай задание по силам 🗺️</div>
+      </div>
+      <div class="guild-board-panel">
+        <div class="guild-in-progress-title">⚡ В работе</div>
+        <div id="guild-in-progress"></div>
+        <div class="guild-bulletin-title">📋 Доска заданий</div>
+        <div class="guild-bulletin" id="guild-quest-cards"></div>
+        <div class="guild-add-form">
+          <input class="guild-add-input" id="custom-quest-title" placeholder="Своё задание..." maxlength="50">
+          <input class="guild-add-input" id="custom-quest-reward" placeholder="Монет" type="number" min="1" max="9999" style="width:80px;flex:none">
+          <button class="btn-accept" onclick="addCustomGuildQuest()">+ Добавить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arc-connector">
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.65)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(245,166,35,0.5)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2" r="3" fill="rgba(245,166,35,0.75)"/>
+      <circle cx="840" cy="2" r="3" fill="rgba(245,166,35,0.6)"/>
+      <circle cx="28" cy="34" r="3" fill="rgba(245,166,35,0.75)"/>
+      <circle cx="840" cy="34" r="3" fill="rgba(245,166,35,0.6)"/>
+    </svg>
+  </div>
+
+  <!-- ТРЕКЕР ТЕЛА -->
+  <div class="section-title collapsible" onclick="toggleSection('body-section')">💪 Трекер тела — замеры <span class="collapse-arrow" id="body-section-arrow">▲</span></div>
+  <div id="body-section">
+    <div class="card">
+      <div class="body-tracker-grid">
+        <div>
+          <div class="body-inputs">
+            <div class="body-input-wrap"><label>Вес (кг)</label><input id="bm-weight" type="number" step="0.1" placeholder="86.0"></div>
+            <div class="body-input-wrap"><label>Бицепс (см)</label><input id="bm-bicep" type="number" step="0.5" placeholder="38"></div>
+            <div class="body-input-wrap"><label>Грудь (см)</label><input id="bm-chest" type="number" step="0.5" placeholder="100"></div>
+            <div class="body-input-wrap"><label>Талия (см)</label><input id="bm-waist" type="number" step="0.5" placeholder="88"></div>
+            <div class="body-input-wrap"><label>Бёдра (см)</label><input id="bm-hips" type="number" step="0.5" placeholder="96"></div>
+          </div>
+          <button class="btn-quest" style="margin-bottom:12px" onclick="saveBodyMeasurement()">💾 Сохранить замеры этого месяца</button>
+          <div id="body-measurements-table"></div>
+          <div id="weight-chart" style="margin-top:10px"></div>
+        </div>
+        <div>
+          <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px">Фото этого месяца</div>
+          <div class="body-photo-slot" id="body-photo-slot" onclick="uploadBodyPhoto()">
+            <div style="text-align:center;color:var(--muted);font-size:0.75rem;padding:12px">📷<br>Добавить фото</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arc-connector">
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(76,175,80,0.5)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(245,166,35,0.45)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2" r="3" fill="rgba(76,175,80,0.6)"/>
+      <circle cx="840" cy="2" r="3" fill="rgba(245,166,35,0.55)"/>
+      <circle cx="28" cy="34" r="3" fill="rgba(76,175,80,0.6)"/>
+      <circle cx="840" cy="34" r="3" fill="rgba(245,166,35,0.55)"/>
+    </svg>
+  </div>
+
+  <!-- ВИТАМИНЫ -->
+  <div class="section-title collapsible" onclick="toggleSection('vitamins-section')">💊 Витамины и добавки <span class="collapse-arrow" id="vitamins-section-arrow">▲</span></div>
+  <div id="vitamins-section">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:0.72rem;color:var(--muted)">Отмечай каждый день</div>
+        <div id="vitamins-progress" style="font-size:0.82rem"></div>
+      </div>
+      <div id="vitamins-list"></div>
+      <div class="vit-add-form">
+        <input class="vit-add-input" id="new-vitamin-name" placeholder="Название добавки..." maxlength="40">
+        <button class="btn-accept" onclick="addVitamin()">+ Добавить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="arc-connector">
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.7)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(255,104,53,0.55)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2" r="3.5" fill="rgba(245,166,35,0.85)"/>
       <circle cx="840" cy="2" r="3.5" fill="rgba(255,104,53,0.7)"/>
       <circle cx="28" cy="34" r="3.5" fill="rgba(245,166,35,0.85)"/>
       <circle cx="840" cy="34" r="3.5" fill="rgba(255,104,53,0.7)"/>
@@ -894,28 +1097,32 @@
 
   // ===== МИНИ-КВЕСТЫ =====
   const QUESTS = [
-    { id: 'water',     icon: '💧', text: 'Выпить стакан воды',       sub: '⚡ 2 мин · прямо сейчас',   coins: 2,  micro: true },
-    { id: 'squat',     icon: '🦵', text: '20 приседаний',             sub: '⚡ 2 мин · встань и сделай', coins: 5,  micro: true },
-    { id: 'skin',      icon: '🧴', text: 'Уход за лицом',             sub: '⚡ 3 мин · утренний ритуал', coins: 4,  micro: true },
-    { id: 'gratitude', icon: '🙏', text: 'Написать 1 вещь за которую благодарен', sub: '⚡ 2 мин',  coins: 3,  micro: true },
-    { id: 'stretch',   icon: '🤸', text: 'Растяжка 5 минут',          sub: '⚡ 5 мин · шея и плечи',    coins: 5,  micro: true },
-    { id: 'steps',     icon: '🚶', text: '10 000 шагов',              sub: 'Пройди сегодня',            coins: 10 },
-    { id: 'workout',   icon: '🏋️', text: 'Тренировка в зале',         sub: 'Зал или дома',              coins: 15 },
-    { id: 'protein',   icon: '🥩', text: '160г белка за день',        sub: 'Правильное питание',        coins: 10 },
-    { id: 'work30',    icon: '⚡', text: '30 мин глубокой работы',    sub: 'Телефон в сторону',         coins: 8  },
-    { id: 'work2h',    icon: '🔥', text: '2 часа работы',             sub: 'Глубокий фокус',            coins: 20 },
-    { id: 'sleep',     icon: '😴', text: 'Лечь до 23:00',             sub: 'Качественный сон',          coins: 8  },
-    { id: 'content',   icon: '📝', text: 'Пост в канал',              sub: 'Любой из каналов',          coins: 12 },
-    { id: 'client',    icon: '💰', text: 'Написать 5 аутрич-сообщений', sub: 'Владельцам каналов',    coins: 15 },
+    { id:'water',     icon:'💧', text:'Выпить стакан воды',            sub:'⚡ 30 сек · прямо сейчас',    coins:1,  micro:true },
+    { id:'squat',     icon:'🦵', text:'20 приседаний',                  sub:'⚡ 2 мин · встань и сделай',  coins:2,  micro:true },
+    { id:'skin',      icon:'🧴', text:'Уход за лицом',                  sub:'⚡ 3 мин · утренний ритуал',  coins:3,  micro:true },
+    { id:'gratitude', icon:'🙏', text:'Написать 1 благодарность',        sub:'⚡ 2 мин',                    coins:2,  micro:true },
+    { id:'stretch',   icon:'🤸', text:'Растяжка 5 минут',               sub:'⚡ 5 мин · шея и плечи',      coins:5,  micro:true },
+    { id:'nolip',     icon:'👄', text:'Не кусать губу',                  sub:'Весь день',                   coins:15 },
+    { id:'nosweets',  icon:'🚫', text:'Без сладкого весь день',          sub:'Чистое питание',              coins:20 },
+    { id:'review',    icon:'📊', text:'15 мин анализ дня',              sub:'Что принесло доход?',         coins:15 },
+    { id:'protein',   icon:'🥩', text:'160г белка за день',             sub:'Правильное питание',          coins:15 },
+    { id:'sleep',     icon:'😴', text:'Лечь до 23:00',                  sub:'Качественный сон',            coins:20 },
+    { id:'hobby',     icon:'🎯', text:'Хобби 30+ минут',                sub:'Перезарядка',                 coins:30 },
+    { id:'work30',    icon:'⚡', text:'30 мин глубокой работы',         sub:'Телефон в сторону',           coins:30 },
+    { id:'work2h',    icon:'🔥', text:'2 часа работы',                  sub:'Глубокий фокус',              coins:120 },
+    { id:'workout',   icon:'🏋️', text:'Тренировка в зале',              sub:'60+ минут',                   coins:60 },
+    { id:'walk10km',  icon:'🚶', text:'10 км пешком',                   sub:'Реальные километры',          coins:90 },
+    { id:'content',   icon:'📝', text:'Пост в канал',                   sub:'Любой из каналов',            coins:30 },
+    { id:'client',    icon:'💰', text:'5 аутрич-сообщений',             sub:'Владельцам каналов',          coins:45 },
   ];
   const SHOP = [
-    { id: 's1', emoji: '☕', text: 'Кофе в хорошей кофейне',     cost: 15 },
-    { id: 's2', emoji: '🥩', text: 'Стейк или бургер',            cost: 30 },
-    { id: 's3', emoji: '😴', text: 'Дневной сон 20 мин без вины', cost: 20 },
-    { id: 's4', emoji: '🎬', text: 'Сериал без лимита — вечер',   cost: 25 },
-    { id: 's5', emoji: '💆', text: 'Массаж 60 минут',             cost: 80 },
-    { id: 's6', emoji: '🏊', text: 'Баня / сауна',                cost: 60 },
-    { id: 's7', emoji: '🌊', text: 'Выходные в другом городе',    cost: 200 },
+    { id:'s1', emoji:'☕', text:'Кофе в хорошей кофейне',      cost:30  },
+    { id:'s2', emoji:'🥩', text:'Стейк или бургер',             cost:90  },
+    { id:'s3', emoji:'😴', text:'Дневной сон 20 мин без вины',  cost:20  },
+    { id:'s4', emoji:'🎬', text:'Сериал без лимита — вечер (40 мин)', cost:40 },
+    { id:'s5', emoji:'💆', text:'Массаж 60 минут',              cost:60  },
+    { id:'s6', emoji:'🏊', text:'Баня / сауна',                 cost:150 },
+    { id:'s7', emoji:'🌊', text:'Выходные в другом городе',     cost:400 },
   ];
 
   function getTodayKey() { const d=new Date(); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
@@ -1035,19 +1242,23 @@
   function fmt(n) { return n.toLocaleString('ru-RU')+' ₽'; }
 
   function renderDebts() {
-    const debts=loadDebts();
+    const debts=loadDebts(), priv=isDebtPrivate();
     const totalOriginal=DEFAULT_DEBTS.reduce((s,d)=>s+d.original,0);
     const totalCurrent=debts.reduce((s,d)=>s+d.current,0);
-    document.getElementById('total-debt-display').innerText=fmt(totalCurrent);
+    const dispEl=document.getElementById('total-debt-display');
+    if(dispEl) dispEl.innerHTML=priv?'<span style="filter:blur(6px)">••••••• ₽</span>':fmt(totalCurrent);
     document.getElementById('debt-total-bar').style.width=(totalCurrent/totalOriginal*100)+'%';
+    const btn=document.getElementById('debt-private-btn');
+    if(btn) btn.textContent=priv?'🔓 Показать':'🔒 Скрыть';
     const list=document.getElementById('debts-list'); list.innerHTML='';
-    debts.forEach(debt => {
+    debts.forEach(debt=>{
       const isPaid=debt.current<=0, debtPct=Math.max(0,debt.current/debt.original*100);
+      const amountStr=priv?'<span style="filter:blur(5px)">••••• ₽</span>':(isPaid?'ЗАКРЫТ':fmt(debt.current));
       const div=document.createElement('div'); div.className='debt-item';
       div.innerHTML=`<div class="debt-header">
         <div class="debt-name ${isPaid?'paid':''}">${isPaid?'✅':'💳'} ${debt.name}</div>
         <div style="display:flex;align-items:center;gap:8px">
-          <div class="debt-amount ${isPaid?'paid':''}">${isPaid?'ЗАКРЫТ':fmt(debt.current)}</div>
+          <div class="debt-amount ${isPaid?'paid':''}">${amountStr}</div>
           ${isPaid?'<div class="debt-paid-badge">🏆 Победа!</div>':`<button class="debt-edit" onclick="editDebt('${debt.id}')">обновить</button>`}
         </div></div>
         ${!isPaid?`<div class="bar" style="height:6px"><div class="bar-fill bar-debt" style="width:${debtPct}%"></div></div>`:''}`;
@@ -1197,6 +1408,312 @@
     const v=loadVision(); delete v[id]; saveVision(v); renderVisionBoard();
   }
 
+  // ===== РАНГ ИГРОКА =====
+  function getPlayerRank(total) {
+    if (total >= 700) return { rank:'SS', title:'Бог',         color:'#ffd700', bg:'rgba(255,215,0,0.1)' };
+    if (total >= 400) return { rank:'S',  title:'Легенда',     color:'#f5a623', bg:'rgba(245,166,35,0.1)' };
+    if (total >= 200) return { rank:'A',  title:'Чемпион',     color:'#e53935', bg:'rgba(229,57,53,0.1)' };
+    if (total >= 100) return { rank:'B',  title:'Мастер',      color:'#ff9800', bg:'rgba(255,152,0,0.1)' };
+    if (total >= 50)  return { rank:'C',  title:'Герой',       color:'#ab47bc', bg:'rgba(171,71,188,0.1)' };
+    if (total >= 25)  return { rank:'D',  title:'Охотник',     color:'#42a5f5', bg:'rgba(66,165,245,0.1)' };
+    if (total >= 10)  return { rank:'E',  title:'Авантюрист',  color:'#4caf50', bg:'rgba(76,175,80,0.1)' };
+    return { rank:'F', title:'Новобранец', color:'#888', bg:'rgba(136,136,136,0.08)' };
+  }
+  function updatePlayerRank() {
+    const total = parseInt(localStorage.getItem('paradise_quests_total')||'0');
+    const r = getPlayerRank(total);
+    const el = document.getElementById('player-rank-badge');
+    if (!el) return;
+    el.innerHTML = `<span style="font-weight:bold;color:${r.color}">[${r.rank}]</span>&nbsp;${r.title}`;
+    el.style.background = r.bg;
+    el.style.borderColor = r.color + '55';
+    el.style.color = 'var(--text)';
+  }
+
+  // ===== ПРИВАТНОСТЬ ДОЛГОВ =====
+  function isDebtPrivate() { return localStorage.getItem('paradise_debt_private') === '1'; }
+  function toggleDebtPrivate() {
+    localStorage.setItem('paradise_debt_private', isDebtPrivate() ? '0' : '1');
+    const btn = document.getElementById('debt-private-btn');
+    if (btn) { btn.textContent = isDebtPrivate() ? '🔓 Показать' : '🔒 Скрыть'; }
+    renderDebts();
+  }
+
+  // ===== КОЛЛАПС СЕКЦИЙ =====
+  function toggleSection(id) {
+    const el = document.getElementById(id);
+    const arrow = document.getElementById(id + '-arrow');
+    if (!el) return;
+    const hiding = el.style.display !== 'none';
+    el.style.display = hiding ? 'none' : '';
+    if (arrow) arrow.textContent = hiding ? '▼' : '▲';
+    localStorage.setItem('paradise_col_' + id, hiding ? '1' : '0');
+  }
+  function initCollapsible(id) {
+    if (localStorage.getItem('paradise_col_' + id) === '1') {
+      const el = document.getElementById(id);
+      const arrow = document.getElementById(id + '-arrow');
+      if (el) el.style.display = 'none';
+      if (arrow) arrow.textContent = '▼';
+    }
+  }
+
+  // ===== ГИЛЬДИЯ =====
+  const RANK_COLORS = { F:'#888', E:'#4caf50', D:'#42a5f5', C:'#ab47bc', B:'#ff9800', A:'#e53935', S:'#f5a623', SS:'#ffd700', '?':'#fff' };
+  const RANK_BG    = { F:'rgba(136,136,136,0.1)', E:'rgba(76,175,80,0.1)', D:'rgba(66,165,245,0.1)', C:'rgba(171,71,188,0.1)', B:'rgba(255,152,0,0.1)', A:'rgba(229,57,53,0.1)', S:'rgba(245,166,35,0.15)', SS:'rgba(255,215,0,0.2)', '?':'rgba(255,255,255,0.05)' };
+  const TYPE_LBL   = { instant:'⚡ Мгновенное', daily:'🌅 Ежедневное', weekly:'📅 Еженедельное', monthly:'📅 Ежемесячное', epic:'🌟 Эпическое' };
+  const GUILD_QUESTS = [
+    { id:'gf1', rank:'F', title:'Стакан воды',           desc:'Прямо сейчас',               reward:1,   icon:'💧', type:'instant' },
+    { id:'gf2', rank:'F', title:'20 приседаний',          desc:'Встань и сделай',             reward:2,   icon:'🦵', type:'instant' },
+    { id:'ge1', rank:'E', title:'Не кусать губу',         desc:'Весь день',                  reward:15,  icon:'👄', type:'daily'   },
+    { id:'ge2', rank:'E', title:'Без сладкого',           desc:'Чистое питание',              reward:20,  icon:'🚫', type:'daily'   },
+    { id:'ge3', rank:'E', title:'160г белка',             desc:'Ежедневная норма',            reward:15,  icon:'🥩', type:'daily'   },
+    { id:'ge4', rank:'E', title:'10 км пешком',           desc:'Реальные шаги',               reward:90,  icon:'🚶', type:'daily'   },
+    { id:'gd1', rank:'D', title:'Лечь до 23:00',          desc:'Качественный сон',            reward:20,  icon:'😴', type:'daily'   },
+    { id:'gd2', rank:'D', title:'15 мин анализа дня',     desc:'Что принесло доход?',         reward:15,  icon:'📊', type:'daily'   },
+    { id:'gd3', rank:'D', title:'Хобби 30+ минут',        desc:'Удовольствие сегодня',        reward:30,  icon:'🎯', type:'daily'   },
+    { id:'gd4', rank:'D', title:'Тренировка в зале',      desc:'60+ минут',                   reward:60,  icon:'🏋️', type:'daily'   },
+    { id:'gc1', rank:'C', title:'Пост в канал',           desc:'Любой канал',                 reward:30,  icon:'📝', type:'weekly'  },
+    { id:'gc2', rank:'C', title:'5 аутрич-сообщений',     desc:'Владельцам каналов',          reward:45,  icon:'📨', type:'weekly'  },
+    { id:'gc3', rank:'C', title:'2 часа глубокой работы', desc:'Без прерываний',              reward:120, icon:'🔥', type:'weekly'  },
+    { id:'gb1', rank:'B', title:'Новый клиент',           desc:'Оплата получена',             reward:200, icon:'🤝', type:'monthly' },
+    { id:'ga1', rank:'A', title:'50 подп. ИИ-директор',  desc:'Рост канала',                 reward:500, icon:'📣', type:'monthly' },
+    { id:'gs1', rank:'S', title:'Закрыть 130k долга',     desc:'Полностью погасить',          reward:1000,icon:'💰', type:'epic'    },
+  ];
+
+  function guildPeriodKey(type) {
+    const d = new Date();
+    if (type==='daily'||type==='instant') return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    if (type==='weekly') {
+      const j=new Date(d.getFullYear(),0,1), w=Math.ceil(((d-j)/86400000+j.getDay()+1)/7);
+      return `${d.getFullYear()}-W${w}`;
+    }
+    if (type==='monthly') return `${d.getFullYear()}-${d.getMonth()}`;
+    return 'epic';
+  }
+  function isGuildDone(q) {
+    const k=`paradise_gdone_${q.type}_${guildPeriodKey(q.type)}`;
+    return JSON.parse(localStorage.getItem(k)||'[]').includes(q.id);
+  }
+  function markGuildDone(q) {
+    const k=`paradise_gdone_${q.type}_${guildPeriodKey(q.type)}`;
+    const a=JSON.parse(localStorage.getItem(k)||'[]');
+    if(!a.includes(q.id)){ a.push(q.id); localStorage.setItem(k,JSON.stringify(a)); }
+  }
+  function getAccepted() { return JSON.parse(localStorage.getItem('paradise_guild_accepted')||'[]'); }
+  function setAccepted(a) { localStorage.setItem('paradise_guild_accepted',JSON.stringify(a)); }
+
+  function acceptGuildQuest(id) {
+    const a=getAccepted(); if(!a.includes(id)){a.push(id);setAccepted(a);} renderGuildBoard();
+  }
+  function completeGuildQuest(id) {
+    const allQ=[...GUILD_QUESTS,...JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]')];
+    const q=allQ.find(q=>q.id===id); if(!q) return;
+    markGuildDone(q);
+    setAccepted(getAccepted().filter(a=>a!==id));
+    saveCoins(loadCoins()+q.reward);
+    const tot=parseInt(localStorage.getItem('paradise_quests_total')||'0')+1;
+    localStorage.setItem('paradise_quests_total',tot);
+    renderGuildBoard(); renderQuests(); renderShop(); updatePlayerRank(); renderStaircase(true);
+    document.getElementById('reward-emoji').innerText=q.icon;
+    document.getElementById('reward-text').innerText=`🏆 Задание гильдии выполнено!\n\n[${q.rank}] ${q.title}\n\n+${q.reward} монет за отвагу!`;
+    document.getElementById('reward-popup').classList.add('show');
+  }
+  function addCustomGuildQuest() {
+    const title=document.getElementById('custom-quest-title').value.trim();
+    const reward=parseInt(document.getElementById('custom-quest-reward').value)||10;
+    if(!title) return;
+    const custom=JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]');
+    custom.push({id:'cq_'+Date.now(),rank:'?',title,desc:'Своё задание',reward,icon:'⭐',type:'instant'});
+    localStorage.setItem('paradise_guild_custom',JSON.stringify(custom));
+    document.getElementById('custom-quest-title').value='';
+    document.getElementById('custom-quest-reward').value='';
+    renderGuildBoard();
+  }
+  function renderGuildBoard() {
+    const accepted=getAccepted();
+    const custom=JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]');
+    const allQ=[...GUILD_QUESTS,...custom];
+    // In progress
+    const ipEl=document.getElementById('guild-in-progress');
+    const ip=accepted.map(id=>allQ.find(q=>q.id===id)).filter(Boolean);
+    if(ipEl){
+      if(!ip.length){ ipEl.innerHTML='<div style="font-size:0.78rem;color:var(--muted);padding:6px 0">Нет активных заданий — прими что-нибудь</div>'; }
+      else { ipEl.innerHTML=ip.map(q=>`<div class="guild-active-card" style="border-color:${RANK_COLORS[q.rank]}40">
+        <span class="guild-rank-badge" style="color:${RANK_COLORS[q.rank]};background:${RANK_BG[q.rank]}">[${q.rank}]</span>
+        <span>${q.icon} ${q.title}</span><span style="flex:1"></span>
+        <span style="color:var(--gold);font-size:0.78rem;margin-right:8px">+${q.reward}🪙</span>
+        <button class="btn-gcomp" onclick="completeGuildQuest('${q.id}')">✓ Выполнил</button>
+      </div>`).join(''); }
+    }
+    // Board
+    const bEl=document.getElementById('guild-quest-cards'); if(!bEl) return;
+    bEl.innerHTML='';
+    ['F','E','D','C','B','A','S','?'].forEach(rank=>{
+      const rq=allQ.filter(q=>q.rank===rank); if(!rq.length) return;
+      const sec=document.createElement('div'); sec.className='guild-rank-section';
+      sec.innerHTML=`<div class="guild-rank-label" style="color:${RANK_COLORS[rank]}">Ранг [${rank}]</div>`;
+      rq.forEach(q=>{
+        const done=isGuildDone(q), inAcc=accepted.includes(q.id);
+        const card=document.createElement('div'); card.className='guild-quest-card';
+        card.style.borderLeftColor=RANK_COLORS[q.rank]; if(done) card.style.opacity='0.42';
+        card.innerHTML=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+          <span class="guild-rank-badge" style="color:${RANK_COLORS[q.rank]};background:${RANK_BG[q.rank]}">[${q.rank}]</span>
+          <span style="font-size:0.85rem;font-weight:bold;color:var(--text)">${q.icon} ${q.title}</span>
+        </div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-bottom:5px">${q.desc} · ${TYPE_LBL[q.type]||q.type}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="color:var(--gold);font-size:0.78rem;font-weight:bold">+${q.reward} 🪙</span>
+          ${done?'<span style="font-size:0.7rem;color:var(--green)">✓ Выполнено</span>':
+            inAcc?'<span style="font-size:0.7rem;color:var(--blue)">⚡ В работе</span>':
+            `<button class="btn-accept" onclick="acceptGuildQuest('${q.id}')">Принять</button>`}
+        </div>`;
+        sec.appendChild(card);
+      });
+      bEl.appendChild(sec);
+    });
+  }
+
+  // ===== ТРЕКЕР ТЕЛА =====
+  function getCurrentMonthKey(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
+  function loadMeasurements(){ return JSON.parse(localStorage.getItem('paradise_measurements')||'[]'); }
+  function saveMeasurements(a){ localStorage.setItem('paradise_measurements',JSON.stringify(a)); }
+
+  function saveBodyMeasurement(){
+    const month=getCurrentMonthKey();
+    const entry={
+      month,
+      weight:parseFloat(document.getElementById('bm-weight').value)||0,
+      bicep: parseFloat(document.getElementById('bm-bicep').value)||0,
+      chest: parseFloat(document.getElementById('bm-chest').value)||0,
+      waist: parseFloat(document.getElementById('bm-waist').value)||0,
+      hips:  parseFloat(document.getElementById('bm-hips').value)||0,
+    };
+    const arr=loadMeasurements(), idx=arr.findIndex(m=>m.month===month);
+    if(idx>=0) arr[idx]=entry; else arr.push(entry);
+    arr.sort((a,b)=>a.month.localeCompare(b.month));
+    saveMeasurements(arr); renderBodyTracker();
+    document.getElementById('reward-emoji').innerText='💪';
+    document.getElementById('reward-text').innerText=`Замеры за ${month} сохранены!\n\nВес: ${entry.weight||'—'} кг · Бицепс: ${entry.bicep||'—'} см\nГрудь: ${entry.chest||'—'} · Талия: ${entry.waist||'—'} · Бёдра: ${entry.hips||'—'}`;
+    document.getElementById('reward-popup').classList.add('show');
+  }
+
+  function renderBodyTracker(){
+    const arr=loadMeasurements();
+    const tableEl=document.getElementById('body-measurements-table'); if(!tableEl) return;
+    if(!arr.length){
+      tableEl.innerHTML='<div style="font-size:0.78rem;color:var(--muted);padding:8px 0">Нет данных. Введи первые замеры выше.</div>';
+    } else {
+      tableEl.innerHTML=`<table style="width:100%;font-size:0.72rem;border-collapse:collapse">
+        <thead><tr style="color:var(--muted)">
+          <th style="text-align:left;padding:4px">Месяц</th>
+          <th style="padding:4px;text-align:right">Вес</th>
+          <th style="padding:4px;text-align:right">Бицепс</th>
+          <th style="padding:4px;text-align:right">Грудь</th>
+          <th style="padding:4px;text-align:right">Талия</th>
+          <th style="padding:4px;text-align:right">Бёдра</th>
+        </tr></thead>
+        <tbody>${arr.slice(-6).reverse().map(m=>`
+          <tr style="border-top:1px solid var(--border)">
+            <td style="padding:4px;color:var(--gold)">${m.month}</td>
+            <td style="padding:4px;text-align:right">${m.weight||'—'}</td>
+            <td style="padding:4px;text-align:right">${m.bicep||'—'}</td>
+            <td style="padding:4px;text-align:right">${m.chest||'—'}</td>
+            <td style="padding:4px;text-align:right">${m.waist||'—'}</td>
+            <td style="padding:4px;text-align:right">${m.hips||'—'}</td>
+          </tr>`).join('')}
+        </tbody></table>`;
+    }
+    // Sparkline
+    const chartEl=document.getElementById('weight-chart');
+    const weights=arr.map(m=>m.weight).filter(w=>w>0);
+    if(chartEl && weights.length>=2){
+      const mn=Math.min(...weights)-2, mx=Math.max(...weights)+2;
+      const W=280,H=55,pad=14;
+      const pts=weights.map((v,i)=>{
+        const x=pad+(i/(weights.length-1))*(W-pad*2);
+        const y=H-pad-((v-mn)/(mx-mn))*(H-pad*2);
+        return [x,y];
+      });
+      chartEl.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">
+        <polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/>
+        ${pts.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="3" fill="var(--gold)"/>
+          <text x="${x}" y="${y-6}" fill="var(--muted)" font-size="8" text-anchor="middle">${weights[i]}</text>`).join('')}
+      </svg>`;
+    } else if(chartEl) chartEl.innerHTML='';
+    // Photo
+    const photos=JSON.parse(localStorage.getItem('paradise_body_photos')||'{}');
+    const photo=photos[getCurrentMonthKey()];
+    const ps=document.getElementById('body-photo-slot');
+    if(ps){
+      if(photo) ps.innerHTML=`<img src="${photo}" style="width:100%;border-radius:8px;cursor:pointer" onclick="uploadBodyPhoto()" alt="Фото ${getCurrentMonthKey()}"><div style="font-size:0.62rem;color:var(--muted);text-align:center;padding:4px">Нажми → заменить</div>`;
+      else ps.innerHTML='<div style="text-align:center;color:var(--muted);font-size:0.75rem;padding:12px">📷<br>Добавить фото</div>';
+    }
+  }
+  function uploadBodyPhoto(){
+    const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+    inp.onchange=e=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        const img=new Image();
+        img.onload=()=>{
+          const ratio=Math.min(400/img.width,600/img.height,1);
+          const w=Math.round(img.width*ratio),h=Math.round(img.height*ratio);
+          const c=document.createElement('canvas'); c.width=w; c.height=h;
+          c.getContext('2d').drawImage(img,0,0,w,h);
+          const photos=JSON.parse(localStorage.getItem('paradise_body_photos')||'{}');
+          photos[getCurrentMonthKey()]=c.toDataURL('image/jpeg',0.72);
+          localStorage.setItem('paradise_body_photos',JSON.stringify(photos));
+          renderBodyTracker();
+        };
+        img.src=ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+    inp.click();
+  }
+
+  // ===== ВИТАМИНЫ =====
+  const DEFAULT_VITAMINS=[
+    {id:'vd3',  name:'Витамин D3 5000 МЕ', daily:true },
+    {id:'vomg', name:'Омега-3',             daily:true },
+    {id:'vmg',  name:'Магний B6',           daily:true },
+    {id:'vzn',  name:'Цинк',               daily:true },
+    {id:'vcr',  name:'Креатин 5г',         daily:true },
+    {id:'vprot',name:'Протеин',             daily:false},
+  ];
+  function loadVitamins(){ const s=localStorage.getItem('paradise_vitamins_list'); return s?JSON.parse(s):DEFAULT_VITAMINS; }
+  function saveVitamins(a){ localStorage.setItem('paradise_vitamins_list',JSON.stringify(a)); }
+  function vitDayKey(){ const d=new Date(); return `paradise_vit_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`; }
+  function loadVitTaken(){ return JSON.parse(localStorage.getItem(vitDayKey())||'[]'); }
+  function toggleVitamin(id){
+    const t=loadVitTaken(), i=t.indexOf(id);
+    if(i>=0) t.splice(i,1); else t.push(id);
+    localStorage.setItem(vitDayKey(),JSON.stringify(t));
+    renderVitamins();
+  }
+  function renderVitamins(){
+    const vits=loadVitamins(), taken=loadVitTaken();
+    const el=document.getElementById('vitamins-list'); if(!el) return;
+    el.innerHTML=vits.map(v=>`<div class="vitamin-item${taken.includes(v.id)?' taken':''}" onclick="toggleVitamin('${v.id}')">
+      <div class="vit-check">${taken.includes(v.id)?'✓':'○'}</div>
+      <div class="vit-name">${v.name}</div>
+      <div class="vit-freq">${v.daily?'каждый день':'по надобности'}</div>
+    </div>`).join('');
+    const daily=vits.filter(v=>v.daily), takenD=daily.filter(v=>taken.includes(v.id)).length;
+    const pg=document.getElementById('vitamins-progress');
+    if(pg) pg.innerHTML=`<span style="color:${takenD===daily.length?'var(--green)':'var(--gold)'}">${takenD}/${daily.length}</span> принято сегодня`;
+  }
+  function addVitamin(){
+    const name=document.getElementById('new-vitamin-name').value.trim(); if(!name) return;
+    const vits=loadVitamins();
+    vits.push({id:'vc_'+Date.now(),name,daily:true});
+    saveVitamins(vits);
+    document.getElementById('new-vitamin-name').value='';
+    renderVitamins();
+  }
+
   // Инициализация
   initParticles();
   initMonthlyTheme();
@@ -1209,6 +1726,12 @@
   renderChests();
   renderStaircase();
   renderVisionBoard();
+  updatePlayerRank();
+  renderGuildBoard();
+  renderBodyTracker();
+  renderVitamins();
+  initCollapsible('body-section');
+  initCollapsible('vitamins-section');
   document.getElementById('coins-header').innerText = loadCoins();
 </script>
 </body>
