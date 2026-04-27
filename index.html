@@ -531,6 +531,55 @@
   .vit-add-input { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:5px 10px; border-radius:6px; font-size:0.78rem; flex:1; }
   .vit-add-input:focus { outline:none; border-color:var(--gold); }
 
+  /* ТРЕКЕР ПРИВЫЧЕК */
+  .habit-row {
+    display:flex; align-items:center; gap:12px; padding:10px 0;
+    border-bottom:1px solid var(--border); flex-wrap:wrap;
+  }
+  .habit-row:last-of-type { border-bottom:none; }
+  .habit-check-btn {
+    width:34px; height:34px; border-radius:50%; border:2px solid var(--border-hi);
+    background:transparent; cursor:pointer; display:flex; align-items:center;
+    justify-content:center; font-size:1rem; flex-shrink:0; transition:all 0.2s;
+    color:var(--muted);
+  }
+  .habit-check-btn.done { background:var(--green); border-color:var(--green); color:#fff; }
+  .habit-check-btn:not(.done):hover { border-color:var(--green); color:var(--green); }
+  .habit-icon { font-size:1.4rem; flex-shrink:0; }
+  .habit-name { font-size:0.88rem; flex:1; min-width:100px; }
+  .habit-streak {
+    display:flex; align-items:center; gap:5px; font-size:0.82rem;
+    font-weight:bold; color:var(--gold); white-space:nowrap;
+  }
+  .habit-streak.on-fire { color:#ff6835; animation:pulse 1.5s infinite; }
+  .habit-streak-num { font-size:1.1rem; }
+  .habit-dots { display:flex; gap:3px; align-items:center; }
+  .habit-dot {
+    width:10px; height:10px; border-radius:50%;
+    flex-shrink:0; cursor:default;
+  }
+  .habit-dot.done-day   { background:var(--green); box-shadow:0 0 4px rgba(76,175,80,0.5); }
+  .habit-dot.missed-day { background:#2a1a08; border:1px solid #3a2808; }
+  .habit-dot.today-done { background:var(--gold); box-shadow:0 0 6px rgba(245,166,35,0.6); }
+  .habit-dot.today-empty{ background:transparent; border:2px solid var(--gold); }
+  .habit-dot.future     { background:#1a0e04; }
+  .habit-del-btn {
+    background:none; border:1px solid transparent; color:#3a2010;
+    padding:3px 6px; border-radius:4px; font-size:0.68rem; cursor:pointer;
+    transition:all 0.2s; flex-shrink:0;
+  }
+  .habit-row:hover .habit-del-btn { border-color:#5a2010; color:#7a3010; }
+  .habit-del-btn:hover { border-color:var(--red)!important; color:var(--red)!important; }
+  .habit-add-form {
+    display:flex; gap:8px; margin-top:12px; border-top:1px solid var(--border); padding-top:12px; flex-wrap:wrap;
+  }
+  .habit-add-input {
+    background:var(--card2); border:1px solid var(--border); color:var(--text);
+    padding:6px 10px; border-radius:6px; font-size:0.82rem;
+  }
+  .habit-add-input:focus { outline:none; border-color:var(--gold); }
+  .habit-best-streak { font-size:0.62rem; color:var(--muted); white-space:nowrap; }
+
   /* СЕКЦИИ ГИЛЬДИИ ПО СЛОЖНОСТИ */
   .guild-tier-header {
     display:flex; align-items:center; gap:8px;
@@ -994,6 +1043,30 @@
   <div class="section-title" style="margin-top:14px">✅ Выполнено сегодня</div>
   <div class="card" id="done-today-card">
     <div id="done-today-list"><div class="done-today-empty">Пока ничего. Выполни первое задание!</div></div>
+  </div>
+
+  <div class="arc-connector">
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(76,175,80,0.55)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(245,166,35,0.45)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2" r="3" fill="rgba(76,175,80,0.65)"/>
+      <circle cx="840" cy="2" r="3" fill="rgba(245,166,35,0.55)"/>
+      <circle cx="28" cy="34" r="3" fill="rgba(76,175,80,0.65)"/>
+      <circle cx="840" cy="34" r="3" fill="rgba(245,166,35,0.55)"/>
+    </svg>
+  </div>
+
+  <!-- ТРЕКЕР ПРИВЫЧЕК -->
+  <div class="section-title collapsible" onclick="toggleSection('habits-section')">🔥 Трекер привычек — дней подряд <span class="collapse-arrow" id="habits-section-arrow">▲</span></div>
+  <div id="habits-section">
+    <div class="card">
+      <div id="habits-list"></div>
+      <div class="habit-add-form">
+        <input class="habit-add-input" id="new-habit-icon" placeholder="🎯" maxlength="4" style="width:52px;text-align:center">
+        <input class="habit-add-input" id="new-habit-name" placeholder="Название привычки..." maxlength="50" style="flex:1">
+        <button class="btn-accept" onclick="addHabit()">+ Добавить</button>
+      </div>
+    </div>
   </div>
 
   <div class="arc-connector">
@@ -2089,6 +2162,145 @@
     renderVitamins();
   }
 
+  // ===== ТРЕКЕР ПРИВЫЧЕК =====
+  const DEFAULT_HABITS = [
+    { id:'hb_walk',   name:'10 км пешком',        icon:'🚶' },
+    { id:'hb_sweet',  name:'Без сладкого весь день', icon:'🚫' },
+    { id:'hb_protein',name:'160г белка',            icon:'🥩' },
+    { id:'hb_sleep',  name:'Лечь до 23:00',         icon:'😴' },
+    { id:'hb_work',   name:'2 часа глубокой работы',icon:'🔥' },
+  ];
+
+  function loadHabits() {
+    const s = localStorage.getItem('paradise_habits');
+    return s ? JSON.parse(s) : DEFAULT_HABITS;
+  }
+  function saveHabits(a) { localStorage.setItem('paradise_habits', JSON.stringify(a)); }
+
+  function habitDateKey(date) {
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  }
+  function todayDateKey() { return habitDateKey(new Date()); }
+
+  function getHabitDoneDates(hid) {
+    return JSON.parse(localStorage.getItem('paradise_habit_' + hid) || '[]');
+  }
+  function setHabitDoneDates(hid, dates) {
+    localStorage.setItem('paradise_habit_' + hid, JSON.stringify(dates));
+  }
+
+  function toggleHabitToday(hid) {
+    const today = todayDateKey();
+    const dates = getHabitDoneDates(hid);
+    const idx = dates.indexOf(today);
+    if (idx >= 0) dates.splice(idx, 1); else dates.push(today);
+    setHabitDoneDates(hid, dates);
+    renderHabits();
+  }
+
+  function calcHabitStreak(dates) {
+    if (!dates.length) return { current: 0, best: 0 };
+    const sorted = [...new Set(dates)].sort();
+    const today = new Date(); today.setHours(0,0,0,0);
+    const yesterday = new Date(today); yesterday.setDate(yesterday.getDate()-1);
+    const todayKey = habitDateKey(today);
+    const yestKey  = habitDateKey(yesterday);
+
+    // Текущий стрик: идём назад от сегодня или вчера
+    let current = 0;
+    let check = dates.includes(todayKey) ? today : (dates.includes(yestKey) ? yesterday : null);
+    if (check) {
+      while (true) {
+        const k = habitDateKey(check);
+        if (!dates.includes(k)) break;
+        current++;
+        check = new Date(check); check.setDate(check.getDate()-1);
+      }
+    }
+
+    // Лучший стрик за всё время
+    let best = 0, run = 1;
+    for (let i = 1; i < sorted.length; i++) {
+      const prev = new Date(sorted[i-1]);
+      const curr = new Date(sorted[i]);
+      prev.setDate(prev.getDate()+1);
+      if (habitDateKey(prev) === sorted[i]) { run++; } else { run = 1; }
+      if (run > best) best = run;
+    }
+    if (sorted.length === 1) best = 1;
+    if (current > best) best = current;
+    return { current, best };
+  }
+
+  function renderHabits() {
+    const el = document.getElementById('habits-list'); if(!el) return;
+    const habits = loadHabits();
+    if (!habits.length) { el.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;padding:8px 0">Добавь первую привычку ниже ↓</div>'; return; }
+
+    const DAYS = 14;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const todayKey = habitDateKey(today);
+
+    el.innerHTML = '';
+    habits.forEach(h => {
+      const dates  = getHabitDoneDates(h.id);
+      const doneToday = dates.includes(todayKey);
+      const { current, best } = calcHabitStreak(dates);
+      const isOnFire = current >= 3;
+
+      // Точки: 14 дней (самый старый слева, сегодня справа)
+      let dotsHtml = '';
+      for (let i = DAYS-1; i >= 0; i--) {
+        const d = new Date(today); d.setDate(d.getDate()-i);
+        const k = habitDateKey(d);
+        const isToday = i === 0;
+        let cls;
+        if (isToday) cls = doneToday ? 'today-done' : 'today-empty';
+        else cls = dates.includes(k) ? 'done-day' : 'missed-day';
+        const label = k;
+        dotsHtml += `<div class="habit-dot ${cls}" title="${label}"></div>`;
+      }
+
+      const row = document.createElement('div');
+      row.className = 'habit-row';
+      row.innerHTML = `
+        <button class="habit-check-btn${doneToday?' done':''}" onclick="toggleHabitToday('${h.id}')" title="${doneToday?'Отменить':'Отметить выполнение'}">
+          ${doneToday?'✓':'○'}
+        </button>
+        <div class="habit-icon">${h.icon}</div>
+        <div class="habit-name">${h.name}</div>
+        <div class="habit-streak${isOnFire?' on-fire':''}">
+          ${isOnFire?'🔥':'📅'}
+          <span class="habit-streak-num">${current}</span>
+          <span style="font-size:0.68rem;font-weight:normal;color:var(--muted)">дн. подряд</span>
+        </div>
+        <div class="habit-dots">${dotsHtml}</div>
+        <div class="habit-best-streak" title="Лучший стрик">рекорд: ${best}д.</div>
+        <button class="habit-del-btn" onclick="deleteHabit('${h.id}')">✕</button>`;
+      el.appendChild(row);
+    });
+  }
+
+  function addHabit() {
+    const iconEl = document.getElementById('new-habit-icon');
+    const nameEl = document.getElementById('new-habit-name');
+    const name = nameEl.value.trim(); if(!name) return;
+    const icon = iconEl.value.trim() || '🎯';
+    const habits = loadHabits();
+    habits.push({ id: 'hb_' + Date.now(), name, icon });
+    saveHabits(habits);
+    nameEl.value = ''; iconEl.value = '';
+    renderHabits();
+  }
+
+  function deleteHabit(id) {
+    if(!confirm('Удалить привычку? История тоже удалится.')) return;
+    const habits = loadHabits().filter(h => h.id !== id);
+    saveHabits(habits);
+    localStorage.removeItem('paradise_habit_' + id);
+    renderHabits();
+  }
+
   // Инициализация
   initParticles();
   initMonthlyTheme();
@@ -2107,6 +2319,8 @@
   renderVitamins();
   renderDoneToday();
   renderSAchievementsInTimeline();
+  renderHabits();
+  initCollapsible('habits-section');
   initCollapsible('body-section');
   initCollapsible('vitamins-section');
   const _ch = document.getElementById('coins-header'); if(_ch) _ch.innerText = loadCoins();
