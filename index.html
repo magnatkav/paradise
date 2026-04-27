@@ -531,6 +531,28 @@
   .vit-add-input { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:5px 10px; border-radius:6px; font-size:0.78rem; flex:1; }
   .vit-add-input:focus { outline:none; border-color:var(--gold); }
 
+  /* СЕКЦИИ ГИЛЬДИИ ПО СЛОЖНОСТИ */
+  .guild-tier-header {
+    display:flex; align-items:center; gap:8px;
+    padding:6px 12px; border-radius:8px; margin-bottom:10px;
+    border:1px solid; font-size:0.75rem;
+  }
+  .gc-tier-easy   { background:rgba(76,175,80,0.1);   border-color:rgba(76,175,80,0.35);   }
+  .gc-tier-medium { background:rgba(245,166,35,0.1);  border-color:rgba(245,166,35,0.35);  }
+  .gc-tier-hard   { background:rgba(245,100,35,0.1);  border-color:rgba(245,100,35,0.35);  }
+  .guild-tier-icon  { font-size:1rem; line-height:1; }
+  .guild-tier-label { font-weight:bold; color:#c0a050; letter-spacing:2px; text-transform:uppercase; flex:1; }
+  .gc-tier-easy   .guild-tier-label { color:#6dc870; }
+  .gc-tier-medium .guild-tier-label { color:#d4a020; }
+  .gc-tier-hard   .guild-tier-label { color:#d06030; }
+  .guild-tier-count {
+    font-size:0.68rem; padding:2px 10px; border-radius:10px;
+    background:rgba(0,0,0,0.2); color:var(--muted); letter-spacing:1px;
+  }
+  .guild-tier-empty {
+    font-size:0.72rem; color:#5a3810; padding:6px 4px 10px; font-style:italic;
+  }
+
   /* МАСТЕР ГИЛЬДИИ */
   .guild-master-area {
     display:flex; align-items:center; gap:14px; margin-bottom:14px;
@@ -919,7 +941,30 @@
           </div>
         </div>
         <div class="guild-board-title">ДОСКА ЗАДАНИЙ · ГИЛЬДИЯ АВАНТЮРИСТОВ</div>
-        <div class="guild-cards-grid" id="guild-quest-cards"></div>
+
+        <!-- ЛЕГКО -->
+        <div class="guild-tier-header gc-tier-easy">
+          <span class="guild-tier-icon">🟢</span>
+          <span class="guild-tier-label">Легко</span>
+          <span class="guild-tier-count" id="tier-count-easy">0 заданий</span>
+        </div>
+        <div class="guild-cards-grid" id="guild-cards-easy"></div>
+
+        <!-- СРЕДНЕ -->
+        <div class="guild-tier-header gc-tier-medium" style="margin-top:14px">
+          <span class="guild-tier-icon">🟡</span>
+          <span class="guild-tier-label">Средне</span>
+          <span class="guild-tier-count" id="tier-count-medium">0 заданий</span>
+        </div>
+        <div class="guild-cards-grid" id="guild-cards-medium"></div>
+
+        <!-- СЛОЖНО -->
+        <div class="guild-tier-header gc-tier-hard" style="margin-top:14px">
+          <span class="guild-tier-icon">🔴</span>
+          <span class="guild-tier-label">Сложно</span>
+          <span class="guild-tier-count" id="tier-count-hard">0 заданий</span>
+        </div>
+        <div class="guild-cards-grid" id="guild-cards-hard"></div>
         <div class="guild-active-strip" id="guild-in-progress-wrap" style="display:none">
           <div class="guild-active-strip-title">⚡ Задания в работе — нажми «Выполнил» когда готово</div>
           <div id="guild-in-progress"></div>
@@ -1831,11 +1876,47 @@
     tl.insertBefore(wrap, tl.firstChild);
   }
 
+  function getTier(rank) {
+    if(rank==='S'||rank==='A') return 'hard';
+    if(rank==='D'||rank==='C'||rank==='B') return 'medium';
+    return 'easy';
+  }
+  function getTierLabel(rank) {
+    if(rank==='S'||rank==='A') return 'Сложно';
+    if(rank==='D'||rank==='C'||rank==='B') return 'Средне';
+    return 'Легко';
+  }
+
+  function makeGuildCard(q, idx, accepted) {
+    const done=isGuildDone(q), inAcc=accepted.includes(q.id);
+    const rc=RANK_COLORS[q.rank]||'#888';
+    const cls=GC_STYLE[q.rank]||'gc-note';
+    const rot=GC_ROTS[(idx*3+(q.rank.charCodeAt(0)||63))%GC_ROTS.length];
+    const card=document.createElement('div');
+    card.className='guild-card '+cls+(done?' gc-done-stamp':'');
+    card.style.transform='rotate('+rot+'deg)';
+    card.onclick=()=>openGuildQuest(q.id);
+    let badge='';
+    if(inAcc&&!done) badge='<div class="gc-status-badge" style="background:rgba(66,165,245,0.92);color:#fff">В РАБОТЕ</div>';
+    else if(done)     badge='<div class="gc-status-badge" style="background:rgba(76,175,80,0.85);color:#fff">✓ СДАНО</div>';
+    const coinCol=(cls==='gc-epic')?'#f5c850':'#6a3a00';
+    card.innerHTML=
+      '<button class="gc-del-btn" onclick="deleteGuildQuest(\''+q.id+'\',event)" title="Удалить задание">✕</button>'+
+      badge+
+      '<div class="gc-rank" style="color:'+rc+'">'+getTierLabel(q.rank)+'</div>'+
+      '<span class="gc-icon">'+q.icon+'</span>'+
+      '<div class="gc-title">'+q.title+'</div>'+
+      '<div class="gc-coins" style="color:'+coinCol+'">+'+q.reward+' 🪙</div>'+
+      '<div class="gc-type">'+(TYPE_LBL[q.type]||q.type)+'</div>';
+    return card;
+  }
+
   function renderGuildBoard() {
     const accepted=getAccepted();
     const custom=JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]');
     const hidden=JSON.parse(localStorage.getItem('paradise_guild_hidden')||'[]');
     const allQ=[...GUILD_QUESTS,...custom].filter(q=>!hidden.includes(q.id));
+
     // Полоса «в работе»
     const ip=accepted.map(id=>allQ.find(q=>q.id===id)).filter(Boolean);
     const ipWrap=document.getElementById('guild-in-progress-wrap');
@@ -1843,38 +1924,28 @@
     if(ipWrap) ipWrap.style.display=ip.length?'':'none';
     if(ipEl) ipEl.innerHTML=ip.map(q=>
       '<div class="guild-active-card" style="border-color:'+RANK_COLORS[q.rank]+'40">'+
-      '<span class="guild-rank-badge" style="color:'+RANK_COLORS[q.rank]+';background:'+RANK_BG[q.rank]+'">['+q.rank+']</span>'+
+      '<span class="guild-rank-badge" style="color:'+RANK_COLORS[q.rank]+';background:'+RANK_BG[q.rank]+'">'+getTierLabel(q.rank)+'</span>'+
       '<span>'+q.icon+' '+q.title+'</span><span style="flex:1"></span>'+
       '<span style="color:var(--gold);font-size:0.78rem;margin-right:8px">+'+q.reward+'🪙</span>'+
       '<button class="btn-gcomp" onclick="completeGuildQuest(\''+q.id+'\')">✓ Выполнил</button>'+
       '<button class="btn-gcancel" onclick="cancelGuildQuest(\''+q.id+'\',event)" title="Отменить задание">✗</button></div>'
     ).join('');
-    // Карточки
-    const bEl=document.getElementById('guild-quest-cards'); if(!bEl) return;
-    bEl.innerHTML='';
-    allQ.forEach((q,idx)=>{
-      const done=isGuildDone(q), inAcc=accepted.includes(q.id);
-      const rc=RANK_COLORS[q.rank]||'#888';
-      const cls=GC_STYLE[q.rank]||'gc-note';
-      const rot=GC_ROTS[(idx*3+(q.rank.charCodeAt(0)||63))%GC_ROTS.length];
-      const card=document.createElement('div');
-      card.className='guild-card '+cls+(done?' gc-done-stamp':'');
-      card.style.transform='rotate('+rot+'deg)';
-      card.onclick=()=>openGuildQuest(q.id);
-      let badge='';
-      if(inAcc&&!done) badge='<div class="gc-status-badge" style="background:rgba(66,165,245,0.92);color:#fff">В РАБОТЕ</div>';
-      else if(done)     badge='<div class="gc-status-badge" style="background:rgba(76,175,80,0.85);color:#fff">✓ СДАНО</div>';
-      const coinCol=(cls==='gc-epic')?'#f5c850':'#6a3a00';
-      const rankLbl = q.rank==='S'||q.rank==='A' ? 'Сложно' : (q.rank==='D'||q.rank==='C'||q.rank==='B' ? 'Средне' : 'Легко');
-      card.innerHTML=
-        '<button class="gc-del-btn" onclick="deleteGuildQuest(\''+q.id+'\',event)" title="Удалить задание">✕</button>'+
-        badge+
-        '<div class="gc-rank" style="color:'+rc+'">'+rankLbl+'</div>'+
-        '<span class="gc-icon">'+q.icon+'</span>'+
-        '<div class="gc-title">'+q.title+'</div>'+
-        '<div class="gc-coins" style="color:'+coinCol+'">+'+q.reward+' 🪙</div>'+
-        '<div class="gc-type">'+(TYPE_LBL[q.type]||q.type)+'</div>';
-      bEl.appendChild(card);
+
+    // Три грида по сложности
+    const tiers = { easy:[], medium:[], hard:[] };
+    allQ.forEach((q,idx) => tiers[getTier(q.rank)].push({q,idx}));
+
+    ['easy','medium','hard'].forEach(tier => {
+      const el = document.getElementById('guild-cards-'+tier); if(!el) return;
+      const countEl = document.getElementById('tier-count-'+tier);
+      const items = tiers[tier];
+      el.innerHTML = '';
+      if(!items.length) {
+        el.innerHTML = '<div class="guild-tier-empty">Заданий нет</div>';
+      } else {
+        items.forEach(({q,idx}) => el.appendChild(makeGuildCard(q, idx, accepted)));
+      }
+      if(countEl) countEl.textContent = items.length + (items.length===1?' задание':items.length<5?' задания':' заданий');
     });
   }
 
