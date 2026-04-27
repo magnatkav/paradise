@@ -665,6 +665,8 @@
 <div class="container">
 
   <!-- ПРОФИЛЬ -->
+  <div class="section-title collapsible" onclick="toggleSection('profile-section')" style="margin-top:0">👤 Профиль игрока <span class="collapse-arrow" id="profile-section-arrow">▲</span></div>
+  <div id="profile-section">
   <div class="card">
     <div class="profile">
       <div class="avatar">⚔️</div>
@@ -695,6 +697,7 @@
       <div class="chests-row" id="chests-row"></div>
     </div>
   </div>
+  </div><!-- /profile-section -->
 
   <!-- ДУГИ МЕЖДУ БЛОКАМИ -->
   <div class="arc-connector">
@@ -709,7 +712,8 @@
   </div>
 
   <!-- ШКАЛА ПУТИ -->
-  <div class="section-title" style="margin-top:0">🗺️ Путь к раю — 1.5 года</div>
+  <div class="section-title collapsible" style="margin-top:0" onclick="toggleSection('roadmap-section')">🗺️ Путь к раю — 1.5 года <span class="collapse-arrow" id="roadmap-section-arrow">▲</span></div>
+  <div id="roadmap-section">
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <div>
@@ -727,6 +731,7 @@
     </div>
     <div id="current-boss-info" style="margin-top:14px;padding:10px;background:#3a2008;border-radius:10px;font-size:0.82rem;color:var(--muted)"></div>
   </div>
+  </div><!-- /roadmap-section -->
 
   <div class="arc-connector">
     <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
@@ -740,10 +745,12 @@
   </div>
 
   <!-- МАГАЗИН НАГРАД -->
-  <div class="section-title">🛍️ Магазин наград — трать монеты</div>
+  <div class="section-title collapsible" onclick="toggleSection('shop-section')">🛍️ Магазин наград — трать монеты <span class="collapse-arrow" id="shop-section-arrow">▲</span></div>
+  <div id="shop-section">
   <div class="card">
     <div id="shop-items"></div>
   </div>
+  </div><!-- /shop-section -->
 
   <div class="arc-connector">
     <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
@@ -757,7 +764,8 @@
   </div>
 
   <!-- ЛЕСТНИЦА К РАЮ -->
-  <div class="section-title">🏗️ Строю лестницу к раю</div>
+  <div class="section-title collapsible" onclick="toggleSection('staircase-section')">🏗️ Строю лестницу к раю <span class="collapse-arrow" id="staircase-section-arrow">▲</span></div>
+  <div id="staircase-section">
   <div class="card">
     <div class="staircase-wrap">
       <div class="staircase-inner" id="staircase-inner">
@@ -769,6 +777,7 @@
       <div class="staircase-level-badge" id="staircase-level-badge">Уровень 1</div>
     </div>
   </div>
+  </div><!-- /staircase-section -->
 
   <div class="arc-connector">
     <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
@@ -781,6 +790,8 @@
     </svg>
   </div>
 
+  <div class="section-title collapsible" onclick="toggleSection('stats-section')">📊 Характеристики и активные квесты <span class="collapse-arrow" id="stats-section-arrow">▲</span></div>
+  <div id="stats-section">
   <div class="grid2">
 
     <!-- ХАРАКТЕРИСТИКИ -->
@@ -823,6 +834,7 @@
       <div class="quest"><div class="quest-dot"></div><div class="quest-text">Сбросить 5 кг жира</div><div class="quest-badge">💪 Тело</div></div>
     </div>
   </div>
+  </div><!-- /stats-section -->
 
   <div class="arc-connector">
     <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
@@ -836,7 +848,8 @@
   </div>
 
   <!-- МОНСТР -->
-  <div class="section-title">⚔️ Текущий бой</div>
+  <div class="section-title collapsible" onclick="toggleSection('monster-section')">⚔️ Текущий бой <span class="collapse-arrow" id="monster-section-arrow">▲</span></div>
+  <div id="monster-section">
   <div class="card monster-card">
     <div class="monster-header">
       <div>
@@ -857,6 +870,7 @@
       <div class="subtask"><input type="checkbox" id="t6" onchange="toggleTask(this)"><label for="t6">Перевести деньги на кредитку</label></div>
     </div>
   </div>
+  </div><!-- /monster-section -->
 
   <div class="arc-connector">
     <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
@@ -870,7 +884,8 @@
   </div>
 
   <!-- ДОЛГИ -->
-  <div class="section-title">💳 Долги — уничтожаем одного за другим</div>
+  <div class="section-title collapsible" onclick="toggleSection('debts-section')">💳 Долги — уничтожаем одного за другим <span class="collapse-arrow" id="debts-section-arrow">▲</span></div>
+  <div id="debts-section">
   <div class="card" style="border-color:#3a1525">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <div>
@@ -890,6 +905,7 @@
     </div>
     <div id="debts-list"></div>
   </div>
+  </div><!-- /debts-section -->
 
   <div class="arc-connector">
     <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
@@ -903,7 +919,8 @@
   </div>
 
   <!-- ХРОНОЛОГИЯ -->
-  <div class="section-title">📜 Хронология достижений</div>
+  <div class="section-title collapsible" onclick="toggleSection('timeline-section')">📜 Хронология достижений <span class="collapse-arrow" id="timeline-section-arrow">▲</span></div>
+  <div id="timeline-section">
   <div class="card">
     <div class="timeline">
       <div class="tl-item">
@@ -962,6 +979,7 @@
       </div>
     </div>
   </div>
+  </div><!-- /timeline-section -->
 
   <div class="arc-connector">
     <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
@@ -975,7 +993,8 @@
   </div>
 
   <!-- ГИЛЬДИЯ -->
-  <div class="section-title">⚔️ Доска заданий гильдии авантюристов</div>
+  <div class="section-title collapsible" onclick="toggleSection('guild-section')">⚔️ Доска заданий гильдии авантюристов <span class="collapse-arrow" id="guild-section-arrow">▲</span></div>
+  <div id="guild-section">
   <div class="card" style="padding:14px">
     <div class="guild-board-frame">
       <div class="guild-board-inner">
@@ -1038,12 +1057,15 @@
       <button class="btn-accept" onclick="addCustomGuildQuest()">+ Добавить</button>
     </div>
   </div>
+  </div><!-- /guild-section -->
 
   <!-- ВЫПОЛНЕНО СЕГОДНЯ -->
-  <div class="section-title" style="margin-top:14px">✅ Выполнено сегодня</div>
+  <div class="section-title collapsible" style="margin-top:14px" onclick="toggleSection('done-today-section')">✅ Выполнено сегодня <span class="collapse-arrow" id="done-today-section-arrow">▲</span></div>
+  <div id="done-today-section">
   <div class="card" id="done-today-card">
     <div id="done-today-list"><div class="done-today-empty">Пока ничего. Выполни первое задание!</div></div>
   </div>
+  </div><!-- /done-today-section -->
 
   <div class="arc-connector">
     <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
@@ -1146,11 +1168,13 @@
   </div>
 
   <!-- ДОСКА ВИЗУАЛИЗАЦИИ -->
-  <div class="section-title">🌅 Доска визуализации — жизнь мечты</div>
+  <div class="section-title collapsible" onclick="toggleSection('vision-section')">🌅 Доска визуализации — жизнь мечты <span class="collapse-arrow" id="vision-section-arrow">▲</span></div>
+  <div id="vision-section">
   <div class="card" style="border-color:#2a1e10">
     <div style="font-size:0.8rem;color:var(--muted);margin-bottom:14px">Нажми на слот · загрузи фото · смотри куда идёшь каждый день</div>
     <div class="vision-grid" id="vision-grid"></div>
   </div>
+  </div><!-- /vision-section -->
 
 </div><!-- /container -->
 
@@ -2320,9 +2344,20 @@
   renderDoneToday();
   renderSAchievementsInTimeline();
   renderHabits();
+  initCollapsible('profile-section');
+  initCollapsible('roadmap-section');
+  initCollapsible('shop-section');
+  initCollapsible('staircase-section');
+  initCollapsible('stats-section');
+  initCollapsible('monster-section');
+  initCollapsible('debts-section');
+  initCollapsible('timeline-section');
+  initCollapsible('guild-section');
+  initCollapsible('done-today-section');
   initCollapsible('habits-section');
   initCollapsible('body-section');
   initCollapsible('vitamins-section');
+  initCollapsible('vision-section');
   const _ch = document.getElementById('coins-header'); if(_ch) _ch.innerText = loadCoins();
 </script>
 </body>
