@@ -530,6 +530,57 @@
   .vit-add-form { display:flex; gap:8px; margin-top:10px; border-top:1px solid var(--border); padding-top:10px; }
   .vit-add-input { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:5px 10px; border-radius:6px; font-size:0.78rem; flex:1; }
   .vit-add-input:focus { outline:none; border-color:var(--gold); }
+
+  /* МАСТЕР ГИЛЬДИИ */
+  .guild-master-area {
+    display:flex; align-items:center; gap:14px; margin-bottom:14px;
+    background:rgba(0,0,0,0.18); border-radius:10px; padding:10px 14px;
+    border:1px solid rgba(197,122,32,0.3);
+  }
+  .guild-master-portrait {
+    width:72px; height:72px; border-radius:50%;
+    border:2px solid #c57a20; overflow:hidden; flex-shrink:0;
+    background:linear-gradient(135deg,#3a1e04,#5a2e08);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.2rem;
+    box-shadow:0 0 18px rgba(197,122,32,0.4);
+  }
+  .guild-master-portrait img { width:100%;height:100%;object-fit:cover;object-position:top; }
+  .guild-master-name  { font-size:0.88rem; font-weight:bold; color:#f0d890; }
+  .guild-master-role  { font-size:0.62rem; color:#8a6a2a; letter-spacing:1px; text-transform:uppercase; margin-top:1px; }
+  .guild-master-speech { font-size:0.76rem; color:#c0a050; font-style:italic; margin-top:5px; line-height:1.4; }
+
+  /* КНОПКА УДАЛЕНИЯ КАРТОЧКИ */
+  .gc-del-btn {
+    position:absolute; top:4px; right:4px; width:18px; height:18px;
+    border-radius:50%; background:rgba(200,50,50,0.85);
+    border:none; color:#fff; font-size:0.6rem; line-height:18px;
+    text-align:center; cursor:pointer; display:none; z-index:10; padding:0;
+    box-shadow:0 1px 4px rgba(0,0,0,0.5);
+  }
+  .guild-card:hover .gc-del-btn { display:block; }
+  .gc-del-btn:hover { background:rgba(220,30,30,1); transform:scale(1.2); }
+
+  /* КНОПКА ОТМЕНЫ В РАБОТЕ */
+  .btn-gcancel {
+    background:rgba(200,50,50,0.1); border:1px solid rgba(200,50,50,0.4);
+    color:#ff6b6b; padding:3px 10px; border-radius:6px; font-size:0.7rem;
+    cursor:pointer; transition:all 0.2s; margin-left:4px;
+  }
+  .btn-gcancel:hover { background:rgba(200,50,50,0.3); color:#fff; }
+
+  /* ВЫПОЛНЕНО СЕГОДНЯ */
+  .done-today-empty { font-size:0.8rem; color:var(--muted); padding:8px 0; text-align:center; }
+  .done-today-item {
+    display:flex; align-items:center; gap:10px; padding:7px 10px;
+    border-radius:8px; background:rgba(76,175,80,0.07);
+    border:1px solid rgba(76,175,80,0.2); margin-bottom:5px;
+  }
+  .done-today-icon { font-size:1.2rem; flex-shrink:0; }
+  .done-today-text { font-size:0.82rem; flex:1; }
+  .done-today-rank { font-size:0.62rem; font-weight:bold; padding:2px 6px; border-radius:4px; letter-spacing:1px; }
+  .done-today-reward { font-size:0.75rem; color:var(--gold); font-weight:bold; white-space:nowrap; }
+  .done-today-time { font-size:0.62rem; color:var(--muted); }
 </style>
 </head>
 <body>
@@ -857,6 +908,17 @@
   <div class="card" style="padding:14px">
     <div class="guild-board-frame">
       <div class="guild-board-inner">
+        <div class="guild-master-area">
+          <div class="guild-master-portrait" id="guild-master-portrait" onclick="uploadGuildMasterPhoto()" title="Нажми чтобы установить фото мастера" style="cursor:pointer">
+            <img id="guild-master-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;object-position:top">
+            <span id="guild-master-fallback">🧝‍♀️</span>
+          </div>
+          <div>
+            <div class="guild-master-name">Тавиэль</div>
+            <div class="guild-master-role">Мастер гильдии авантюристов</div>
+            <div class="guild-master-speech">"Добро пожаловать, авантюрист. Выбирай задание мудро — каждое испытание делает тебя сильнее."</div>
+          </div>
+        </div>
         <div class="guild-board-title">ДОСКА ЗАДАНИЙ · ГИЛЬДИЯ АВАНТЮРИСТОВ</div>
         <div class="guild-cards-grid" id="guild-quest-cards"></div>
         <div class="guild-active-strip" id="guild-in-progress-wrap" style="display:none">
@@ -867,14 +929,10 @@
     </div>
     <div class="guild-add-form">
       <input class="guild-add-input" id="custom-quest-title" placeholder="Название задания..." maxlength="60" style="flex:2;min-width:160px">
-      <select class="guild-add-input" id="custom-quest-rank" style="flex:none;width:90px">
-        <option value="F">F — легко</option>
-        <option value="E">E — просто</option>
-        <option value="D" selected>D — норма</option>
-        <option value="C">C — сложно</option>
-        <option value="B">B — тяжело</option>
-        <option value="A">A — эпик</option>
-        <option value="S">S — легенда</option>
+      <select class="guild-add-input" id="custom-quest-rank" style="flex:none;width:130px">
+        <option value="E">🟢 Легко</option>
+        <option value="D" selected>🟡 Средне</option>
+        <option value="S">🔴 Сложно (S)</option>
       </select>
       <select class="guild-add-input" id="custom-quest-type" style="flex:none;width:130px">
         <option value="instant">⚡ Мгновенное</option>
@@ -886,6 +944,12 @@
       <input class="guild-add-input" id="custom-quest-reward" placeholder="Монет (авто)" type="number" min="1" max="9999" style="flex:none;width:100px">
       <button class="btn-accept" onclick="addCustomGuildQuest()">+ Добавить</button>
     </div>
+  </div>
+
+  <!-- ВЫПОЛНЕНО СЕГОДНЯ -->
+  <div class="section-title" style="margin-top:14px">✅ Выполнено сегодня</div>
+  <div class="card" id="done-today-card">
+    <div id="done-today-list"><div class="done-today-empty">Пока ничего. Выполни первое задание!</div></div>
   </div>
 
   <div class="arc-connector">
@@ -1259,8 +1323,8 @@
 
   function renderQuests() {
     const state = loadQuestState();
-    document.getElementById('coins-count').innerText = loadCoins();
-    const list = document.getElementById('daily-quests'); list.innerHTML = '';
+    const coinsEl = document.getElementById('coins-count'); if(coinsEl) coinsEl.innerText = loadCoins();
+    const list = document.getElementById('daily-quests'); if(!list) return; list.innerHTML = '';
     const hdr = (t) => { const d=document.createElement('div'); d.style.cssText='font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;color:#5a3812;margin:6px 0 4px;'; d.innerText=t; list.appendChild(d); };
     hdr('⚡ Быстрые (2–5 мин)');
     QUESTS.filter(q=>q.micro).forEach(q=>renderQuestItem(q,state,list));
@@ -1656,12 +1720,19 @@
     saveCoins(loadCoins()+q.reward);
     const tot=parseInt(localStorage.getItem('paradise_quests_total')||'0')+1;
     localStorage.setItem('paradise_quests_total',tot);
-    renderGuildBoard(); renderShop(); updatePlayerRank(); renderStaircase(true);
+    addDoneToday(q);
+    renderGuildBoard(); renderShop(); updatePlayerRank(); renderStaircase(true); renderDoneToday();
+    if(q.rank==='S'||q.rank==='A') addSAchievement(q);
     document.getElementById('reward-emoji').innerText=q.icon;
-    document.getElementById('reward-text').innerText='🏆 Задание гильдии выполнено!\n\n['+q.rank+'] '+q.title+'\n\n+'+q.reward+' монет за отвагу!';
+    const isEpic=(q.rank==='S'||q.rank==='A');
+    document.getElementById('reward-text').innerText=
+      (isEpic?'🌟 ЭПИЧЕСКОЕ ДОСТИЖЕНИЕ!\n\n':'🏆 Задание гильдии выполнено!\n\n')+
+      '['+q.rank+'] '+q.title+'\n\n+'+q.reward+' монет за отвагу!'+
+      (isEpic?'\n\n✨ Добавлено в хронологию достижений!':'');
     document.getElementById('reward-popup').classList.add('show');
   }
-  const RANK_DEFAULT_COINS = { F:2, E:10, D:25, C:60, B:150, A:350, S:1000 };
+  const RANK_DEFAULT_COINS = { F:2, E:10, D:25, C:60, B:150, A:350, S:200 };
+
   function addCustomGuildQuest() {
     const title  = document.getElementById('custom-quest-title').value.trim();
     const rank   = document.getElementById('custom-quest-rank').value;
@@ -1677,10 +1748,95 @@
     renderGuildBoard();
   }
 
+  // ===== УДАЛЕНИЕ ЗАДАНИЙ =====
+  function deleteGuildQuest(id, event) {
+    if(event) event.stopPropagation();
+    const custom = JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]');
+    const isCustom = custom.some(q=>q.id===id);
+    if(isCustom) {
+      localStorage.setItem('paradise_guild_custom', JSON.stringify(custom.filter(q=>q.id!==id)));
+    } else {
+      const hidden = JSON.parse(localStorage.getItem('paradise_guild_hidden')||'[]');
+      if(!hidden.includes(id)) { hidden.push(id); localStorage.setItem('paradise_guild_hidden', JSON.stringify(hidden)); }
+    }
+    setAccepted(getAccepted().filter(a=>a!==id));
+    renderGuildBoard();
+  }
+
+  function cancelGuildQuest(id, event) {
+    if(event) event.stopPropagation();
+    setAccepted(getAccepted().filter(a=>a!==id));
+    renderGuildBoard();
+  }
+
+  // ===== ВЫПОЛНЕНО СЕГОДНЯ =====
+  function getDoneTodayKey() { const d=new Date(); return `paradise_done_today_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`; }
+  function loadDoneToday() { return JSON.parse(localStorage.getItem(getDoneTodayKey())||'[]'); }
+
+  function addDoneToday(q) {
+    const arr = loadDoneToday();
+    const now = new Date();
+    arr.push({ id:q.id, title:q.title, icon:q.icon, rank:q.rank, reward:q.reward,
+      time: `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}` });
+    localStorage.setItem(getDoneTodayKey(), JSON.stringify(arr));
+  }
+
+  function renderDoneToday() {
+    const el = document.getElementById('done-today-list'); if(!el) return;
+    const arr = loadDoneToday();
+    if(!arr.length) { el.innerHTML='<div class="done-today-empty">Пока ничего. Выполни первое задание!</div>'; return; }
+    const rc = RANK_COLORS;
+    el.innerHTML = arr.slice().reverse().map(item=>{
+      const color = rc[item.rank]||'#888';
+      return `<div class="done-today-item">
+        <div class="done-today-icon">${item.icon}</div>
+        <div class="done-today-text">${item.title}</div>
+        <span class="done-today-rank" style="color:${color};background:${color}20;border:1px solid ${color}40">[${item.rank}]</span>
+        <div class="done-today-reward">+${item.reward}🪙</div>
+        <div class="done-today-time">${item.time}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ===== S-ДОСТИЖЕНИЯ В ХРОНОЛОГИЮ =====
+  function addSAchievement(q) {
+    const arr = JSON.parse(localStorage.getItem('paradise_s_achievements')||'[]');
+    const now = new Date();
+    const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    arr.push({ title:q.title, icon:q.icon, reward:q.reward,
+      monthKey:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,
+      monthLabel:`${MONTHS_RU[now.getMonth()]} ${now.getFullYear()}`,
+      date:`${now.getDate()}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}` });
+    localStorage.setItem('paradise_s_achievements', JSON.stringify(arr));
+    renderSAchievementsInTimeline();
+  }
+
+  function renderSAchievementsInTimeline() {
+    const existing = document.getElementById('s-achievements-tl');
+    if(existing) existing.remove();
+    const arr = JSON.parse(localStorage.getItem('paradise_s_achievements')||'[]');
+    if(!arr.length) return;
+    const tl = document.querySelector('.timeline'); if(!tl) return;
+    const wrap = document.createElement('div'); wrap.id='s-achievements-tl';
+    const groups = {};
+    arr.forEach(a=>{ if(!groups[a.monthKey]) groups[a.monthKey]=[]; groups[a.monthKey].push(a); });
+    const keys = Object.keys(groups).sort();
+    keys.forEach(k=>{
+      const items = groups[k];
+      const div = document.createElement('div'); div.className='tl-item';
+      div.innerHTML=`<div class="tl-dot" style="background:#f5a623;box-shadow:0 0 10px rgba(245,166,35,0.7)"></div>
+        <div class="tl-year" style="color:#f5a623">${items[0].monthLabel}</div>
+        ${items.map(a=>`<div class="tl-title">${a.icon} ${a.title}</div><div class="tl-sub">+${a.reward} монет · ${a.date}</div>`).join('')}`;
+      wrap.appendChild(div);
+    });
+    tl.insertBefore(wrap, tl.firstChild);
+  }
+
   function renderGuildBoard() {
     const accepted=getAccepted();
     const custom=JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]');
-    const allQ=[...GUILD_QUESTS,...custom];
+    const hidden=JSON.parse(localStorage.getItem('paradise_guild_hidden')||'[]');
+    const allQ=[...GUILD_QUESTS,...custom].filter(q=>!hidden.includes(q.id));
     // Полоса «в работе»
     const ip=accepted.map(id=>allQ.find(q=>q.id===id)).filter(Boolean);
     const ipWrap=document.getElementById('guild-in-progress-wrap');
@@ -1691,7 +1847,8 @@
       '<span class="guild-rank-badge" style="color:'+RANK_COLORS[q.rank]+';background:'+RANK_BG[q.rank]+'">['+q.rank+']</span>'+
       '<span>'+q.icon+' '+q.title+'</span><span style="flex:1"></span>'+
       '<span style="color:var(--gold);font-size:0.78rem;margin-right:8px">+'+q.reward+'🪙</span>'+
-      '<button class="btn-gcomp" onclick="completeGuildQuest(\''+q.id+'\')">✓ Выполнил</button></div>'
+      '<button class="btn-gcomp" onclick="completeGuildQuest(\''+q.id+'\')">✓ Выполнил</button>'+
+      '<button class="btn-gcancel" onclick="cancelGuildQuest(\''+q.id+'\',event)" title="Отменить задание">✗</button></div>'
     ).join('');
     // Карточки
     const bEl=document.getElementById('guild-quest-cards'); if(!bEl) return;
@@ -1709,8 +1866,11 @@
       if(inAcc&&!done) badge='<div class="gc-status-badge" style="background:rgba(66,165,245,0.92);color:#fff">В РАБОТЕ</div>';
       else if(done)     badge='<div class="gc-status-badge" style="background:rgba(76,175,80,0.85);color:#fff">✓ СДАНО</div>';
       const coinCol=(cls==='gc-epic')?'#f5c850':'#6a3a00';
-      card.innerHTML=badge+
-        '<div class="gc-rank" style="color:'+rc+'">['+q.rank+']</div>'+
+      const rankLbl = q.rank==='S'||q.rank==='A' ? 'Сложно' : (q.rank==='D'||q.rank==='C'||q.rank==='B' ? 'Средне' : 'Легко');
+      card.innerHTML=
+        '<button class="gc-del-btn" onclick="deleteGuildQuest(\''+q.id+'\',event)" title="Удалить задание">✕</button>'+
+        badge+
+        '<div class="gc-rank" style="color:'+rc+'">'+rankLbl+'</div>'+
         '<span class="gc-icon">'+q.icon+'</span>'+
         '<div class="gc-title">'+q.title+'</div>'+
         '<div class="gc-coins" style="color:'+coinCol+'">+'+q.reward+' 🪙</div>'+
@@ -1859,6 +2019,38 @@
     renderVitamins();
   }
 
+  // ===== ФОТО МАСТЕРА ГИЛЬДИИ =====
+  function initGuildMasterPhoto() {
+    const photo = localStorage.getItem('paradise_guild_master_photo');
+    if(!photo) return;
+    const img = document.getElementById('guild-master-img');
+    const fb  = document.getElementById('guild-master-fallback');
+    if(img) { img.src=photo; img.style.display='block'; }
+    if(fb)  fb.style.display='none';
+  }
+  function uploadGuildMasterPhoto() {
+    const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*';
+    inp.onchange = e => {
+      const file = e.target.files[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const image = new Image();
+        image.onload = () => {
+          const ratio = Math.min(200/image.width, 200/image.height, 1);
+          const w=Math.round(image.width*ratio), h=Math.round(image.height*ratio);
+          const c=document.createElement('canvas'); c.width=w; c.height=h;
+          c.getContext('2d').drawImage(image,0,0,w,h);
+          const data = c.toDataURL('image/jpeg', 0.82);
+          localStorage.setItem('paradise_guild_master_photo', data);
+          initGuildMasterPhoto();
+        };
+        image.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+    inp.click();
+  }
+
   // Инициализация
   initParticles();
   initMonthlyTheme();
@@ -1875,6 +2067,9 @@
   renderGuildBoard();
   renderBodyTracker();
   renderVitamins();
+  renderDoneToday();
+  renderSAchievementsInTimeline();
+  initGuildMasterPhoto();
   initCollapsible('body-section');
   initCollapsible('vitamins-section');
   const _ch = document.getElementById('coins-header'); if(_ch) _ch.innerText = loadCoins();
