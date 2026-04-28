@@ -193,6 +193,11 @@
   .subtask input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--green); cursor: pointer; flex-shrink: 0; }
   .subtask label { font-size: 0.85rem; cursor: pointer; flex: 1; }
   .subtask.done label { text-decoration: line-through; color: var(--muted); }
+  .subtask-del { background:none; border:1px solid transparent; color:#3a2010; padding:2px 6px; border-radius:4px; font-size:0.65rem; cursor:pointer; transition:all 0.2s; flex-shrink:0; }
+  .subtask:hover .subtask-del { border-color:#5a2010; color:#7a3010; }
+  .subtask-del:hover { border-color:var(--red)!important; color:var(--red)!important; }
+  .monster-name { cursor:pointer; }
+  .monster-name:hover { text-decoration:underline dotted; }
 
   /* POPUP */
   .reward-popup { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100; align-items: center; justify-content: center; }
@@ -829,20 +834,17 @@
     <div class="monster-header">
       <div>
         <div class="card-title" style="margin-bottom:4px">Босс-задача</div>
-        <div class="monster-name" id="monster-name">💀 Долг 130,000 ₽</div>
+        <div class="monster-name" id="monster-name" onclick="editBossName()" title="Нажми чтобы изменить название">💀 Долг 130,000 ₽</div>
       </div>
       <div style="font-size:0.8rem;color:var(--muted)">Победи — получи приз</div>
     </div>
     <div class="monster-emoji" id="monster-emoji">👹</div>
     <div class="hp-label"><span>HP монстра</span><span id="hp-text">6 / 6</span></div>
     <div class="bar" style="height:14px"><div class="bar-fill bar-hp" id="hp-bar" style="width:100%"></div></div>
-    <div class="subtasks" id="subtasks">
-      <div class="subtask"><input type="checkbox" id="t1" onchange="toggleTask(this)"><label for="t1">Найти 2 новых клиента масс-лукинг (30k)</label></div>
-      <div class="subtask"><input type="checkbox" id="t2" onchange="toggleTask(this)"><label for="t2">Закрыть 3 текущих клиента (45k)</label></div>
-      <div class="subtask"><input type="checkbox" id="t3" onchange="toggleTask(this)"><label for="t3">Провести 3 аутрич-рассылки владельцам каналов</label></div>
-      <div class="subtask"><input type="checkbox" id="t4" onchange="toggleTask(this)"><label for="t4">Опубликовать 5 постов в канале маркетинга</label></div>
-      <div class="subtask"><input type="checkbox" id="t5" onchange="toggleTask(this)"><label for="t5">Настроить автоматический масс-лукинг на себя</label></div>
-      <div class="subtask"><input type="checkbox" id="t6" onchange="toggleTask(this)"><label for="t6">Перевести деньги на кредитку</label></div>
+    <div class="subtasks" id="subtasks"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;border-top:1px solid #5a3010;padding-top:10px">
+      <input class="guild-add-input" id="subtask-input" placeholder="Новая задача к боссу..." style="flex:1" onkeydown="if(event.key==='Enter')addSubtask()">
+      <button class="btn-accept" onclick="addSubtask()">+ Добавить</button>
     </div>
   </div>
   </div><!-- /monster-section -->
@@ -1306,32 +1308,100 @@
     { emoji: '🏊', text: 'Баня или сауна — перезагрузка тела и головы' },
   ];
 
-  let totalTasks = 0, doneTasks = 0;
-  function countTasks() {
-    totalTasks = document.querySelectorAll('.subtask').length;
-    doneTasks = document.querySelectorAll('.subtask.done').length;
+  // ===== БОСС / SUBTASKS =====
+  const DEFAULT_SUBTASKS = [
+    {id:1, text:'Найти 2 новых клиента масс-лукинг (30k)', done:false},
+    {id:2, text:'Закрыть 3 текущих клиента (45k)', done:false},
+    {id:3, text:'Провести 3 аутрич-рассылки владельцам каналов', done:false},
+    {id:4, text:'Опубликовать 5 постов в канале маркетинга', done:false},
+    {id:5, text:'Настроить автоматический масс-лукинг на себя', done:false},
+    {id:6, text:'Перевести деньги на кредитку', done:false},
+  ];
+  function loadSubtasks() {
+    try { return JSON.parse(localStorage.getItem('paradise_subtasks') || 'null') || DEFAULT_SUBTASKS; } catch { return DEFAULT_SUBTASKS; }
   }
-  function updateHP() {
-    countTasks();
-    const hp = totalTasks - doneTasks;
-    const pct = totalTasks > 0 ? (hp / totalTasks) * 100 : 0;
-    document.getElementById('hp-bar').style.width = pct + '%';
-    document.getElementById('hp-text').innerText = hp + ' / ' + totalTasks;
-    const bar = document.getElementById('hp-bar');
-    if (pct > 60) bar.style.background = 'linear-gradient(90deg,#e53935,#b71c1c)';
-    else if (pct > 30) bar.style.background = 'linear-gradient(90deg,#ff9800,#e65100)';
-    else bar.style.background = 'linear-gradient(90deg,#4caf50,#1b5e20)';
-    if (hp === 0 && totalTasks > 0) setTimeout(killMonster, 400);
-  }
-  function toggleTask(cb) {
-    cb.closest('.subtask').classList.toggle('done', cb.checked);
-    if (cb.checked) {
-      const emoji = document.getElementById('monster-emoji');
-      emoji.classList.remove('hit'); void emoji.offsetWidth; emoji.classList.add('hit');
-      setTimeout(() => emoji.classList.remove('hit'), 300);
+  function saveSubtasks(t) { localStorage.setItem('paradise_subtasks', JSON.stringify(t)); }
+  function loadBossName() { return localStorage.getItem('paradise_boss_name') || '💀 Долг 130,000 ₽'; }
+  function saveBossName(n) { localStorage.setItem('paradise_boss_name', n); }
+
+  function renderSubtasks() {
+    const tasks = loadSubtasks();
+    const container = document.getElementById('subtasks');
+    if (!container) return;
+    const el = document.getElementById('monster-name');
+    if (el) el.innerText = loadBossName();
+    if (tasks.length === 0) {
+      container.innerHTML = '<div style="font-size:0.8rem;color:var(--muted);padding:10px 0;text-align:center">Нет задач — добавь ниже</div>';
+    } else {
+      container.innerHTML = tasks.map(t =>
+        `<div class="subtask${t.done?' done':''}">
+          <input type="checkbox" id="st-${t.id}"${t.done?' checked':''} onchange="toggleSubtask(${t.id},this)">
+          <label for="st-${t.id}" ondblclick="editSubtask(${t.id})">${t.text}</label>
+          <button class="subtask-del" onclick="deleteSubtask(${t.id})" title="Удалить">✕</button>
+        </div>`
+      ).join('');
     }
     updateHP();
   }
+
+  function countTasks() {} // kept for compatibility
+
+  function toggleSubtask(id, cb) {
+    const tasks = loadSubtasks();
+    const t = tasks.find(x => x.id === id); if (!t) return;
+    t.done = cb.checked; saveSubtasks(tasks);
+    cb.closest('.subtask').classList.toggle('done', cb.checked);
+    if (cb.checked) {
+      const em = document.getElementById('monster-emoji');
+      em.classList.remove('hit'); void em.offsetWidth; em.classList.add('hit');
+      setTimeout(() => em.classList.remove('hit'), 300);
+    }
+    updateHP();
+  }
+
+  function deleteSubtask(id) {
+    saveSubtasks(loadSubtasks().filter(x => x.id !== id));
+    renderSubtasks();
+  }
+
+  function editSubtask(id) {
+    const tasks = loadSubtasks();
+    const t = tasks.find(x => x.id === id); if (!t) return;
+    const val = prompt('Изменить задачу:', t.text);
+    if (val === null || !val.trim()) return;
+    t.text = val.trim(); saveSubtasks(tasks); renderSubtasks();
+  }
+
+  function addSubtask() {
+    const inp = document.getElementById('subtask-input');
+    if (!inp || !inp.value.trim()) return;
+    const tasks = loadSubtasks();
+    const maxId = tasks.reduce((m, x) => Math.max(m, x.id), 0);
+    tasks.push({id: maxId + 1, text: inp.value.trim(), done: false});
+    saveSubtasks(tasks); inp.value = ''; renderSubtasks();
+  }
+
+  function editBossName() {
+    const val = prompt('Название босса:', loadBossName());
+    if (val === null || !val.trim()) return;
+    saveBossName(val.trim()); renderSubtasks();
+  }
+
+  function updateHP() {
+    const tasks = loadSubtasks();
+    const total = tasks.length, done = tasks.filter(t => t.done).length;
+    const hp = total - done, pct = total > 0 ? (hp / total) * 100 : 0;
+    const bar = document.getElementById('hp-bar'), txt = document.getElementById('hp-text');
+    if (bar) {
+      bar.style.width = pct + '%';
+      bar.style.background = pct > 60 ? 'linear-gradient(90deg,#e53935,#b71c1c)'
+        : pct > 30 ? 'linear-gradient(90deg,#ff9800,#e65100)'
+        : 'linear-gradient(90deg,#4caf50,#1b5e20)';
+    }
+    if (txt) txt.innerText = hp + ' / ' + total;
+    if (hp === 0 && total > 0) setTimeout(killMonster, 400);
+  }
+
   function killMonster() {
     document.getElementById('monster-emoji').classList.add('dead');
     setTimeout(showReward, 700);
@@ -2387,7 +2457,7 @@
   // Инициализация
   initParticles();
   initMonthlyTheme();
-  countTasks();
+  renderSubtasks();
   renderDebts();
   initRoadmap();
   renderQuests();
