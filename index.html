@@ -696,6 +696,13 @@
       <div style="font-size:0.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Сундуки (каждые 5 квестов)</div>
       <div class="chests-row" id="chests-row"></div>
     </div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Данные:</span>
+      <button class="btn-private" onclick="exportData()" title="Скачать все данные как резервную копию">💾 Экспорт</button>
+      <button class="btn-private" onclick="document.getElementById('import-file').click()" title="Восстановить из резервной копии">📂 Импорт</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+      <span style="font-size:0.62rem;color:var(--muted)">Все данные в localStorage браузера — сохраняй копию регулярно</span>
+    </div>
   </div>
   </div><!-- /profile-section -->
 
@@ -1053,6 +1060,7 @@
         <option value="monthly">📅 Каждый месяц</option>
         <option value="epic">🌟 Разово</option>
       </select>
+      <input class="guild-add-input" id="custom-quest-icon" placeholder="⭐" maxlength="4" style="flex:none;width:52px;text-align:center;font-size:1.1rem" title="Эмодзи задания">
       <input class="guild-add-input" id="custom-quest-reward" placeholder="Монет (авто)" type="number" min="1" max="9999" style="flex:none;width:100px">
       <button class="btn-accept" onclick="addCustomGuildQuest()">+ Добавить</button>
     </div>
@@ -1875,16 +1883,19 @@
   const RANK_DEFAULT_COINS = { F:2, E:10, D:25, C:60, B:150, A:350, S:200 };
 
   function addCustomGuildQuest() {
-    const title  = document.getElementById('custom-quest-title').value.trim();
-    const rank   = document.getElementById('custom-quest-rank').value;
-    const type   = document.getElementById('custom-quest-type').value;
-    const rewardEl = document.getElementById('custom-quest-reward');
-    const reward = parseInt(rewardEl.value) || RANK_DEFAULT_COINS[rank] || 10;
+    const title   = document.getElementById('custom-quest-title').value.trim();
+    const rank    = document.getElementById('custom-quest-rank').value;
+    const type    = document.getElementById('custom-quest-type').value;
+    const iconEl  = document.getElementById('custom-quest-icon');
+    const rewardEl= document.getElementById('custom-quest-reward');
+    const icon    = iconEl.value.trim() || '⭐';
+    const reward  = parseInt(rewardEl.value) || RANK_DEFAULT_COINS[rank] || 10;
     if (!title) return;
     const custom = JSON.parse(localStorage.getItem('paradise_guild_custom')||'[]');
-    custom.push({ id:'cq_'+Date.now(), rank, title, desc:'Пользовательское задание', reward, icon:'⭐', type });
+    custom.push({ id:'cq_'+Date.now(), rank, title, desc:'Пользовательское задание', reward, icon, type });
     localStorage.setItem('paradise_guild_custom', JSON.stringify(custom));
     document.getElementById('custom-quest-title').value = '';
+    iconEl.value = '';
     rewardEl.value = '';
     renderGuildBoard();
   }
@@ -2323,6 +2334,39 @@
     saveHabits(habits);
     localStorage.removeItem('paradise_habit_' + id);
     renderHabits();
+  }
+
+  // ===== ЭКСПОРТ / ИМПОРТ =====
+  function exportData() {
+    const data = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key.startsWith('paradise')) data[key] = localStorage.getItem(key);
+    }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    const date = new Date();
+    const ds   = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    a.href = url; a.download = `paradise-backup-${ds}.json`;
+    a.click(); URL.revokeObjectURL(url);
+  }
+
+  function importData(event) {
+    const file = event.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if(!confirm(`Импортировать ${Object.keys(data).length} ключей? Текущие данные будут заменены.`)) return;
+        Object.entries(data).forEach(([k, v]) => localStorage.setItem(k, v));
+        location.reload();
+      } catch(err) {
+        alert('Ошибка: файл повреждён или не является бэкапом Paradise.');
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
   }
 
   // Инициализация
