@@ -652,6 +652,28 @@
   .done-today-rank { font-size:0.62rem; font-weight:bold; padding:2px 6px; border-radius:4px; letter-spacing:1px; }
   .done-today-reward { font-size:0.75rem; color:var(--gold); font-weight:bold; white-space:nowrap; }
   .done-today-time { font-size:0.62rem; color:var(--muted); }
+
+  /* ХАРАКТЕРИСТИКИ В ПРОФИЛЕ */
+  .profile-stats {
+    flex:1; min-width:160px;
+    border-left:1px solid var(--border);
+    padding-left:14px;
+    display:flex; flex-direction:column; gap:5px;
+  }
+  @media(max-width:600px) {
+    .profile-stats { border-left:none; border-top:1px solid var(--border); padding-left:0; padding-top:10px; }
+  }
+  .ps-title { font-size:0.6rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-bottom:3px; }
+  .ps-row { display:flex; align-items:center; gap:6px; }
+  .ps-label { font-size:0.7rem; width:104px; display:flex; align-items:center; gap:3px; white-space:nowrap; overflow:hidden; }
+  .ps-bar-wrap { flex:1; height:5px; background:#3a2008; border-radius:3px; overflow:hidden; min-width:30px; }
+  .ps-bar-fill { height:100%; border-radius:3px; transition:width 0.4s; }
+  .ps-val {
+    font-size:0.68rem; color:var(--gold); font-weight:bold;
+    cursor:pointer; min-width:26px; text-align:right;
+    padding:1px 4px; border-radius:4px; transition:background 0.2s; white-space:nowrap;
+  }
+  .ps-val:hover { background:rgba(245,166,35,0.15); text-decoration:underline; }
 </style>
 </head>
 <body>
@@ -684,6 +706,9 @@
           <span class="osbed-text">OSBED</span>
           <span class="osbed-sub">One Step But Every Day</span>
         </div>
+      </div>
+      <div class="profile-stats" id="profile-stats-panel">
+        <div class="ps-title">Характеристики</div>
       </div>
     </div>
     <div id="login-bonus-bar"></div>
@@ -797,49 +822,16 @@
     </svg>
   </div>
 
-  <div class="section-title collapsible" onclick="toggleSection('stats-section')">📊 Характеристики и активные квесты <span class="collapse-arrow" id="stats-section-arrow">▲</span></div>
+  <div class="section-title collapsible" onclick="toggleSection('stats-section')">📋 Активные квесты <span class="collapse-arrow" id="stats-section-arrow">▲</span></div>
   <div id="stats-section">
-  <div class="grid2">
-
-    <!-- ХАРАКТЕРИСТИКИ -->
-    <div class="card">
-      <div class="card-title">Характеристики персонажа</div>
-      <div class="stat">
-        <div class="stat-header"><div class="stat-name">💰 Деньги</div><div class="stat-val">28/100</div></div>
-        <div class="bar"><div class="bar-fill bar-stat" style="width:28%"></div></div>
-      </div>
-      <div class="stat">
-        <div class="stat-header"><div class="stat-name">💪 Тело</div><div class="stat-val">35/100</div></div>
-        <div class="bar"><div class="bar-fill bar-body" style="width:35%"></div></div>
-      </div>
-      <div class="stat">
-        <div class="stat-header"><div class="stat-name">🧬 Молодость</div><div class="stat-val">42/100</div></div>
-        <div class="bar"><div class="bar-fill bar-youth" style="width:42%"></div></div>
-      </div>
-      <div class="stat">
-        <div class="stat-header"><div class="stat-name">😴 Восстановление</div><div class="stat-val">30/100</div></div>
-        <div class="bar"><div class="bar-fill bar-sleep" style="width:30%"></div></div>
-      </div>
-      <div class="stat">
-        <div class="stat-header"><div class="stat-name">✈️ Свобода</div><div class="stat-val">20/100</div></div>
-        <div class="bar"><div class="bar-fill bar-freedom" style="width:20%"></div></div>
-      </div>
-      <div class="stat">
-        <div class="stat-header"><div class="stat-name">👔 Образ</div><div class="stat-val">25/100</div></div>
-        <div class="bar"><div class="bar-fill bar-style" style="width:25%"></div></div>
-      </div>
-    </div>
-
-    <!-- АКТИВНЫЕ КВЕСТЫ -->
-    <div class="card">
-      <div class="card-title">Активные квесты</div>
-      <div class="quest"><div class="quest-dot"></div><div class="quest-text">Закрыть 130k с кредитки</div><div class="quest-badge">🔥 Горит</div></div>
-      <div class="quest"><div class="quest-dot"></div><div class="quest-text">8 клиентов масс-лукинга</div><div class="quest-badge">💰 Деньги</div></div>
-      <div class="quest"><div class="quest-dot"></div><div class="quest-text">50 подписчиков ИИ-директор</div><div class="quest-badge">📣 Канал</div></div>
-      <div class="quest"><div class="quest-dot"></div><div class="quest-text">Настроить BotHelp-приветствие</div><div class="quest-badge">🤖 Бот</div></div>
-      <div class="quest"><div class="quest-dot"></div><div class="quest-text">Настроить бот оплаты ЮКасса</div><div class="quest-badge">💳 Оплата</div></div>
-      <div class="quest"><div class="quest-dot"></div><div class="quest-text">Сбросить 5 кг жира</div><div class="quest-badge">💪 Тело</div></div>
-    </div>
+  <div class="card">
+    <div class="card-title">Активные квесты</div>
+    <div class="quest"><div class="quest-dot"></div><div class="quest-text">Закрыть 130k с кредитки</div><div class="quest-badge">🔥 Горит</div></div>
+    <div class="quest"><div class="quest-dot"></div><div class="quest-text">8 клиентов масс-лукинга</div><div class="quest-badge">💰 Деньги</div></div>
+    <div class="quest"><div class="quest-dot"></div><div class="quest-text">50 подписчиков ИИ-директор</div><div class="quest-badge">📣 Канал</div></div>
+    <div class="quest"><div class="quest-dot"></div><div class="quest-text">Настроить BotHelp-приветствие</div><div class="quest-badge">🤖 Бот</div></div>
+    <div class="quest"><div class="quest-dot"></div><div class="quest-text">Настроить бот оплаты ЮКасса</div><div class="quest-badge">💳 Оплата</div></div>
+    <div class="quest"><div class="quest-dot"></div><div class="quest-text">Сбросить 5 кг жира</div><div class="quest-badge">💪 Тело</div></div>
   </div>
   </div><!-- /stats-section -->
 
@@ -2369,6 +2361,53 @@
     event.target.value = '';
   }
 
+  // ===== ХАРАКТЕРИСТИКИ ПЕРСОНАЖА =====
+  const STATS_CONFIG = [
+    { key:'money',   icon:'💰', name:'Деньги',        bar:'bar-stat',    desc:'Доход, накопления, закрытые долги.\n0 = безденежье, 100 = 500k+/мес' },
+    { key:'body',    icon:'💪', name:'Тело',           bar:'bar-body',    desc:'Форма, энергия, здоровье.\n0 = плохо, 100 = идеальная форма' },
+    { key:'youth',   icon:'🧬', name:'Молодость',      bar:'bar-youth',   desc:'Биологический возраст, самочувствие.\n0 = старею быстро, 100 = выгляжу на 10 лет моложе' },
+    { key:'sleep',   icon:'😴', name:'Восстановление', bar:'bar-sleep',   desc:'Качество сна и отдыха.\n0 = постоянно разбит, 100 = просыпаюсь бодрым' },
+    { key:'freedom', icon:'✈️', name:'Свобода',        bar:'bar-freedom', desc:'Свобода времени, денег, места.\n0 = в ловушке, 100 = делаю что хочу' },
+    { key:'style',   icon:'👔', name:'Образ',          bar:'bar-style',   desc:'Внешний вид, одежда, уверенность.\n0 = забил, 100 = всегда на высоте' },
+  ];
+
+  function loadStats() {
+    const def = { money:28, body:35, youth:42, sleep:30, freedom:20, style:25 };
+    try { return Object.assign({}, def, JSON.parse(localStorage.getItem('paradise_stats') || '{}')); } catch { return def; }
+  }
+
+  function saveStats(data) {
+    localStorage.setItem('paradise_stats', JSON.stringify(data));
+  }
+
+  function renderProfileStats() {
+    const panel = document.getElementById('profile-stats-panel');
+    if (!panel) return;
+    const stats = loadStats();
+    panel.innerHTML = '<div class="ps-title">Характеристики</div>' +
+      STATS_CONFIG.map(s => {
+        const v = stats[s.key] !== undefined ? stats[s.key] : 0;
+        return `<div class="ps-row">
+          <div class="ps-label" title="${s.desc}">${s.icon} ${s.name}</div>
+          <div class="ps-bar-wrap"><div class="ps-bar-fill ${s.bar}" style="width:${v}%"></div></div>
+          <div class="ps-val" onclick="editStat('${s.key}')" title="Нажми чтобы изменить\n\n${s.desc}">${v}</div>
+        </div>`;
+      }).join('');
+  }
+
+  function editStat(key) {
+    const cfg = STATS_CONFIG.find(s => s.key === key);
+    if (!cfg) return;
+    const stats = loadStats();
+    const current = stats[key] !== undefined ? stats[key] : 0;
+    const val = prompt(`${cfg.icon} ${cfg.name}\n\n${cfg.desc}\n\nТвоя оценка сегодня (0–100):`, current);
+    if (val === null) return;
+    const num = Math.max(0, Math.min(100, parseInt(val) || 0));
+    stats[key] = num;
+    saveStats(stats);
+    renderProfileStats();
+  }
+
   // Инициализация
   initParticles();
   initMonthlyTheme();
@@ -2388,6 +2427,7 @@
   renderDoneToday();
   renderSAchievementsInTimeline();
   renderHabits();
+  renderProfileStats();
   initCollapsible('profile-section');
   initCollapsible('roadmap-section');
   initCollapsible('shop-section');
