@@ -658,6 +658,42 @@
   .done-today-reward { font-size:0.75rem; color:var(--gold); font-weight:bold; white-space:nowrap; }
   .done-today-time { font-size:0.62rem; color:var(--muted); }
 
+  /* ТРЕКЕР РУТИНЫ */
+  .routine-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .routine-month-label { font-size:1rem; font-weight:bold; color:var(--gold); }
+  .routine-nav-btn { background:none; border:1px solid var(--border); color:var(--muted); padding:4px 14px; border-radius:6px; cursor:pointer; transition:all 0.2s; font-size:0.82rem; }
+  .routine-nav-btn:hover { border-color:var(--gold); color:var(--gold); }
+  .routine-stats { display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+  .routine-stat-badge { background:rgba(245,166,35,0.07); border:1px solid rgba(245,166,35,0.2); border-radius:8px; padding:4px 12px; font-size:0.78rem; color:var(--gold); }
+  .routine-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .routine-table { border-collapse:collapse; min-width:max-content; }
+  .routine-table th, .routine-table td { border:1px solid rgba(90,48,16,0.4); }
+  .rt-name-cell { position:sticky; left:0; z-index:2; background:var(--card2); min-width:158px; max-width:158px; padding:5px 8px; font-size:0.75rem; }
+  .rt-name-inner { display:flex; align-items:center; gap:4px; white-space:nowrap; overflow:hidden; }
+  .rt-name-text { overflow:hidden; text-overflow:ellipsis; flex:1; cursor:pointer; }
+  .rt-name-text:hover { text-decoration:underline dotted; }
+  .rt-meta-cell { width:36px; min-width:36px; text-align:center; padding:4px 2px; font-size:0.72rem; }
+  .rt-pct-cell { min-width:54px; max-width:54px; padding:3px 5px; }
+  .rt-pct-num { font-size:0.68rem; font-weight:bold; }
+  .rt-pct-bar { height:3px; background:#3a2008; border-radius:2px; margin-top:2px; overflow:hidden; }
+  .rt-pct-fill { height:100%; border-radius:2px; }
+  .rt-head-num, .rt-head-dow { text-align:center; min-width:26px; width:26px; padding:2px 0; font-size:0.62rem; color:var(--muted); }
+  .rt-head-dow { font-size:0.55rem; padding-bottom:3px; }
+  .rt-head-num.wknd, .rt-head-dow.wknd { color:#6a3a14; }
+  .rt-head-num.today-h, .rt-head-dow.today-h { color:var(--gold); font-weight:bold; }
+  .rt-cell { text-align:center; cursor:pointer; user-select:none; transition:background 0.1s; min-width:26px; width:26px; padding:4px 0; font-size:0.78rem; line-height:1; }
+  .rt-cell:hover { background:rgba(245,166,35,0.14); }
+  .rt-cell.rt-checked { background:rgba(76,175,80,0.2); color:var(--green); }
+  .rt-cell.rt-missed { background:rgba(229,57,53,0.07); }
+  .rt-cell.rt-wknd { background:rgba(0,0,0,0.18); }
+  .rt-cell.rt-today { box-shadow:inset 0 0 0 1.5px rgba(245,166,35,0.55); }
+  .rt-del-btn { opacity:0; background:none; border:none; color:#7a3010; cursor:pointer; font-size:0.6rem; padding:0 2px; transition:all 0.2s; flex-shrink:0; }
+  .rt-task-row:hover .rt-del-btn { opacity:1; }
+  .rt-del-btn:hover { color:var(--red); }
+  .rt-head-row th { background:rgba(0,0,0,0.24); }
+  .rt-task-row:hover { background:rgba(245,166,35,0.025); }
+  .rt-add-form { display:flex; gap:8px; margin-top:12px; border-top:1px solid var(--border); padding-top:12px; flex-wrap:wrap; }
+
   /* ХАРАКТЕРИСТИКИ В ПРОФИЛЕ */
   .profile-stats {
     flex:1; min-width:160px;
@@ -957,6 +993,37 @@
     </div>
   </div>
   </div><!-- /timeline-section -->
+
+  <div class="arc-connector">
+    <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
+      <path d="M 28,2 Q -18,18 28,34" fill="none" stroke="rgba(245,166,35,0.7)" stroke-width="2" class="arc-side left"/>
+      <path d="M 840,2 Q 886,18 840,34" fill="none" stroke="rgba(255,104,53,0.55)" stroke-width="2" class="arc-side right"/>
+      <circle cx="28" cy="2"  r="3.5" fill="rgba(245,166,35,0.85)"/>
+      <circle cx="840" cy="2" r="3.5" fill="rgba(255,104,53,0.7)"/>
+      <circle cx="28" cy="34" r="3.5" fill="rgba(245,166,35,0.85)"/>
+      <circle cx="840" cy="34" r="3.5" fill="rgba(255,104,53,0.7)"/>
+    </svg>
+  </div>
+
+  <!-- РУТИНА -->
+  <div class="section-title collapsible" onclick="toggleSection('routine-section')">📅 Ежедневная рутина <span class="collapse-arrow" id="routine-section-arrow">▲</span></div>
+  <div id="routine-section">
+  <div class="card">
+    <div class="routine-nav">
+      <button class="routine-nav-btn" onclick="routinePrevMonth()">← Пред.</button>
+      <div id="routine-month-label" class="routine-month-label">...</div>
+      <button class="routine-nav-btn" onclick="routineNextMonth()">След. →</button>
+    </div>
+    <div id="routine-overall-stats" class="routine-stats"></div>
+    <div class="routine-wrap">
+      <table class="routine-table" id="routine-table"></table>
+    </div>
+    <div class="rt-add-form">
+      <input class="guild-add-input" id="routine-add-input" placeholder="Новая задача рутины..." style="flex:1" onkeydown="if(event.key==='Enter')addRoutineTask()">
+      <button class="btn-accept" onclick="addRoutineTask()">+ Добавить</button>
+    </div>
+  </div>
+  </div><!-- /routine-section -->
 
   <div class="arc-connector">
     <svg class="arc-svg" viewBox="0 0 868 36" width="100%" height="36" style="overflow:visible">
@@ -2407,6 +2474,181 @@
     event.target.value = '';
   }
 
+  // ===== ТРЕКЕР РУТИНЫ =====
+  const DEFAULT_ROUTINE = [
+    {id:1,  name:'Откладывать на «золотую курицу»'},
+    {id:2,  name:'Глаза + красивые'},
+    {id:3,  name:'Зарядка'},
+    {id:4,  name:'Подъём таза'},
+    {id:5,  name:'Миланет'},
+    {id:6,  name:'Массаж'},
+    {id:7,  name:'Медитация'},
+    {id:8,  name:'Считать деньги'},
+    {id:9,  name:'Отчёт за прошлый день'},
+    {id:10, name:'Потоки'},
+    {id:11, name:'Выложить рекламу С'},
+    {id:12, name:'Ответить всем в чате ИН'},
+    {id:13, name:'Пост в канал Трафик'},
+    {id:14, name:'Пост в канал Дисциплина'},
+    {id:15, name:'Пост в канал ИИ'},
+    {id:16, name:'Пост в Тредс'},
+    {id:17, name:'Репосты постов в сторис'},
+    {id:18, name:'Выложить посты М'},
+    {id:19, name:'Написать в лс участникам'},
+    {id:20, name:'Рилсы выложить РУ'},
+    {id:21, name:'Рилсы выложить США'},
+    {id:22, name:'Запуск клиентов: Инвайт'},
+    {id:23, name:'Запуск себя: Инвайт'},
+    {id:24, name:'Собрать данные: МЛ'},
+  ];
+
+  const MONTH_NAMES_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  const DOW_RU = ['вс','пн','вт','ср','чт','пт','сб'];
+
+  let routineYear  = new Date().getFullYear();
+  let routineMonth = new Date().getMonth();
+
+  function loadRoutineTasks() {
+    try { return JSON.parse(localStorage.getItem('paradise_routine_tasks') || 'null') || DEFAULT_ROUTINE; } catch { return DEFAULT_ROUTINE; }
+  }
+  function saveRoutineTasks(t) { localStorage.setItem('paradise_routine_tasks', JSON.stringify(t)); }
+
+  function getRoutineStorageKey() { return `paradise_routine_${routineYear}-${String(routineMonth+1).padStart(2,'0')}`; }
+  function loadRoutineData() {
+    try { return JSON.parse(localStorage.getItem(getRoutineStorageKey()) || '{}'); } catch { return {}; }
+  }
+  function saveRoutineData(d) { localStorage.setItem(getRoutineStorageKey(), JSON.stringify(d)); }
+
+  function toggleRoutineCell(taskId, day) {
+    const data = loadRoutineData();
+    const key = `${taskId}_${day}`;
+    if (data[key]) delete data[key]; else data[key] = 1;
+    saveRoutineData(data);
+    renderRoutine();
+  }
+
+  function addRoutineTask() {
+    const inp = document.getElementById('routine-add-input');
+    if (!inp || !inp.value.trim()) return;
+    const tasks = loadRoutineTasks();
+    const maxId = tasks.reduce((m, t) => Math.max(m, t.id), 0);
+    tasks.push({id: maxId + 1, name: inp.value.trim()});
+    saveRoutineTasks(tasks); inp.value = ''; renderRoutine();
+  }
+
+  function deleteRoutineTask(id) {
+    saveRoutineTasks(loadRoutineTasks().filter(t => t.id !== id));
+    renderRoutine();
+  }
+
+  function editRoutineTask(id) {
+    const tasks = loadRoutineTasks();
+    const t = tasks.find(x => x.id === id); if (!t) return;
+    const val = prompt('Название задачи:', t.name);
+    if (val === null || !val.trim()) return;
+    t.name = val.trim(); saveRoutineTasks(tasks); renderRoutine();
+  }
+
+  function routinePrevMonth() {
+    routineMonth--; if (routineMonth < 0) { routineMonth = 11; routineYear--; }
+    renderRoutine();
+  }
+  function routineNextMonth() {
+    routineMonth++; if (routineMonth > 11) { routineMonth = 0; routineYear++; }
+    renderRoutine();
+  }
+
+  function renderRoutine() {
+    const tasks = loadRoutineTasks();
+    const data  = loadRoutineData();
+    const now   = new Date();
+    const todayNum = now.getDate();
+    const isCurrentMonth = (routineYear === now.getFullYear() && routineMonth === now.getMonth());
+    const isPastMonthView = routineYear < now.getFullYear() || (routineYear === now.getFullYear() && routineMonth < now.getMonth());
+    const daysInMonth = new Date(routineYear, routineMonth + 1, 0).getDate();
+
+    // Month label
+    const lbl = document.getElementById('routine-month-label');
+    if (lbl) lbl.textContent = `${MONTH_NAMES_RU[routineMonth]} ${routineYear}`;
+
+    // Build header rows
+    let headNums = '<tr class="rt-head-row">'
+      + '<th class="rt-name-cell" rowspan="2" style="color:var(--muted);font-size:0.62rem;text-transform:uppercase;letter-spacing:1px">Задача</th>'
+      + '<th class="rt-meta-cell" rowspan="2" style="color:var(--muted);font-size:0.55rem">ПЛАН</th>'
+      + '<th class="rt-meta-cell" rowspan="2" style="color:var(--gold);font-size:0.55rem">ФАКТ</th>'
+      + '<th class="rt-pct-cell" rowspan="2" style="font-size:0.55rem;color:var(--muted)">%</th>';
+    let headDows = '<tr class="rt-head-row">';
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dow = new Date(routineYear, routineMonth, d).getDay();
+      const isWknd = dow === 0 || dow === 6;
+      const isToday = isCurrentMonth && d === todayNum;
+      const nc = 'rt-head-num' + (isWknd ? ' wknd' : '') + (isToday ? ' today-h' : '');
+      const dc = 'rt-head-dow' + (isWknd ? ' wknd' : '') + (isToday ? ' today-h' : '');
+      headNums += `<th class="${nc}">${d}</th>`;
+      headDows += `<th class="${dc}">${DOW_RU[dow]}</th>`;
+    }
+    headNums += '</tr>'; headDows += '</tr>';
+
+    // Build task rows
+    let tbody = '';
+    let totalFact = 0, totalPlan = 0;
+
+    tasks.forEach(task => {
+      let factCount = 0;
+      for (let d = 1; d <= daysInMonth; d++) { if (data[`${task.id}_${d}`]) factCount++; }
+      const planCount = daysInMonth;
+      const pct = Math.round(factCount / planCount * 100);
+      totalFact += factCount; totalPlan += planCount;
+
+      const pctColor = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--gold)' : (factCount > 0 ? 'var(--orange)' : 'var(--muted)');
+
+      let row = `<tr class="rt-task-row">`;
+      row += `<td class="rt-name-cell">
+        <div class="rt-name-inner">
+          <span class="rt-name-text" ondblclick="editRoutineTask(${task.id})" title="Двойной клик — переименовать">${task.name}</span>
+          <button class="rt-del-btn" onclick="deleteRoutineTask(${task.id})" title="Удалить">✕</button>
+        </div></td>`;
+      row += `<td class="rt-meta-cell" style="color:var(--muted)">${planCount}</td>`;
+      row += `<td class="rt-meta-cell" style="color:${pctColor};font-weight:bold">${factCount}</td>`;
+      row += `<td class="rt-pct-cell">
+        <div class="rt-pct-num" style="color:${pctColor}">${pct}%</div>
+        <div class="rt-pct-bar"><div class="rt-pct-fill" style="width:${pct}%;background:${pctColor}"></div></div>
+      </td>`;
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dow = new Date(routineYear, routineMonth, d).getDay();
+        const isWknd = dow === 0 || dow === 6;
+        const isToday = isCurrentMonth && d === todayNum;
+        const isPast = isCurrentMonth ? d < todayNum : isPastMonthView;
+        const isFuture = isCurrentMonth ? d > todayNum : !isPastMonthView;
+        const isChecked = !!data[`${task.id}_${d}`];
+
+        let cls = 'rt-cell';
+        if (isWknd) cls += ' rt-wknd';
+        if (isToday) cls += ' rt-today';
+        if (isChecked) cls += ' rt-checked';
+        else if (isPast) cls += ' rt-missed';
+
+        const icon = isChecked ? '✓' : (isFuture && !isToday ? '' : '·');
+        row += `<td class="${cls}" onclick="toggleRoutineCell(${task.id},${d})">${icon}</td>`;
+      }
+      row += '</tr>';
+      tbody += row;
+    });
+
+    const table = document.getElementById('routine-table');
+    if (table) table.innerHTML = `<thead>${headNums}${headDows}</thead><tbody>${tbody}</tbody>`;
+
+    // Overall stats
+    const overallPct = totalPlan > 0 ? Math.round(totalFact / totalPlan * 100) : 0;
+    const statsEl = document.getElementById('routine-overall-stats');
+    if (statsEl) statsEl.innerHTML =
+      `<span class="routine-stat-badge">✓ Выполнено: ${totalFact} / ${totalPlan}</span>` +
+      `<span class="routine-stat-badge">📊 Общий %: ${overallPct}%</span>` +
+      `<span class="routine-stat-badge">📋 Задач: ${tasks.length}</span>`;
+  }
+
   // ===== ХАРАКТЕРИСТИКИ ПЕРСОНАЖА =====
   const STATS_CONFIG = [
     { key:'money',   icon:'💰', name:'Деньги',        bar:'bar-stat',    desc:'Доход, накопления, закрытые долги.\n0 = безденежье, 100 = 500k+/мес' },
@@ -2473,6 +2715,7 @@
   renderDoneToday();
   renderSAchievementsInTimeline();
   renderHabits();
+  renderRoutine();
   renderProfileStats();
   initCollapsible('profile-section');
   initCollapsible('roadmap-section');
@@ -2481,6 +2724,7 @@
   initCollapsible('monster-section');
   initCollapsible('debts-section');
   initCollapsible('timeline-section');
+  initCollapsible('routine-section');
   initCollapsible('guild-section');
   initCollapsible('done-today-section');
   initCollapsible('habits-section');
