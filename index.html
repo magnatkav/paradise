@@ -683,16 +683,28 @@
   .rt-head-num.today-h, .rt-head-dow.today-h { color:var(--gold); font-weight:bold; }
   .rt-cell { text-align:center; cursor:pointer; user-select:none; transition:background 0.1s; min-width:26px; width:26px; padding:4px 0; font-size:0.78rem; line-height:1; }
   .rt-cell:hover { background:rgba(245,166,35,0.14); }
-  .rt-cell.rt-checked { background:rgba(76,175,80,0.2); color:var(--green); }
+  .rt-cell.rt-checked { background:#1d6b1d; color:#b8ffb8; font-weight:bold; box-shadow:inset 0 0 0 1.5px rgba(76,175,80,0.9); text-shadow:0 0 5px rgba(76,175,80,0.6); }
   .rt-cell.rt-missed { background:rgba(229,57,53,0.07); }
   .rt-cell.rt-wknd { background:rgba(0,0,0,0.18); }
   .rt-cell.rt-today { box-shadow:inset 0 0 0 1.5px rgba(245,166,35,0.55); }
   .rt-del-btn { opacity:0; background:none; border:none; color:#7a3010; cursor:pointer; font-size:0.6rem; padding:0 2px; transition:all 0.2s; flex-shrink:0; }
   .rt-task-row:hover .rt-del-btn { opacity:1; }
   .rt-del-btn:hover { color:var(--red); }
+  .rt-drag-handle { cursor:grab; color:#5a3818; font-size:0.8rem; flex-shrink:0; padding:0 3px; user-select:none; line-height:1; }
+  .rt-drag-handle:hover { color:var(--muted); }
+  .rt-drag-handle:active { cursor:grabbing; }
+  .rt-task-row.rt-dragging { opacity:0.35; }
+  .rt-task-row.rt-drag-over { box-shadow:0 -2px 0 var(--gold); }
   .rt-head-row th { background:rgba(0,0,0,0.24); }
   .rt-task-row:hover { background:rgba(245,166,35,0.025); }
   .rt-add-form { display:flex; gap:8px; margin-top:12px; border-top:1px solid var(--border); padding-top:12px; flex-wrap:wrap; }
+  .rt-group-sep td { padding:3px 8px; font-size:0.58rem; text-transform:uppercase; letter-spacing:1.5px; font-weight:bold; background:rgba(0,0,0,0.25)!important; }
+  .rt-g1 td { border-left:3px solid rgba(245,166,35,0.55)!important; color:#c09020; }
+  .rt-g2 td { border-left:3px solid rgba(66,165,245,0.55)!important; color:#42a5f5; }
+  .rt-g3 td { border-left:3px solid rgba(192,96,224,0.55)!important; color:#c060e0; }
+  .rt-task-row.rt-grow-1 .rt-name-cell { border-left:3px solid rgba(245,166,35,0.3)!important; }
+  .rt-task-row.rt-grow-2 .rt-name-cell { border-left:3px solid rgba(66,165,245,0.3)!important; }
+  .rt-task-row.rt-grow-3 .rt-name-cell { border-left:3px solid rgba(192,96,224,0.3)!important; }
 
   /* ХАРАКТЕРИСТИКИ В ПРОФИЛЕ */
   .profile-stats {
@@ -822,6 +834,12 @@
   <div id="shop-section">
   <div class="card">
     <div id="shop-items"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;border-top:1px solid var(--border);padding-top:10px;flex-wrap:wrap;align-items:center">
+      <input class="guild-add-input" id="shop-add-emoji" placeholder="🎁" maxlength="4" style="flex:none;width:52px;text-align:center;font-size:1.1rem" title="Эмодзи">
+      <input class="guild-add-input" id="shop-add-text" placeholder="Название награды..." style="flex:1;min-width:130px">
+      <input class="guild-add-input" id="shop-add-cost" type="number" placeholder="Цена🪙" min="1" style="flex:none;width:80px">
+      <button class="btn-accept" onclick="addShopItem()">+ Добавить</button>
+    </div>
   </div>
   </div><!-- /shop-section -->
 
@@ -1536,7 +1554,7 @@
     { id:'content',   icon:'📝', text:'Пост в канал',                   sub:'Любой из каналов',            coins:30 },
     { id:'client',    icon:'💰', text:'5 аутрич-сообщений',             sub:'Владельцам каналов',          coins:45 },
   ];
-  const SHOP = [
+  const DEFAULT_SHOP = [
     { id:'s1', emoji:'☕', text:'Кофе в хорошей кофейне',      cost:30  },
     { id:'s2', emoji:'🥩', text:'Стейк или бургер',             cost:90  },
     { id:'s3', emoji:'😴', text:'Дневной сон 20 мин без вины',  cost:20  },
@@ -1545,6 +1563,8 @@
     { id:'s6', emoji:'🏊', text:'Баня / сауна',                 cost:150 },
     { id:'s7', emoji:'🌊', text:'Выходные в другом городе',     cost:400 },
   ];
+  function loadShop() { try { return JSON.parse(localStorage.getItem('paradise_shop')||'null')||DEFAULT_SHOP; } catch { return DEFAULT_SHOP; } }
+  function saveShop(s) { localStorage.setItem('paradise_shop', JSON.stringify(s)); }
 
   function getTodayKey() { const d=new Date(); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
   function loadQuestState() { const s=localStorage.getItem('pq_'+getTodayKey()); return s?JSON.parse(s):{}; }
@@ -1619,15 +1639,37 @@
   }
 
   function renderShop() {
-    const coins = loadCoins(), list = document.getElementById('shop-items'); list.innerHTML = '';
-    SHOP.forEach(item => {
+    const coins = loadCoins(), shop = loadShop();
+    const list = document.getElementById('shop-items'); if(!list) return; list.innerHTML = '';
+    shop.forEach(item => {
       const div=document.createElement('div'); div.className='shop-item';
-      div.innerHTML=`<span class="shop-emoji">${item.emoji}</span><span class="shop-text">${item.text}</span><span class="shop-cost">${item.cost}🪙</span><button class="btn-buy" ${coins<item.cost?'disabled':''} onclick="buyReward('${item.id}',${item.cost},'${item.emoji}','${item.text}')">Купить</button>`;
+      div.innerHTML=`<span class="shop-emoji">${item.emoji}</span>
+        <span class="shop-text">${item.text}</span>
+        <span class="shop-cost">${item.cost}🪙</span>
+        <button class="btn-buy" ${coins<item.cost?'disabled':''} onclick="buyShopItem('${item.id}')">Купить</button>
+        <button class="debt-edit" onclick="deleteShopItem('${item.id}')" title="Удалить">✕</button>`;
       list.appendChild(div);
     });
   }
 
-  function buyReward(id, cost, emoji, text) {
+  function buyShopItem(id) {
+    const item = loadShop().find(s => s.id === id); if(!item) return;
+    buyReward(item.cost, item.emoji, item.text);
+  }
+
+  function addShopItem() {
+    const eEl=document.getElementById('shop-add-emoji'), tEl=document.getElementById('shop-add-text'), cEl=document.getElementById('shop-add-cost');
+    if(!tEl||!tEl.value.trim()) return;
+    const shop=loadShop(), maxId=shop.reduce((m,s)=>Math.max(m,parseInt(s.id.replace('s',''))||0),0);
+    shop.push({id:'s'+(maxId+1), emoji:(eEl?eEl.value.trim():'')||'🎁', text:tEl.value.trim(), cost:Math.max(1,parseInt(cEl?cEl.value:'50')||50)});
+    saveShop(shop);
+    if(eEl)eEl.value=''; tEl.value=''; if(cEl)cEl.value='';
+    renderShop();
+  }
+
+  function deleteShopItem(id) { saveShop(loadShop().filter(s=>s.id!==id)); renderShop(); }
+
+  function buyReward(cost, emoji, text) {
     const coins=loadCoins(); if(coins<cost) return;
     saveCoins(coins-cost); renderShop(); renderQuests();
     document.getElementById('reward-emoji').innerText=emoji;
@@ -1741,6 +1783,11 @@
     }
     const fire=streak>=3?`<span class="streak-fire">🔥</span>`:'🔥';
     document.getElementById('streak-badge').innerHTML=`${fire} Стрик: <span id="streak">${streak}</span> дн.`;
+    // Days in game
+    if (!localStorage.getItem('paradise_start_date')) localStorage.setItem('paradise_start_date', new Date().toISOString().slice(0,10));
+    const start = new Date(localStorage.getItem('paradise_start_date'));
+    const dayCount = Math.max(1, Math.round((new Date() - start) / 86400000) + 1);
+    const daysEl = document.getElementById('days'); if(daysEl) daysEl.innerText = dayCount;
   }
 
   function loadChestData() {
@@ -1782,6 +1829,8 @@
     {id:'v1',icon:'💰',label:'Финансы'},{id:'v2',icon:'💪',label:'Тело'},
     {id:'v3',icon:'✈️',label:'Путешествия'},{id:'v4',icon:'🏠',label:'Жильё / место'},
     {id:'v5',icon:'🌟',label:'Образ жизни'},{id:'v6',icon:'🎯',label:'Цель 2027'},
+    {id:'v7',icon:'❤️',label:'Отношения'},{id:'v8',icon:'🧠',label:'Развитие'},
+    {id:'v9',icon:'🏆',label:'Мечта'},
   ];
   function loadVision() { const s=localStorage.getItem('paradise_vision'); return s?JSON.parse(s):{}; }
   function saveVision(v) { localStorage.setItem('paradise_vision',JSON.stringify(v)); }
@@ -2397,8 +2446,8 @@
         let cls;
         if (isToday) cls = doneToday ? 'today-done' : 'today-empty';
         else cls = dates.includes(k) ? 'done-day' : 'missed-day';
-        const label = k;
-        dotsHtml += `<div class="habit-dot ${cls}" title="${label}"></div>`;
+        const dayLabel = d.getDate() + '.' + (d.getMonth()+1);
+        dotsHtml += `<div class="habit-dot ${cls}" title="${dayLabel} — нажми чтобы переключить" style="cursor:pointer" onclick="toggleHabitDate('${h.id}','${k}')"></div>`;
       }
 
       const row = document.createElement('div');
@@ -2430,6 +2479,14 @@
     habits.push({ id: 'hb_' + Date.now(), name, icon });
     saveHabits(habits);
     nameEl.value = ''; iconEl.value = '';
+    renderHabits();
+  }
+
+  function toggleHabitDate(hid, dateKey) {
+    const dates = getHabitDoneDates(hid);
+    const idx = dates.indexOf(dateKey);
+    if (idx >= 0) dates.splice(idx, 1); else dates.push(dateKey);
+    setHabitDoneDates(hid, dates);
     renderHabits();
   }
 
@@ -2476,31 +2533,32 @@
 
   // ===== ТРЕКЕР РУТИНЫ =====
   const DEFAULT_ROUTINE = [
-    {id:1,  name:'Откладывать на «золотую курицу»'},
-    {id:2,  name:'Глаза + красивые'},
-    {id:3,  name:'Зарядка'},
-    {id:4,  name:'Подъём таза'},
-    {id:5,  name:'Миланет'},
-    {id:6,  name:'Массаж'},
-    {id:7,  name:'Медитация'},
-    {id:8,  name:'Считать деньги'},
-    {id:9,  name:'Отчёт за прошлый день'},
-    {id:10, name:'Потоки'},
-    {id:11, name:'Выложить рекламу С'},
-    {id:12, name:'Ответить всем в чате ИН'},
-    {id:13, name:'Пост в канал Трафик'},
-    {id:14, name:'Пост в канал Дисциплина'},
-    {id:15, name:'Пост в канал ИИ'},
-    {id:16, name:'Пост в Тредс'},
-    {id:17, name:'Репосты постов в сторис'},
-    {id:18, name:'Выложить посты М'},
-    {id:19, name:'Написать в лс участникам'},
-    {id:20, name:'Рилсы выложить РУ'},
-    {id:21, name:'Рилсы выложить США'},
-    {id:22, name:'Запуск клиентов: Инвайт'},
-    {id:23, name:'Запуск себя: Инвайт'},
-    {id:24, name:'Собрать данные: МЛ'},
+    {id:1,  name:'Откладывать на «золотую курицу»', group:1},
+    {id:2,  name:'Глаза + красивые',                group:1},
+    {id:3,  name:'Зарядка',                          group:1},
+    {id:4,  name:'Подъём таза',                      group:1},
+    {id:5,  name:'Миланет',                          group:1},
+    {id:6,  name:'Массаж',                           group:1},
+    {id:7,  name:'Медитация',                        group:1},
+    {id:8,  name:'Считать деньги',                   group:1},
+    {id:9,  name:'Отчёт за прошлый день',            group:1},
+    {id:10, name:'Потоки',                           group:1},
+    {id:11, name:'Выложить рекламу С',               group:2},
+    {id:12, name:'Ответить всем в чате ИН',          group:2},
+    {id:13, name:'Пост в канал Трафик',              group:2},
+    {id:14, name:'Пост в канал Дисциплина',          group:2},
+    {id:15, name:'Пост в канал ИИ',                  group:2},
+    {id:16, name:'Пост в Тредс',                     group:2},
+    {id:17, name:'Репосты постов в сторис',          group:2},
+    {id:18, name:'Выложить посты М',                 group:2},
+    {id:19, name:'Написать в лс участникам',         group:2},
+    {id:20, name:'Рилсы выложить РУ',               group:2},
+    {id:21, name:'Рилсы выложить США',              group:2},
+    {id:22, name:'Запуск клиентов: Инвайт',         group:3},
+    {id:23, name:'Запуск себя: Инвайт',             group:3},
+    {id:24, name:'Собрать данные: МЛ',              group:3},
   ];
+  const ROUTINE_GROUPS = {1:'🌅 Утренняя рутина', 2:'💼 Работа & контент', 3:'🚀 Запуск'};
 
   const MONTH_NAMES_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
   const DOW_RU = ['вс','пн','вт','ср','чт','пт','сб'];
@@ -2508,8 +2566,31 @@
   let routineYear  = new Date().getFullYear();
   let routineMonth = new Date().getMonth();
 
+  let _rtDragId = null;
+
   function loadRoutineTasks() {
-    try { return JSON.parse(localStorage.getItem('paradise_routine_tasks') || 'null') || DEFAULT_ROUTINE; } catch { return DEFAULT_ROUTINE; }
+    let tasks;
+    try { tasks = JSON.parse(localStorage.getItem('paradise_routine_tasks') || 'null'); } catch { tasks = null; }
+    if (!tasks) return DEFAULT_ROUTINE;
+    // Migration: add group if missing
+    let changed = false;
+    tasks.forEach(t => {
+      if (!t.group) { t.group = t.id <= 10 ? 1 : t.id <= 21 ? 2 : 3; changed = true; }
+    });
+    if (changed) saveRoutineTasks(tasks);
+    return tasks;
+  }
+
+  function rtDragStart(e, id) { _rtDragId = id; e.dataTransfer.effectAllowed='move'; e.currentTarget.classList.add('rt-dragging'); }
+  function rtDragEnd(e) { e.currentTarget.classList.remove('rt-dragging'); document.querySelectorAll('.rt-drag-over').forEach(r=>r.classList.remove('rt-drag-over')); }
+  function rtDragOver(e, id) { e.preventDefault(); e.dataTransfer.dropEffect='move'; document.querySelectorAll('.rt-drag-over').forEach(r=>r.classList.remove('rt-drag-over')); e.currentTarget.classList.add('rt-drag-over'); }
+  function rtDrop(e, id) {
+    e.preventDefault();
+    if (!_rtDragId || _rtDragId === id) { _rtDragId=null; return; }
+    const tasks=loadRoutineTasks(), fi=tasks.findIndex(t=>t.id===_rtDragId), ti=tasks.findIndex(t=>t.id===id);
+    if(fi<0||ti<0){_rtDragId=null;return;}
+    const [m]=tasks.splice(fi,1); tasks.splice(ti,0,m);
+    saveRoutineTasks(tasks); _rtDragId=null; renderRoutine();
   }
   function saveRoutineTasks(t) { localStorage.setItem('paradise_routine_tasks', JSON.stringify(t)); }
 
@@ -2593,19 +2674,29 @@
     // Build task rows
     let tbody = '';
     let totalFact = 0, totalPlan = 0;
+    let lastGroup = null;
 
     tasks.forEach(task => {
+      const g = task.group || 1;
+      if (g !== lastGroup) {
+        lastGroup = g;
+        const label = ROUTINE_GROUPS[g] || ('Группа ' + g);
+        tbody += `<tr class="rt-group-sep rt-g${g}"><td colspan="${4 + daysInMonth}">${label}</td></tr>`;
+      }
+
       let factCount = 0;
       for (let d = 1; d <= daysInMonth; d++) { if (data[`${task.id}_${d}`]) factCount++; }
       const planCount = daysInMonth;
       const pct = Math.round(factCount / planCount * 100);
       totalFact += factCount; totalPlan += planCount;
-
       const pctColor = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--gold)' : (factCount > 0 ? 'var(--orange)' : 'var(--muted)');
 
-      let row = `<tr class="rt-task-row">`;
+      let row = `<tr class="rt-task-row rt-grow-${g}" draggable="true"
+        ondragstart="rtDragStart(event,${task.id})" ondragend="rtDragEnd(event)"
+        ondragover="rtDragOver(event,${task.id})" ondrop="rtDrop(event,${task.id})">`;
       row += `<td class="rt-name-cell">
         <div class="rt-name-inner">
+          <span class="rt-drag-handle" title="Перетащи для сортировки">⠿</span>
           <span class="rt-name-text" ondblclick="editRoutineTask(${task.id})" title="Двойной клик — переименовать">${task.name}</span>
           <button class="rt-del-btn" onclick="deleteRoutineTask(${task.id})" title="Удалить">✕</button>
         </div></td>`;
@@ -2694,6 +2785,14 @@
     stats[key] = num;
     saveStats(stats);
     renderProfileStats();
+  }
+
+  // Одноразовый сброс — свежий старт май 2026
+  if (!localStorage.getItem('paradise_reset_may2026')) {
+    ['paradise_streak','paradise_last_login','paradise_habits','paradise_quests_total','paradise_chests_opened','paradise_start_date'].forEach(k => localStorage.removeItem(k));
+    const hk = []; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('paradise_habit_')) hk.push(k); }
+    hk.forEach(k => localStorage.removeItem(k));
+    localStorage.setItem('paradise_reset_may2026', '1');
   }
 
   // Инициализация
